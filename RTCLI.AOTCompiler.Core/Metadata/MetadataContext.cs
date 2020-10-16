@@ -10,6 +10,7 @@ namespace RTCLI.AOTCompiler.Metadata
 {
     public sealed class MetadataContext
     {
+        public readonly Dictionary<AssemblyDefinition, AssemblyInformation> Assemblies = new Dictionary<AssemblyDefinition, AssemblyInformation>(); 
         public MetadataContext(string assemblyPath, bool readSymbols)
         {
             // Initialize Assembly Resolver.
@@ -21,7 +22,8 @@ namespace RTCLI.AOTCompiler.Metadata
             };
             // Read Assembly
             FocusedAssembly = AssemblyDefinition.ReadAssembly(assemblyPath, parameter);
-            
+
+            Assemblies.Add(FocusedAssembly, new AssemblyInformation(FocusedAssembly));
         }
         public AssemblyDefinition FocusedAssembly;
     }
