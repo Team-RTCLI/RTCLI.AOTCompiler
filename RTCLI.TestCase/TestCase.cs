@@ -12,9 +12,4 @@ namespace RTCLI.TestCase
         }
         RefClass refed;
     }
-
-    public interface TestCaseInterface
-    {
-
-    }
 }
