@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 
 using Mono.Cecil;
+using Newtonsoft.Json;
 
 namespace RTCLI.AOTCompiler.Metadata
 {
@@ -25,6 +26,6 @@ namespace RTCLI.AOTCompiler.Metadata
 
             Assemblies.Add(FocusedAssembly, new AssemblyInformation(FocusedAssembly));
         }
-        public AssemblyDefinition FocusedAssembly;
+        [JsonIgnore] public AssemblyDefinition FocusedAssembly;
     }
 }

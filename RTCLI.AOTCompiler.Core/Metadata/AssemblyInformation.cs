@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 
 using Mono.Cecil;
+using Newtonsoft.Json;
+using System;
 
 namespace RTCLI.AOTCompiler.Metadata
 {
@@ -17,9 +19,11 @@ namespace RTCLI.AOTCompiler.Metadata
             {
                 Modules.Add(module, new ModuleInformation(module));
             }
+
+            Console.WriteLine(JsonConvert.SerializeObject(this, Formatting.Indented));
         }
 
-        public readonly AssemblyDefinition definition = null;
+        [JsonIgnore] private readonly AssemblyDefinition definition = null;
 
         IMetadataTokenProvider IMetadataInformation.Definition => definition;
     }

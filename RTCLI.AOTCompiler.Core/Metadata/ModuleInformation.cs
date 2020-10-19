@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using Mono.Cecil;
+using Newtonsoft.Json;
 
 namespace RTCLI.AOTCompiler.Metadata
 {
@@ -17,7 +18,7 @@ namespace RTCLI.AOTCompiler.Metadata
             }
         }
 
-        public readonly ModuleDefinition definition = null;
+        [JsonIgnore] private readonly ModuleDefinition definition = null;
         public IMetadataTokenProvider Definition => definition;
     }
 }

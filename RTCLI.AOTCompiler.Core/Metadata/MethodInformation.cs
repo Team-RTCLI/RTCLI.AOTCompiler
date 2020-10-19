@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
+using Newtonsoft.Json;
 
 namespace RTCLI.AOTCompiler.Metadata
 {
@@ -17,12 +18,12 @@ namespace RTCLI.AOTCompiler.Metadata
             foreach (var Inst in def.Body.Instructions)
             {
                 Console.WriteLine(Inst.ToString());
-                Instructions.Add(Inst);
+                Instructions.Add(new InstructionInformation(Inst));
             }
         }
 
-        public readonly MethodDefinition definition = null;
-        public readonly List<Instruction> Instructions = new List<Instruction>();
+        [JsonIgnore] private readonly MethodDefinition definition = null;
+        public readonly List<InstructionInformation> Instructions = new List<InstructionInformation>();
         public IMetadataTokenProvider Definition => definition;
     }
 }

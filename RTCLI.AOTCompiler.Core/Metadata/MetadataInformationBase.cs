@@ -1,10 +1,11 @@
 using System.Reflection;
 using Mono.Cecil;
+using Newtonsoft.Json;
 
 namespace RTCLI.AOTCompiler.Metadata
 {
     public interface IMetadataInformation
     {
-        IMetadataTokenProvider Definition { get; } 
+        [JsonIgnore] IMetadataTokenProvider Definition { get; } 
     }
 }
