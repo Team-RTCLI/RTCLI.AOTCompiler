@@ -13,11 +13,8 @@ namespace RTCLI.AOTCompiler.Metadata
         {
             this.definition = def;
 
-            Console.WriteLine("");
-            Console.WriteLine(def.Name);
             foreach (var Inst in def.Body.Instructions)
             {
-                Console.WriteLine(Inst.ToString());
                 Instructions.Add(new InstructionInformation(Inst));
             }
         }

@@ -6,7 +6,6 @@ namespace RTCLI.AOTCompiler
     public static class Dispatcher
     {
         public static void Translate(
-            TextWriter logw,
             CodeTextStorage storage,
             bool readSymbols,
             bool enableBundler,
@@ -14,34 +13,29 @@ namespace RTCLI.AOTCompiler
             DebugInformationOptions debugInformationOptions,
             string assemblyPath)
         {
-            logw.Write("IL2C: Preparing assembly: \"{0}\" ...", Path.GetFullPath(assemblyPath));
+            System.Console.WriteLine("IL2C: Preparing assembly: \"{0}\" ...", Path.GetFullPath(assemblyPath));
 
             var translateContext = new TranslateContext(assemblyPath, readSymbols);
             //var preparedFunctions = AssemblyPreparer.Prepare(translateContext);
 
-            logw.WriteLine(" done.");
+            System.Console.WriteLine(" done.");
+            using (var _ = storage.EnterScope("meta"))
+            {
+                
+            }
 
             using (var _ = storage.EnterScope("include"))
             {
-                //AssemblyWriter.WriteHeader(
-                //    storage,
-                //    translateContext,
-                //    preparedFunctions);
+                
             }
 
             using (var _ = storage.EnterScope("src"))
             {
-                //AssemblyWriter.WriteSourceCode(
-                //    storage,
-                //    translateContext,
-                //    preparedFunctions,
-                //    enableBundler,
-                //    debugInformationOptions);
+                
             }
         }
 
         public static void TranslateAll(
-            TextWriter logw,
             CodeTextStorage storage,
             bool readSymbols,
             bool enableBundler,
@@ -52,7 +46,6 @@ namespace RTCLI.AOTCompiler
             foreach (var aseemblyPath in assemblyPaths)
             {
                 Translate(
-                    logw,
                     storage,
                     readSymbols,
                     enableBundler,
@@ -63,7 +56,6 @@ namespace RTCLI.AOTCompiler
         }
 
         public static void TranslateAll(
-            TextWriter logw,
             CodeTextStorage storage,
             bool readSymbols,
             bool enableBundler,
@@ -72,7 +64,6 @@ namespace RTCLI.AOTCompiler
             params string[] assemblyPaths)
         {
             TranslateAll(
-                logw,
                 storage,
                 readSymbols,
                 enableBundler,
@@ -98,7 +89,6 @@ namespace RTCLI.AOTCompiler
             foreach (var aseemblyPath in assemblyPaths)
             {
                 Translate(
-                    logw,
                     storage,
                     readSymbols,
                     enableBundler,

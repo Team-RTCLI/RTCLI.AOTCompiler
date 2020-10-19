@@ -19,8 +19,6 @@ namespace RTCLI.AOTCompiler.Metadata
             {
                 Modules.Add(module, new ModuleInformation(module));
             }
-
-            Console.WriteLine(JsonConvert.SerializeObject(this, Formatting.Indented));
         }
 
         [JsonIgnore] private readonly AssemblyDefinition definition = null;
