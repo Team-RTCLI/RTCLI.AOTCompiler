@@ -11,17 +11,29 @@ namespace RTCLI.AOTCompiler
     public class CodeTextStorage
     {
         private readonly TextWriter logw;
+        public readonly string BasePath;
         private readonly Stack<string> scopeNames = new Stack<string>();
 
         public CodeTextStorage(TextWriter logw, string basePath, string indent)
         {
             this.logw = logw;
+            this.BasePath = basePath;
         }
 
         public IDisposable EnterScope(string scopeName, bool splitScope = true)
         {
             scopeNames.Push(splitScope ? Utilities.GetCXXLanguageScopedPath(scopeName) : scopeName);
             return new ScopeDisposer(this);
+        }
+
+        public CodeTextWriter Wirter(string FileName)
+        {
+            string fullFileName = BasePath;
+            foreach(var scope in scopeNames)
+            {
+                fullFileName = Path.Combine(fullFileName, scope);
+            }
+            return new CodeTextWriter(Path.Combine(fullFileName, FileName));
         }
 
         private sealed class ScopeDisposer : IDisposable
