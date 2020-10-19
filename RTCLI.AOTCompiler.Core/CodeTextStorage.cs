@@ -20,20 +20,30 @@ namespace RTCLI.AOTCompiler
             this.BasePath = basePath;
         }
 
+        private string getScopePath()
+        {
+            string fullDirName = BasePath;
+            foreach (var scope in scopeNames)
+            {
+                fullDirName = Path.Combine(fullDirName, scope);
+            }
+            return fullDirName;
+        }
+
         public IDisposable EnterScope(string scopeName, bool splitScope = true)
         {
             scopeNames.Push(splitScope ? Utilities.GetCXXLanguageScopedPath(scopeName) : scopeName);
+            if (!Directory.Exists(getScopePath()))
+            {
+                Directory.CreateDirectory(getScopePath());     
+            }
             return new ScopeDisposer(this);
         }
 
         public CodeTextWriter Wirter(string FileName)
         {
-            string fullFileName = BasePath;
-            foreach(var scope in scopeNames)
-            {
-                fullFileName = Path.Combine(fullFileName, scope);
-            }
-            return new CodeTextWriter(Path.Combine(fullFileName, FileName));
+            
+            return new CodeTextWriter(Path.Combine(getScopePath(), FileName));
         }
 
         private sealed class ScopeDisposer : IDisposable

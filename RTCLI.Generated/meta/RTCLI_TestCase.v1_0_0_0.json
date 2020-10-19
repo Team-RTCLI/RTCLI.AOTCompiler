@@ -1,0 +1,72 @@
+﻿{
+  "Modules": {
+    "RTCLI.TestCase.dll": {
+      "Types": {
+        "RTCLI.TestCase.TestCaseClass": {
+          "FullName": "RTCLI.TestCase.TestCaseClass",
+          "TypeName": "TestCaseClass",
+          "NamespaceChain": [
+            "RTCLI",
+            "TestCase"
+          ],
+          "TypeAttributes": [
+            "AnsiClass",
+            "NotPublic",
+            "AutoLayout",
+            "Public",
+            "BeforeFieldInit"
+          ],
+          "Methods": {
+            "System.Void RTCLI.TestCase.TestCaseClass::Method()": {
+              "Instructions": [
+                {
+                  "Body": "IL_0000: nop"
+                },
+                {
+                  "Body": "IL_0001: ldarg.0"
+                },
+                {
+                  "Body": "IL_0002: ldstr \"TestCase\""
+                },
+                {
+                  "Body": "IL_0007: newobj System.Void RTCLI.TestCase.Reference.RefClass::.ctor(System.String)"
+                },
+                {
+                  "Body": "IL_000c: stfld RTCLI.TestCase.Reference.RefClass RTCLI.TestCase.TestCaseClass::refed"
+                },
+                {
+                  "Body": "IL_0011: ret"
+                }
+              ]
+            },
+            "System.Void RTCLI.TestCase.TestCaseClass::.ctor()": {
+              "Instructions": [
+                {
+                  "Body": "IL_0000: ldarg.0"
+                },
+                {
+                  "Body": "IL_0001: call System.Void System.Object::.ctor()"
+                },
+                {
+                  "Body": "IL_0006: nop"
+                },
+                {
+                  "Body": "IL_0007: ret"
+                }
+              ]
+            }
+          },
+          "Fields": {
+            "RTCLI.TestCase.Reference.RefClass RTCLI.TestCase.TestCaseClass::refed": {
+              "FullName": "RTCLI.TestCase.Reference.RefClass RTCLI.TestCase.TestCaseClass::refed",
+              "Name": "refed",
+              "FieldType": "RTCLI.TestCase.Reference.RefClass"
+            }
+          },
+          "Properties": {}
+        }
+      }
+    }
+  },
+  "IdentName": "RTCLI_TestCase.v1_0_0_0"
+}

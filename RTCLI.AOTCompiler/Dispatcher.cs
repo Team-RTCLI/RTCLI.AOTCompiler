@@ -1,3 +1,4 @@
+using RTCLI.AOTCompiler.Translators;
 using System.Collections.Generic;
 using System.IO;
 
@@ -20,7 +21,8 @@ namespace RTCLI.AOTCompiler
             System.Console.WriteLine(" done.");
             using (var _ = storage.EnterScope("meta"))
             {
-                
+                MetadataSerializer metaSerializer = new MetadataSerializer(translateContext);
+                metaSerializer.WriteResult(storage);
             }
 
             using (var _ = storage.EnterScope("include"))

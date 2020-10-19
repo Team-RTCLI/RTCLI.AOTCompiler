@@ -10,6 +10,7 @@ namespace RTCLI.AOTCompiler.Metadata
 {
     public class AssemblyInformation : IMetadataInformation
     {
+        public string IdentName => definition.Name.Name.Replace('.', '_') + ".v" + definition.Name.Version.ToString().Replace('.', '_');
         public readonly Dictionary<ModuleDefinition, ModuleInformation> Modules = new Dictionary<ModuleDefinition, ModuleInformation>();
         public AssemblyInformation(AssemblyDefinition def)
         {
@@ -17,7 +18,8 @@ namespace RTCLI.AOTCompiler.Metadata
 
             foreach(var module in def.Modules)
             {
-                Modules.Add(module, new ModuleInformation(module));
+                if(module.HasTypes)
+                    Modules.Add(module, new ModuleInformation(module));
             }
         }
 

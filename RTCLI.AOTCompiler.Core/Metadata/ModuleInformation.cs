@@ -14,7 +14,8 @@ namespace RTCLI.AOTCompiler.Metadata
 
             foreach(var type in definition.Types)
             {
-                Types.Add(type, new TypeInformation(type));
+                if(type.FullName != "<Module>")
+                    Types.Add(type, new TypeInformation(type));
             }
         }
 
