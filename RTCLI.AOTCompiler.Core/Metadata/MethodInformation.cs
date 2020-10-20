@@ -13,6 +13,7 @@ namespace RTCLI.AOTCompiler.Metadata
         {
             this.definition = def;
 
+            if(def.HasBody)
             foreach (var Inst in def.Body.Instructions)
             {
                 Instructions.Add(new InstructionInformation(Inst));

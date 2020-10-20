@@ -13,6 +13,52 @@ namespace RTCLI.AOTCompiler.Translators
         DebugInformationOptions debugInformationOption;
     }
 
+    public class CXXMethodTranslateContext : MethodTranslateContext
+    {
+        public CXXMethodTranslateContext(TranslateContext translateContext)
+            :base(translateContext)
+        {
+
+        }
+
+        private int FocusedObjectIndex = -1;
+        public string FocusedObjectName => $"o{FocusedObjectIndex}";
+        public string FocusOnNewObject
+        {
+            get
+            {
+                FocusedObjectIndex++;
+                return $"o{FocusedObjectIndex}";
+            }
+        }
+
+        private int CmptStackObjectIndex = -1;
+        public string CmptStackObjectName => CmptStackValidate() ? $"s{CmptStack.Peek()}" : "ERROR_CMPT_STACK_EMPTY";
+        public string CmptStackPushObject
+        {
+            get
+            {
+                CmptStackObjectIndex++;
+                CmptStack.Push(CmptStackObjectIndex);
+                return $"s{CmptStack.Peek()}";
+            }
+        }
+        public string CmptStackPopObject
+        {
+            get
+            {
+                if (CmptStackValidate())
+                    return $"s{CmptStack.Pop()}";
+                return "ERROR_CMPT_STACK_EMPTY";
+            }
+        }
+        private bool CmptStackValidate()
+        {
+            return CmptStack.Count > 0;
+        }
+        Stack<int> CmptStack = new Stack<int>();
+    }
+
     public class CXXTranslator
     {
         private static bool TypeNameFilter(Type typeObj, Object criteriaObj)
@@ -23,7 +69,7 @@ namespace RTCLI.AOTCompiler.Translators
                 return false;
         }
 
-        public CXXTranslator(CXXTranslateOptions options)
+        public CXXTranslator(TranslateContext translateContext, CXXTranslateOptions options)
         {
             Assembly assembly = Assembly.GetAssembly(typeof(ILConverters.IILConverter));
             TypeFilter typeNameFilter = new TypeFilter(TypeNameFilter);
@@ -36,14 +82,38 @@ namespace RTCLI.AOTCompiler.Translators
                     ConvertersCXX.Add(newConv.TargetOpCode(), newConv);
                 }
             }
+
+            foreach(var module in translateContext.FocusedAssembly.Modules)
+            {
+                foreach(var type in module.Types)
+                {
+                    foreach(var method in type.Methods)
+                    {
+                        CXXMethodTranslateContext methodContext = new CXXMethodTranslateContext(translateContext);
+                        foreach (var instruction in method.Body.Instructions)
+                        {
+                            Console.WriteLine(NoteILInstruction(instruction, methodContext));
+                            Console.WriteLine(TranslateILInstruction(instruction, methodContext));
+                        }
+                    }
+                }
+            }
         }
 
-        public string TranslateILInstruction(Instruction inst)
+        private string NoteILInstruction(Instruction inst, MethodTranslateContext methodContext)
         {
             if (ConvertersCXX.TryGetValue(inst.OpCode, out ICXXILConverter targetConverter))
-                return targetConverter.Convert(inst);
-            return $"//{inst.ToString()} Has No Converter Implementation!\n\nstatic_assert(0, \"{inst.ToString()} Has No Converter Implementation!\");\n";
+                return targetConverter.Note(inst, methodContext);
+            return $"//{inst.ToString()}";
         }
+        private string TranslateILInstruction(Instruction inst, MethodTranslateContext methodContext)
+        {
+            if (ConvertersCXX.TryGetValue(inst.OpCode, out ICXXILConverter targetConverter))
+                return targetConverter.Convert(inst, methodContext);
+            return $"static_assert(0, \"[{inst.ToString()}] Has No Converter Implementation!\");";
+        }
+
+        //public void  
 
         private readonly Dictionary<OpCode, ICXXILConverter> ConvertersCXX = new Dictionary<OpCode, ICXXILConverter>(); 
     }

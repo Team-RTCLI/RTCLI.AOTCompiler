@@ -8,6 +8,7 @@ namespace RTCLI.TestCase
     {
         void Method()
         {
+            var reff = new RefClass("TestCase");
             refed = new RefClass("TestCase");
         }
         RefClass refed;

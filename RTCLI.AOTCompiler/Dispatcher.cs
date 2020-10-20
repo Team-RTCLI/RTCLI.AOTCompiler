@@ -14,11 +14,11 @@ namespace RTCLI.AOTCompiler
             DebugInformationOptions debugInformationOptions,
             string assemblyPath)
         {
-            System.Console.WriteLine("IL2C: Preparing assembly: \"{0}\" ...", Path.GetFullPath(assemblyPath));
+            System.Console.WriteLine("AOTCompiler: Preparing assembly: \"{0}\" ...", Path.GetFullPath(assemblyPath));
 
             var translateContext = new TranslateContext(assemblyPath, readSymbols);
             CXXTranslateOptions cxxOptions = new CXXTranslateOptions();
-            var cxxTranslator = new CXXTranslator(cxxOptions);
+            var cxxTranslator = new CXXTranslator(translateContext, cxxOptions);
 
             System.Console.WriteLine(" done.");
             using (var _ = storage.EnterScope("meta"))
@@ -29,12 +29,12 @@ namespace RTCLI.AOTCompiler
 
             using (var _ = storage.EnterScope("include"))
             {
-                
+                //cxxTranslator.WriteHeader(storage);
             }
 
             using (var _ = storage.EnterScope("src"))
             {
-                
+                //cxxTranslator.WriteSource(storage);
             }
         }
 

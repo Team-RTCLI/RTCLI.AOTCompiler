@@ -22,9 +22,36 @@ namespace RTCLI.AOTCompiler.Metadata
                 ReadSymbols = readSymbols
             };
             // Read Assembly
+            string AssemblyBase = Path.GetDirectoryName(assemblyPath);
             FocusedAssembly = AssemblyDefinition.ReadAssembly(assemblyPath, parameter);
+            foreach(var module in FocusedAssembly.Modules)
+            {
+                var references = module.AssemblyReferences;
+                foreach(var reference in references)
+                {
+                    if (reference.Name != "netstandard" && reference.Name != "mscorlib")
+                    {
+                        var dep = AssemblyDefinition.ReadAssembly(Path.Combine(AssemblyBase, reference.Name + ".dll"), parameter);
+                        Assemblies.Add(dep, new AssemblyInformation(dep));
+                    }
+                }
+            }
 
             Assemblies.Add(FocusedAssembly, new AssemblyInformation(FocusedAssembly));
+        }
+
+        public TypeInformation GetTypeInformation(TypeReference inType)
+        {
+            foreach(var assembly in Assemblies.Values)
+            {
+                foreach(var module in assembly.Modules.Values)
+                {
+                    foreach (var type in module.Types.Keys)
+                        if (type.FullName == inType.FullName)
+                            return module.Types[type];
+                }
+            }
+            return null;
         }
         [JsonIgnore] public AssemblyDefinition FocusedAssembly;
     }

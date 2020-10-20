@@ -15,6 +15,8 @@ namespace RTCLI.AOTCompiler.Metadata
         public readonly string[] NamespaceChain = null;
         public readonly string[] TypeAttributes = null;
 
+        public string CXXTypeName => FullName;
+
         public readonly Dictionary<MethodDefinition, MethodInformation> Methods = new Dictionary<MethodDefinition, MethodInformation>();
         public readonly Dictionary<FieldDefinition, FieldInformation> Fields = new Dictionary<FieldDefinition, FieldInformation>();
         public readonly Dictionary<PropertyDefinition, PropertyInformation> Properties = new Dictionary<PropertyDefinition, PropertyInformation>();

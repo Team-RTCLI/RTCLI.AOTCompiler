@@ -23,19 +23,28 @@
                   "Body": "IL_0000: nop"
                 },
                 {
-                  "Body": "IL_0001: ldarg.0"
+                  "Body": "IL_0001: ldstr \"TestCase\""
                 },
                 {
-                  "Body": "IL_0002: ldstr \"TestCase\""
+                  "Body": "IL_0006: newobj System.Void RTCLI.TestCase.Reference.RefClass::.ctor(System.String)"
                 },
                 {
-                  "Body": "IL_0007: newobj System.Void RTCLI.TestCase.Reference.RefClass::.ctor(System.String)"
+                  "Body": "IL_000b: stloc.0"
                 },
                 {
-                  "Body": "IL_000c: stfld RTCLI.TestCase.Reference.RefClass RTCLI.TestCase.TestCaseClass::refed"
+                  "Body": "IL_000c: ldarg.0"
                 },
                 {
-                  "Body": "IL_0011: ret"
+                  "Body": "IL_000d: ldstr \"TestCase\""
+                },
+                {
+                  "Body": "IL_0012: newobj System.Void RTCLI.TestCase.Reference.RefClass::.ctor(System.String)"
+                },
+                {
+                  "Body": "IL_0017: stfld RTCLI.TestCase.Reference.RefClass RTCLI.TestCase.TestCaseClass::refed"
+                },
+                {
+                  "Body": "IL_001c: ret"
                 }
               ]
             },
@@ -63,7 +72,8 @@
               "FieldType": "RTCLI.TestCase.Reference.RefClass"
             }
           },
-          "Properties": {}
+          "Properties": {},
+          "CXXTypeName": "RTCLI.TestCase.TestCaseClass"
         }
       }
     }

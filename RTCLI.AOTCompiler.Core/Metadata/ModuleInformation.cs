@@ -7,7 +7,7 @@ namespace RTCLI.AOTCompiler.Metadata
 {
     public class ModuleInformation : IMemberInformation
     {
-        public readonly Dictionary<TypeDefinition, TypeInformation> Types = new Dictionary<TypeDefinition, TypeInformation>();
+        public readonly Dictionary<TypeReference, TypeInformation> Types = new Dictionary<TypeReference, TypeInformation>();
         public ModuleInformation(ModuleDefinition def)
         {
             this.definition = def;
