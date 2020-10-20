@@ -17,6 +17,8 @@ namespace RTCLI.AOTCompiler
             System.Console.WriteLine("IL2C: Preparing assembly: \"{0}\" ...", Path.GetFullPath(assemblyPath));
 
             var translateContext = new TranslateContext(assemblyPath, readSymbols);
+            CXXTranslateOptions cxxOptions = new CXXTranslateOptions();
+            var cxxTranslator = new CXXTranslator(cxxOptions);
 
             System.Console.WriteLine(" done.");
             using (var _ = storage.EnterScope("meta"))

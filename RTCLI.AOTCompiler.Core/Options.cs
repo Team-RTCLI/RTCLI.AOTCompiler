@@ -13,5 +13,4 @@ namespace RTCLI.AOTCompiler
         InterpreterCode,
         Generic = NativeCpp
     }
-
 }
