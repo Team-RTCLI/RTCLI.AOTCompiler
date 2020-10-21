@@ -21,17 +21,6 @@ namespace RTCLI.AOTCompiler.Translators
 
         }
 
-        private int FocusedObjectIndex = -1;
-        public string FocusedObjectName => $"o{FocusedObjectIndex}";
-        public string FocusOnNewObject
-        {
-            get
-            {
-                FocusedObjectIndex++;
-                return $"o{FocusedObjectIndex}";
-            }
-        }
-
         private int CmptStackObjectIndex = -1;
         public string CmptStackObjectName => CmptStackValidate() ? $"s{CmptStack.Peek()}" : "ERROR_CMPT_STACK_EMPTY";
         public string CmptStackPushObject
@@ -71,6 +60,7 @@ namespace RTCLI.AOTCompiler.Translators
 
         public CXXTranslator(TranslateContext translateContext, CXXTranslateOptions options)
         {
+            this.translateContext = translateContext;
             Assembly assembly = Assembly.GetAssembly(typeof(ILConverters.IILConverter));
             TypeFilter typeNameFilter = new TypeFilter(TypeNameFilter);
             foreach (var type in assembly.GetTypes())
@@ -79,42 +69,53 @@ namespace RTCLI.AOTCompiler.Translators
                 if (typeInterfaces.Length > 0)
                 {
                     var newConv = System.Activator.CreateInstance(type) as ILConverters.ICXXILConverter;
-                    ConvertersCXX.Add(newConv.TargetOpCode(), newConv);
-                }
-            }
-
-            foreach(var module in translateContext.FocusedAssembly.Modules)
-            {
-                foreach(var type in module.Types)
-                {
-                    foreach(var method in type.Methods)
-                    {
-                        CXXMethodTranslateContext methodContext = new CXXMethodTranslateContext(translateContext);
-                        foreach (var instruction in method.Body.Instructions)
-                        {
-                            Console.WriteLine(NoteILInstruction(instruction, methodContext));
-                            Console.WriteLine(TranslateILInstruction(instruction, methodContext));
-                        }
-                    }
+                    convertersCXX.Add(newConv.TargetOpCode(), newConv);
                 }
             }
         }
 
         private string NoteILInstruction(Instruction inst, MethodTranslateContext methodContext)
         {
-            if (ConvertersCXX.TryGetValue(inst.OpCode, out ICXXILConverter targetConverter))
+            if (convertersCXX.TryGetValue(inst.OpCode, out ICXXILConverter targetConverter))
                 return targetConverter.Note(inst, methodContext);
             return $"//{inst.ToString()}";
         }
         private string TranslateILInstruction(Instruction inst, MethodTranslateContext methodContext)
         {
-            if (ConvertersCXX.TryGetValue(inst.OpCode, out ICXXILConverter targetConverter))
+            if (convertersCXX.TryGetValue(inst.OpCode, out ICXXILConverter targetConverter))
                 return targetConverter.Convert(inst, methodContext);
             return $"static_assert(0, \"[{inst.ToString()}] Has No Converter Implementation!\");";
         }
 
-        //public void  
+        public void WriteSource(CodeTextStorage storage)
+        {
+            using (var _ = storage.EnterScope(translateContext.FocusedAssemblyInformation.IdentName))
+            {
 
-        private readonly Dictionary<OpCode, ICXXILConverter> ConvertersCXX = new Dictionary<OpCode, ICXXILConverter>(); 
+                foreach (var module in translateContext.FocusedAssemblyInformation.Modules.Values)
+                {
+                    foreach (var type in module.Types.Values)
+                    {
+                        typeSourceWriters[type.FullName] = storage.Wirter(type.TypeName + ".cpp");
+                        foreach (var method in type.Methods.Values)
+                        {
+                            CXXMethodTranslateContext methodContext = new CXXMethodTranslateContext(translateContext);
+                            foreach (var instruction in method.Body.Instructions)
+                            {
+                                typeSourceWriters[type.FullName].WriteLine(NoteILInstruction(instruction, methodContext));
+                                typeSourceWriters[type.FullName].WriteLine(TranslateILInstruction(instruction, methodContext));
+                            }
+                        }
+                        typeSourceWriters[type.FullName].Flush();
+                    }
+                }
+
+            }//End Dispose EnterScope
+
+        }
+
+        private readonly TranslateContext translateContext = null;
+        private readonly Dictionary<string, CodeTextWriter> typeSourceWriters = new Dictionary<string, CodeTextWriter>();
+        private readonly Dictionary<OpCode, ICXXILConverter> convertersCXX = new Dictionary<OpCode, ICXXILConverter>(); 
     }
 }

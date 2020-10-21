@@ -34,7 +34,7 @@ namespace RTCLI.AOTCompiler
 
             using (var _ = storage.EnterScope("src"))
             {
-                //cxxTranslator.WriteSource(storage);
+                cxxTranslator.WriteSource(storage);
             }
         }
 

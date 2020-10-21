@@ -17,9 +17,9 @@ namespace RTCLI.AOTCompiler.Metadata
 
         public string CXXTypeName => FullName;
 
-        public readonly Dictionary<MethodDefinition, MethodInformation> Methods = new Dictionary<MethodDefinition, MethodInformation>();
-        public readonly Dictionary<FieldDefinition, FieldInformation> Fields = new Dictionary<FieldDefinition, FieldInformation>();
-        public readonly Dictionary<PropertyDefinition, PropertyInformation> Properties = new Dictionary<PropertyDefinition, PropertyInformation>();
+        public readonly Dictionary<string, MethodInformation> Methods = new Dictionary<string, MethodInformation>();
+        public readonly Dictionary<string, FieldInformation> Fields = new Dictionary<string, FieldInformation>();
+        public readonly Dictionary<string, PropertyInformation> Properties = new Dictionary<string, PropertyInformation>();
         public TypeInformation(TypeDefinition def)
         {
             this.definition = def;
@@ -28,11 +28,11 @@ namespace RTCLI.AOTCompiler.Metadata
             NamespaceChain = def.Namespace.Split('.');
 
             foreach (var method in def.Methods)
-                Methods.Add(method, new MethodInformation(method));
+                Methods.Add(method.FullName, new MethodInformation(method));
             foreach(var prop in def.Properties)
-                Properties.Add(prop, new PropertyInformation(prop));
+                Properties.Add(prop.FullName, new PropertyInformation(prop));
             foreach(var field in def.Fields)
-                Fields.Add(field, new FieldInformation(field));
+                Fields.Add(field.FullName, new FieldInformation(field));
 
             TypeAttributes = def.Attributes.ToString().Split(sep, StringSplitOptions.RemoveEmptyEntries);
         }

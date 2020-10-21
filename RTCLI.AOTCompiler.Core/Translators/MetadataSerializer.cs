@@ -14,7 +14,8 @@ namespace RTCLI.AOTCompiler.Translators
 
         public void WriteResult(CodeTextStorage storage)
         {
-            var assemblyInformation = translateContext.MetadataContext.Assemblies[translateContext.FocusedAssembly];
+            var assemblyInformation 
+                = translateContext.MetadataContext.Assemblies[translateContext.FocusedAssembly];
             CodeTextWriter writer = storage.Wirter(
                 assemblyInformation.IdentName + ".json"
             );
@@ -23,6 +24,7 @@ namespace RTCLI.AOTCompiler.Translators
                     translateContext.MetadataContext.Assemblies[translateContext.FocusedAssembly],
                     Formatting.Indented)
             );
+            writer.Flush();
         }
 
         private readonly TranslateContext translateContext = null;

@@ -36,7 +36,7 @@ namespace RTCLI.AOTCompiler.ILConverters
     {
         public OpCode TargetOpCode() => OpCodes.Ldarg_0;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext) 
-            => $"RTCLI::object_ref {(methodContext as CXXMethodTranslateContext).FocusOnNewObject} = *static_cast<RTCLI::object*>(this);";
+            => $"RTCLI::object_ref {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = *static_cast<RTCLI::object*>(this);";
     }
 
     public class LdstrConverterCXX : ICXXILConverter

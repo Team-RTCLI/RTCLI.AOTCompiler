@@ -7,7 +7,7 @@ namespace RTCLI.AOTCompiler.Metadata
 {
     public class ModuleInformation : IMemberInformation
     {
-        public readonly Dictionary<TypeReference, TypeInformation> Types = new Dictionary<TypeReference, TypeInformation>();
+        public readonly Dictionary<string, TypeInformation> Types = new Dictionary<string, TypeInformation>();
         public ModuleInformation(ModuleDefinition def)
         {
             this.definition = def;
@@ -15,7 +15,7 @@ namespace RTCLI.AOTCompiler.Metadata
             foreach(var type in definition.Types)
             {
                 if(type.FullName != "<Module>")
-                    Types.Add(type, new TypeInformation(type));
+                    Types.Add(type.FullName, new TypeInformation(type));
             }
         }
 

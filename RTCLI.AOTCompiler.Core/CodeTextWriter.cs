@@ -14,10 +14,25 @@ namespace RTCLI.AOTCompiler
 
         public void WriteLine(string toWrite)
         {
-            sw.WriteLine(toWrite);
+            sw.WriteLine(indentString + toWrite);
+        }
+
+        public void indent()
+        {
+            indentString += "\t";
+        }
+        public void unindent()
+        {
+            if(indentString.Length > 0)
+                indentString = indentString.Remove(indentString.Length - 1);
+        }
+
+        public void Flush()
+        {
             sw.Flush();
         }
 
+        private String indentString = "";
         private StreamWriter sw = null;
     }
 }

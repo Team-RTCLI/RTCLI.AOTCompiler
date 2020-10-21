@@ -44,7 +44,82 @@
                   "Body": "IL_0017: stfld RTCLI.TestCase.Reference.RefClass RTCLI.TestCase.TestCaseClass::refed"
                 },
                 {
-                  "Body": "IL_001c: ret"
+                  "Body": "IL_001c: ldc.i4.3"
+                },
+                {
+                  "Body": "IL_001d: newarr System.String"
+                },
+                {
+                  "Body": "IL_0022: dup"
+                },
+                {
+                  "Body": "IL_0023: ldc.i4.0"
+                },
+                {
+                  "Body": "IL_0024: ldstr \"\""
+                },
+                {
+                  "Body": "IL_0029: stelem.ref"
+                },
+                {
+                  "Body": "IL_002a: dup"
+                },
+                {
+                  "Body": "IL_002b: ldc.i4.1"
+                },
+                {
+                  "Body": "IL_002c: ldstr \"\""
+                },
+                {
+                  "Body": "IL_0031: stelem.ref"
+                },
+                {
+                  "Body": "IL_0032: dup"
+                },
+                {
+                  "Body": "IL_0033: ldc.i4.2"
+                },
+                {
+                  "Body": "IL_0034: ldstr \"\""
+                },
+                {
+                  "Body": "IL_0039: stelem.ref"
+                },
+                {
+                  "Body": "IL_003a: stloc.1"
+                },
+                {
+                  "Body": "IL_003b: ldloc.1"
+                },
+                {
+                  "Body": "IL_003c: stloc.2"
+                },
+                {
+                  "Body": "IL_003d: ldloc.2"
+                },
+                {
+                  "Body": "IL_003e: isinst System.String[]"
+                },
+                {
+                  "Body": "IL_0043: ldc.i4.1"
+                },
+                {
+                  "Body": "IL_0044: ldelem.ref"
+                },
+                {
+                  "Body": "IL_0045: stloc.3"
+                },
+                {
+                  "Body": "IL_0046: ldloc.2"
+                },
+                {
+                  "Body": "IL_0047: castclass System.String[]"
+                },
+                {
+                  "Body": "IL_004c: stloc.s V_4"
+                },
+                {
+                  "Body": "IL_004e: ret"
                 }
               ]
             },

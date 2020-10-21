@@ -11,7 +11,7 @@ namespace RTCLI.AOTCompiler.Metadata
 {
     public sealed class MetadataContext
     {
-        public readonly Dictionary<AssemblyDefinition, AssemblyInformation> Assemblies = new Dictionary<AssemblyDefinition, AssemblyInformation>(); 
+        public readonly Dictionary<string, AssemblyInformation> Assemblies = new Dictionary<string, AssemblyInformation>(); 
         public MetadataContext(string assemblyPath, bool readSymbols)
         {
             // Initialize Assembly Resolver.
@@ -23,8 +23,9 @@ namespace RTCLI.AOTCompiler.Metadata
             };
             // Read Assembly
             string AssemblyBase = Path.GetDirectoryName(assemblyPath);
-            FocusedAssembly = AssemblyDefinition.ReadAssembly(assemblyPath, parameter);
-            foreach(var module in FocusedAssembly.Modules)
+            var FocusedAssemblyLoaded = AssemblyDefinition.ReadAssembly(assemblyPath, parameter);
+            FocusedAssembly = AssemblyDefinition.ReadAssembly(assemblyPath, parameter).FullName;
+            foreach(var module in FocusedAssemblyLoaded.Modules)
             {
                 var references = module.AssemblyReferences;
                 foreach(var reference in references)
@@ -32,27 +33,31 @@ namespace RTCLI.AOTCompiler.Metadata
                     if (reference.Name != "netstandard" && reference.Name != "mscorlib")
                     {
                         var dep = AssemblyDefinition.ReadAssembly(Path.Combine(AssemblyBase, reference.Name + ".dll"), parameter);
-                        Assemblies.Add(dep, new AssemblyInformation(dep));
+                        Assemblies.Add(dep.FullName, new AssemblyInformation(dep));
                     }
                 }
             }
 
-            Assemblies.Add(FocusedAssembly, new AssemblyInformation(FocusedAssembly));
+            Assemblies.Add(FocusedAssembly, new AssemblyInformation(FocusedAssemblyLoaded));
         }
 
-        public TypeInformation GetTypeInformation(TypeReference inType)
+        public TypeInformation GetTypeInformation(string inType)
         {
-            foreach(var assembly in Assemblies.Values)
+            foreach (var assembly in Assemblies.Values)
             {
-                foreach(var module in assembly.Modules.Values)
+                foreach (var module in assembly.Modules.Values)
                 {
                     foreach (var type in module.Types.Keys)
-                        if (type.FullName == inType.FullName)
+                        if (type == inType)
                             return module.Types[type];
                 }
             }
             return null;
         }
-        [JsonIgnore] public AssemblyDefinition FocusedAssembly;
+
+        public TypeInformation GetTypeInformation(TypeReference inType) 
+            => GetTypeInformation(inType.FullName);
+
+        [JsonIgnore] public string FocusedAssembly;
     }
 }

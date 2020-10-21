@@ -14,6 +14,7 @@ namespace RTCLI.AOTCompiler.Translators
             this.TranslateContext = translateContext;
             this.MetadataContext = translateContext.MetadataContext;
         }
+
         public TranslateContext TranslateContext { get; }
         public MetadataContext MetadataContext { get; }
     }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Newtonsoft.Json;
@@ -20,6 +19,7 @@ namespace RTCLI.AOTCompiler.Metadata
             }
         }
 
+        [JsonIgnore] public MethodBody Body => definition.Body;
         [JsonIgnore] private readonly MethodDefinition definition = null;
         public readonly List<InstructionInformation> Instructions = new List<InstructionInformation>();
         public IMetadataTokenProvider Definition => definition;

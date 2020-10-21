@@ -12,7 +12,7 @@ namespace RTCLI.AOTCompiler
     {
         private readonly TextWriter logw;
         public readonly string BasePath;
-        private readonly Stack<string> scopeNames = new Stack<string>();
+        private readonly Queue<string> scopeNames = new Queue<string>();
 
         public CodeTextStorage(TextWriter logw, string basePath, string indent)
         {
@@ -32,7 +32,7 @@ namespace RTCLI.AOTCompiler
 
         public IDisposable EnterScope(string scopeName, bool splitScope = true)
         {
-            scopeNames.Push(splitScope ? Utilities.GetCXXLanguageScopedPath(scopeName) : scopeName);
+            scopeNames.Enqueue(splitScope ? Utilities.GetCXXLanguageScopedPath(scopeName) : scopeName);
             if (!Directory.Exists(getScopePath()))
             {
                 Directory.CreateDirectory(getScopePath());     
@@ -42,7 +42,6 @@ namespace RTCLI.AOTCompiler
 
         public CodeTextWriter Wirter(string FileName)
         {
-            
             return new CodeTextWriter(Path.Combine(getScopePath(), FileName));
         }
 
@@ -58,7 +57,7 @@ namespace RTCLI.AOTCompiler
             {
                 if (parent != null)
                 {
-                    parent.scopeNames.Pop();
+                    parent.scopeNames.Dequeue();
                     parent = null;
                 }
             }
