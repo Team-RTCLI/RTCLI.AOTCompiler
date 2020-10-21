@@ -142,14 +142,14 @@
               "CXXRetType": "System.Void"
             }
           ],
-          "Fields": {
-            "RTCLI.TestCase.Reference.RefClass RTCLI.TestCase.TestCaseClass::refed": {
+          "Fields": [
+            {
               "FullName": "RTCLI.TestCase.Reference.RefClass RTCLI.TestCase.TestCaseClass::refed",
               "Name": "refed",
               "FieldType": "RTCLI.TestCase.Reference.RefClass"
             }
-          },
-          "Properties": {},
+          ],
+          "Properties": [],
           "FullName": "RTCLI.TestCase.TestCaseClass",
           "TypeName": "TestCaseClass",
           "CXXTypeName": "RTCLI::TestCase::TestCaseClass"

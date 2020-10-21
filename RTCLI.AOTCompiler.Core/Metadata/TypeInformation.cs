@@ -18,8 +18,8 @@ namespace RTCLI.AOTCompiler.Metadata
         public string CXXTypeName => string.Join("::", FullName.Split('.'));
 
         public readonly List<MethodInformation> Methods = new List<MethodInformation>();
-        public readonly Dictionary<string, FieldInformation> Fields = new Dictionary<string, FieldInformation>();
-        public readonly Dictionary<string, PropertyInformation> Properties = new Dictionary<string, PropertyInformation>();
+        public readonly List<FieldInformation> Fields = new List<FieldInformation>();
+        public readonly List<PropertyInformation> Properties = new List<PropertyInformation>();
         public TypeInformation(TypeDefinition def, MetadataContext metadataContext)
         {
             this.definition = def;
@@ -30,9 +30,9 @@ namespace RTCLI.AOTCompiler.Metadata
             foreach (var method in def.Methods)
                 Methods.Add(new MethodInformation(method, metadataContext));
             foreach(var prop in def.Properties)
-                Properties.Add(prop.FullName, new PropertyInformation(prop, metadataContext));
+                Properties.Add(new PropertyInformation(prop, metadataContext));
             foreach(var field in def.Fields)
-                Fields.Add(field.FullName, new FieldInformation(field, metadataContext));
+                Fields.Add(new FieldInformation(field, metadataContext));
 
             TypeAttributes = def.Attributes.ToString().Split(sep, StringSplitOptions.RemoveEmptyEntries);
         }
