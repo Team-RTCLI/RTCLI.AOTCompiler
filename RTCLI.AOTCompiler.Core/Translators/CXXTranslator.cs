@@ -96,15 +96,22 @@ namespace RTCLI.AOTCompiler.Translators
                 {
                     foreach (var type in module.Types.Values)
                     {
-                        typeSourceWriters[type.FullName] = storage.Wirter(type.TypeName + ".cpp");
+                        var codeWriter = storage.Wirter(type.TypeName + ".cpp");
+                        typeSourceWriters[type.FullName] = codeWriter;
                         foreach (var method in type.Methods.Values)
                         {
                             CXXMethodTranslateContext methodContext = new CXXMethodTranslateContext(translateContext);
+                            codeWriter.WriteLine(method.CXXMethodName);
+                            codeWriter.WriteLine("{");
+                            // Method Body
+                            codeWriter.indent();
                             foreach (var instruction in method.Body.Instructions)
                             {
-                                typeSourceWriters[type.FullName].WriteLine(NoteILInstruction(instruction, methodContext));
-                                typeSourceWriters[type.FullName].WriteLine(TranslateILInstruction(instruction, methodContext));
+                                codeWriter.WriteLine(NoteILInstruction(instruction, methodContext));
+                                codeWriter.WriteLine(TranslateILInstruction(instruction, methodContext));
                             }
+                            codeWriter.unindent();
+                            codeWriter.WriteLine("}");
                         }
                         typeSourceWriters[type.FullName].Flush();
                     }

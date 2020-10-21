@@ -12,19 +12,21 @@ namespace RTCLI.AOTCompiler.Metadata
     {
         public string IdentName => definition.Name.Name.Replace('.', '_') + ".v" + definition.Name.Version.ToString().Replace('.', '_');
         public readonly Dictionary<ModuleDefinition, ModuleInformation> Modules = new Dictionary<ModuleDefinition, ModuleInformation>();
-        public AssemblyInformation(AssemblyDefinition def)
+        public AssemblyInformation(AssemblyDefinition def, MetadataContext metadataContext)
         {
             this.definition = def;
+            this.MetadataContext = metadataContext;
 
-            foreach(var module in def.Modules)
+            foreach (var module in def.Modules)
             {
                 if(module.HasTypes)
-                    Modules.Add(module, new ModuleInformation(module));
+                    Modules.Add(module, new ModuleInformation(module, metadataContext));
             }
         }
 
         [JsonIgnore] private readonly AssemblyDefinition definition = null;
 
         IMetadataTokenProvider IMetadataInformation.Definition => definition;
+        public MetadataContext MetadataContext { get; }
     }
 }

@@ -11,9 +11,10 @@ namespace RTCLI.AOTCompiler.Metadata
         public readonly string Name = "None";
         public readonly string FieldType = null;
 
-        public FieldInformation(FieldDefinition def)
+        public FieldInformation(FieldDefinition def, MetadataContext metadataContext)
         {
             this.definition = def;
+            this.MetadataContext = metadataContext;
 
             FieldType = def.FieldType.FullName;
             FullName = def.FullName;
@@ -22,5 +23,6 @@ namespace RTCLI.AOTCompiler.Metadata
 
         [JsonIgnore] private readonly FieldDefinition definition = null;
         public IMetadataTokenProvider Definition => definition;
+        public MetadataContext MetadataContext { get; }
     }
 }

@@ -33,12 +33,12 @@ namespace RTCLI.AOTCompiler.Metadata
                     if (reference.Name != "netstandard" && reference.Name != "mscorlib")
                     {
                         var dep = AssemblyDefinition.ReadAssembly(Path.Combine(AssemblyBase, reference.Name + ".dll"), parameter);
-                        Assemblies.Add(dep.FullName, new AssemblyInformation(dep));
+                        Assemblies.Add(dep.FullName, new AssemblyInformation(dep, this));
                     }
                 }
             }
 
-            Assemblies.Add(FocusedAssembly, new AssemblyInformation(FocusedAssemblyLoaded));
+            Assemblies.Add(FocusedAssembly, new AssemblyInformation(FocusedAssemblyLoaded, this));
         }
 
         public TypeInformation GetTypeInformation(string inType)

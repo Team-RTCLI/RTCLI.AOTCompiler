@@ -20,19 +20,21 @@ namespace RTCLI.AOTCompiler.Metadata
         public readonly Dictionary<string, MethodInformation> Methods = new Dictionary<string, MethodInformation>();
         public readonly Dictionary<string, FieldInformation> Fields = new Dictionary<string, FieldInformation>();
         public readonly Dictionary<string, PropertyInformation> Properties = new Dictionary<string, PropertyInformation>();
-        public TypeInformation(TypeDefinition def)
+        public TypeInformation(TypeDefinition def, MetadataContext metadataContext)
         {
             this.definition = def;
+            this.MetadataContext = metadataContext;
+
             FullName = def.FullName;
             TypeName = def.Name;
             NamespaceChain = def.Namespace.Split('.');
 
             foreach (var method in def.Methods)
-                Methods.Add(method.FullName, new MethodInformation(method));
+                Methods.Add(method.FullName, new MethodInformation(method, metadataContext));
             foreach(var prop in def.Properties)
-                Properties.Add(prop.FullName, new PropertyInformation(prop));
+                Properties.Add(prop.FullName, new PropertyInformation(prop, metadataContext));
             foreach(var field in def.Fields)
-                Fields.Add(field.FullName, new FieldInformation(field));
+                Fields.Add(field.FullName, new FieldInformation(field, metadataContext));
 
             TypeAttributes = def.Attributes.ToString().Split(sep, StringSplitOptions.RemoveEmptyEntries);
         }
@@ -41,5 +43,6 @@ namespace RTCLI.AOTCompiler.Metadata
 
         [JsonIgnore] private readonly TypeDefinition definition = null;
         [JsonIgnore] public IMetadataTokenProvider Definition => definition;
+        public MetadataContext MetadataContext { get; }
     }
 }

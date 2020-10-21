@@ -7,5 +7,6 @@ namespace RTCLI.AOTCompiler.Metadata
     public interface IMetadataInformation
     {
         [JsonIgnore] IMetadataTokenProvider Definition { get; } 
+        [JsonIgnore] MetadataContext MetadataContext { get; }
     }
 }

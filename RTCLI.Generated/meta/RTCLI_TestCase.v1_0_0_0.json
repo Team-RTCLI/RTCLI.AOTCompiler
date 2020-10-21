@@ -121,7 +121,9 @@
                 {
                   "Body": "IL_004e: ret"
                 }
-              ]
+              ],
+              "CXXMethodName": "CXXMethod",
+              "CXXRetType": "System.Void"
             },
             "System.Void RTCLI.TestCase.TestCaseClass::.ctor()": {
               "Instructions": [
@@ -137,7 +139,9 @@
                 {
                   "Body": "IL_0007: ret"
                 }
-              ]
+              ],
+              "CXXMethodName": "CXXMethod",
+              "CXXRetType": "System.Void"
             }
           },
           "Fields": {
