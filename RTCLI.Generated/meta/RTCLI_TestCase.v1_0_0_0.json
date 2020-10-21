@@ -157,5 +157,7 @@
       }
     }
   },
-  "IdentName": "RTCLI_TestCase.v1_0_0_0"
+  "IdentName": "RTCLI_TestCase.v1_0_0_0",
+  "FullName": "RTCLI.TestCase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+  "Name": "RTCLI.TestCase"
 }

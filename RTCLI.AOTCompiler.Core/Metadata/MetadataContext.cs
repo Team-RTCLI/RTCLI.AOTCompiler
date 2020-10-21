@@ -6,6 +6,7 @@ using System.Linq;
 
 using Mono.Cecil;
 using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace RTCLI.AOTCompiler.Metadata
 {
@@ -24,7 +25,8 @@ namespace RTCLI.AOTCompiler.Metadata
             // Read Assembly
             string AssemblyBase = Path.GetDirectoryName(assemblyPath);
             var FocusedAssemblyLoaded = AssemblyDefinition.ReadAssembly(assemblyPath, parameter);
-            FocusedAssembly = AssemblyDefinition.ReadAssembly(assemblyPath, parameter).FullName;
+            FocusedAssembly = AssemblyDefinition.ReadAssembly(assemblyPath, parameter).Name.Name;
+
             foreach(var module in FocusedAssemblyLoaded.Modules)
             {
                 var references = module.AssemblyReferences;
@@ -32,12 +34,19 @@ namespace RTCLI.AOTCompiler.Metadata
                 {
                     if (reference.Name != "netstandard" && reference.Name != "mscorlib")
                     {
-                        var dep = AssemblyDefinition.ReadAssembly(Path.Combine(AssemblyBase, reference.Name + ".dll"), parameter);
-                        Assemblies.Add(dep.FullName, new AssemblyInformation(dep, this));
+                        var dep = AssemblyDefinition.ReadAssembly(
+                            Path.Combine(AssemblyBase, reference.Name + ".dll"),
+                            parameter);
+                        if (Assemblies.ContainsKey(dep.Name.Name))//Already Exists this Assembly
+                        {
+                            if(Assemblies[dep.Name.Name].FullName != dep.FullName)//Version Diff
+                                Trace.Assert(false, "Assembly: " + dep.Name.Name + " already exists!");
+                        }
+                        else//No depended Assembly, create one.
+                            Assemblies.Add(dep.Name.Name, new AssemblyInformation(dep, this));
                     }
                 }
             }
-
             Assemblies.Add(FocusedAssembly, new AssemblyInformation(FocusedAssemblyLoaded, this));
         }
 
