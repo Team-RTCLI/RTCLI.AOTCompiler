@@ -26,13 +26,12 @@ namespace RTCLI.AOTCompiler.Metadata
 
         private string CXXParamsSequence()
         {
-
             return "void";
         }
         public string CXXMethodName 
-            => MetadataContext.GetTypeInformation(definition.ReturnType).CXXTypeName // Return Type
-             + " " + MetadataContext.GetTypeInformation(definition.DeclaringType).CXXTypeName //Type Name
-             + "::" + definition.Name //MethodName
+            => MetadataContext.GetTypeInformation(definition.ReturnType)?.CXXTypeName // Return Type
+             + " " + MetadataContext.GetTypeInformation(definition.DeclaringType)?.CXXTypeName //Type Name
+             + "::" + definition?.Name //MethodName
              + "(" + CXXParamsSequence() + ")" //Param Sequence
             ;
         public string CXXRetType => definition.ReturnType.FullName;
