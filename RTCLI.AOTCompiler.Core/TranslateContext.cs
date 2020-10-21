@@ -21,7 +21,7 @@ namespace RTCLI.AOTCompiler
         }
 #endregion
         public MetadataContext MetadataContext { get; }
-        
+
         public string FocusedAssembly;
         public AssemblyInformation FocusedAssemblyInformation => MetadataContext.Assemblies[FocusedAssembly];
     }

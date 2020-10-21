@@ -14,17 +14,27 @@ namespace RTCLI.AOTCompiler.Metadata
             this.MetadataContext = metadataContext;
 
             if (def.HasBody)
-            foreach (var Inst in def.Body.Instructions)
-            {
-                Instructions.Add(new InstructionInformation(Inst));
-            }
+                foreach (var Inst in def.Body.Instructions)
+                {
+                    Instructions.Add(new InstructionInformation(Inst));
+                }
         }
 
         [JsonIgnore] public MethodBody Body => definition.Body;
         [JsonIgnore] private readonly MethodDefinition definition = null;
-        
-        
-        public string CXXMethodName => "CXXMethod";
+
+
+        private string CXXParamsSequence()
+        {
+
+            return "void";
+        }
+        public string CXXMethodName 
+            => MetadataContext.GetTypeInformation(definition.ReturnType).CXXTypeName // Return Type
+             + " " + MetadataContext.GetTypeInformation(definition.DeclaringType).CXXTypeName //Type Name
+             + "::" + definition.Name //MethodName
+             + "(" + CXXParamsSequence() + ")" //Param Sequence
+            ;
         public string CXXRetType => definition.ReturnType.FullName;
 
         public readonly List<InstructionInformation> Instructions = new List<InstructionInformation>();

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Mono.Cecil;
@@ -16,7 +17,17 @@ namespace RTCLI.AOTCompiler.Metadata
             foreach(var type in definition.Types)
             {
                 if(type.FullName != "<Module>")
-                    Types.Add(type.FullName, new TypeInformation(type, metadataContext));
+                {
+                    if(Types.ContainsKey(type.FullName))
+                    {
+                        Console.WriteLine(type.Module.Name
+                            + "!="
+                            + (Types[type.FullName].Definition as TypeDefinition).Module.Name
+                        );
+                    }
+                    else
+                        Types.Add(type.FullName, new TypeInformation(type, metadataContext));
+                }
             }
         }
 

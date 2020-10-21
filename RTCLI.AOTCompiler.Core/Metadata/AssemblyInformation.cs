@@ -28,8 +28,7 @@ namespace RTCLI.AOTCompiler.Metadata
         }
 
         [JsonIgnore] private readonly AssemblyDefinition definition = null;
-
-        IMetadataTokenProvider IMetadataInformation.Definition => definition;
+        public IMetadataTokenProvider Definition => definition;
         public MetadataContext MetadataContext { get; }
     }
 }

@@ -10,7 +10,9 @@ namespace RTCLI.AOTCompiler.Translators
 {
     public struct CXXTranslateOptions
     {
-        DebugInformationOptions debugInformationOption;
+        public DebugInformationOptions DebugInformationOption;
+        public bool StaticAssertOnUnimplementatedILs;
+        public IEnumerable<string> assemblyPaths;
     }
 
     public class CXXMethodTranslateContext : MethodTranslateContext
@@ -60,7 +62,9 @@ namespace RTCLI.AOTCompiler.Translators
 
         public CXXTranslator(TranslateContext translateContext, CXXTranslateOptions options)
         {
+            this.options = options;
             this.translateContext = translateContext;
+
             Assembly assembly = Assembly.GetAssembly(typeof(ILConverters.IILConverter));
             TypeFilter typeNameFilter = new TypeFilter(TypeNameFilter);
             foreach (var type in assembly.GetTypes())
@@ -84,7 +88,9 @@ namespace RTCLI.AOTCompiler.Translators
         {
             if (convertersCXX.TryGetValue(inst.OpCode, out ICXXILConverter targetConverter))
                 return targetConverter.Convert(inst, methodContext);
-            return $"static_assert(0, \"[{inst.ToString()}] Has No Converter Implementation!\");";
+            return options.StaticAssertOnUnimplementatedILs 
+                ? $"static_assert(0, \"[{inst.ToString()}] Has No Converter Implementation!\");"
+                : $"RTCLI::unimplemented_il();//{inst.ToString()}";
         }
 
         public void WriteSource(CodeTextStorage storage)
@@ -98,7 +104,7 @@ namespace RTCLI.AOTCompiler.Translators
                     {
                         var codeWriter = storage.Wirter(type.TypeName + ".cpp");
                         typeSourceWriters[type.FullName] = codeWriter;
-                        foreach (var method in type.Methods.Values)
+                        foreach (var method in type.Methods)
                         {
                             CXXMethodTranslateContext methodContext = new CXXMethodTranslateContext(translateContext);
                             codeWriter.WriteLine(method.CXXMethodName);
@@ -121,6 +127,7 @@ namespace RTCLI.AOTCompiler.Translators
 
         }
 
+        public readonly CXXTranslateOptions options;
         private readonly TranslateContext translateContext = null;
         private readonly Dictionary<string, CodeTextWriter> typeSourceWriters = new Dictionary<string, CodeTextWriter>();
         private readonly Dictionary<OpCode, ICXXILConverter> convertersCXX = new Dictionary<OpCode, ICXXILConverter>(); 

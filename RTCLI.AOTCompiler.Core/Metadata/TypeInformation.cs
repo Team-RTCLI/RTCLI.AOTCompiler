@@ -10,14 +10,14 @@ namespace RTCLI.AOTCompiler.Metadata
 {
     public class TypeInformation : IMemberInformation
     {
-        public readonly string FullName = "None";
-        public readonly string TypeName = "None";
+        public string FullName => definition.FullName;
+        public string TypeName => definition.Name;
         public readonly string[] NamespaceChain = null;
         public readonly string[] TypeAttributes = null;
 
-        public string CXXTypeName => FullName;
+        public string CXXTypeName => string.Join("::", FullName.Split('.'));
 
-        public readonly Dictionary<string, MethodInformation> Methods = new Dictionary<string, MethodInformation>();
+        public readonly List<MethodInformation> Methods = new List<MethodInformation>();
         public readonly Dictionary<string, FieldInformation> Fields = new Dictionary<string, FieldInformation>();
         public readonly Dictionary<string, PropertyInformation> Properties = new Dictionary<string, PropertyInformation>();
         public TypeInformation(TypeDefinition def, MetadataContext metadataContext)
@@ -25,12 +25,10 @@ namespace RTCLI.AOTCompiler.Metadata
             this.definition = def;
             this.MetadataContext = metadataContext;
 
-            FullName = def.FullName;
-            TypeName = def.Name;
             NamespaceChain = def.Namespace.Split('.');
 
             foreach (var method in def.Methods)
-                Methods.Add(method.FullName, new MethodInformation(method, metadataContext));
+                Methods.Add(new MethodInformation(method, metadataContext));
             foreach(var prop in def.Properties)
                 Properties.Add(prop.FullName, new PropertyInformation(prop, metadataContext));
             foreach(var field in def.Fields)

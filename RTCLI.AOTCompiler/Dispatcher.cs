@@ -8,16 +8,14 @@ namespace RTCLI.AOTCompiler
     {
         public static void Translate(
             CodeTextStorage storage,
-            bool readSymbols,
-            bool enableBundler,
-            TargetPlatforms targetPlatform,
-            DebugInformationOptions debugInformationOptions,
+            DispatchArgs dispatchArgs,
             string assemblyPath)
         {
             System.Console.WriteLine("AOTCompiler: Preparing assembly: \"{0}\" ...", Path.GetFullPath(assemblyPath));
 
-            var translateContext = new TranslateContext(assemblyPath, readSymbols);
+            var translateContext = new TranslateContext(assemblyPath, dispatchArgs.readSymbols);
             CXXTranslateOptions cxxOptions = new CXXTranslateOptions();
+            cxxOptions.StaticAssertOnUnimplementatedILs = dispatchArgs.cxxStaticAssertOnUnimplementatedILs;
             var cxxTranslator = new CXXTranslator(translateContext, cxxOptions);
 
             System.Console.WriteLine(" done.");
@@ -40,48 +38,33 @@ namespace RTCLI.AOTCompiler
 
         public static void TranslateAll(
             CodeTextStorage storage,
-            bool readSymbols,
-            bool enableBundler,
-            TargetPlatforms targetPlatform,
-            DebugInformationOptions debugInformationOptions,
+            DispatchArgs dispatchArgs,
             IEnumerable<string> assemblyPaths)
         {
             foreach (var aseemblyPath in assemblyPaths)
             {
                 Translate(
                     storage,
-                    readSymbols,
-                    enableBundler,
-                    targetPlatform,
-                    debugInformationOptions,
+                    dispatchArgs,
                     aseemblyPath);
             }
         }
 
         public static void TranslateAll(
             CodeTextStorage storage,
-            bool readSymbols,
-            bool enableBundler,
-            TargetPlatforms targetPlatform,
-            DebugInformationOptions debugInformationOptions,
+            DispatchArgs dispatchArgs,
             params string[] assemblyPaths)
         {
             TranslateAll(
                 storage,
-                readSymbols,
-                enableBundler,
-                targetPlatform,
-                debugInformationOptions,
+                dispatchArgs,
                 (IEnumerable<string>)assemblyPaths);
         }
 
         public static void TranslateAll(
             TextWriter logw,
             string outputPath,
-            bool readSymbols,
-            bool enableBundler,
-            TargetPlatforms targetPlatform,
-            DebugInformationOptions debugInformationOptions,
+            DispatchArgs dispatchArgs,
             IEnumerable<string> assemblyPaths)
         {
             var storage = new CodeTextStorage(
@@ -93,10 +76,7 @@ namespace RTCLI.AOTCompiler
             {
                 Translate(
                     storage,
-                    readSymbols,
-                    enableBundler,
-                    targetPlatform,
-                    debugInformationOptions,
+                    dispatchArgs,
                     aseemblyPath);
             }
         }
@@ -104,19 +84,13 @@ namespace RTCLI.AOTCompiler
         public static void TranslateAll(
             TextWriter logw,
             string outputPath,
-            bool readSymbols,
-            bool enableBundler,
-            TargetPlatforms targetPlatform,
-            DebugInformationOptions debugInformationOptions,
+            DispatchArgs dispatchArgs,
             params string[] assemblyPaths)
         {
             TranslateAll(
                 logw,
                 outputPath,
-                readSymbols,
-                enableBundler,
-                targetPlatform,
-                debugInformationOptions,
+                dispatchArgs,
                 (IEnumerable<string>)assemblyPaths);
         }
     }

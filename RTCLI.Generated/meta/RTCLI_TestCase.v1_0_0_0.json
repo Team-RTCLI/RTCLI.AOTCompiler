@@ -3,8 +3,6 @@
     "RTCLI.TestCase.dll": {
       "Types": {
         "RTCLI.TestCase.TestCaseClass": {
-          "FullName": "RTCLI.TestCase.TestCaseClass",
-          "TypeName": "TestCaseClass",
           "NamespaceChain": [
             "RTCLI",
             "TestCase"
@@ -16,8 +14,8 @@
             "Public",
             "BeforeFieldInit"
           ],
-          "Methods": {
-            "System.Void RTCLI.TestCase.TestCaseClass::Method()": {
+          "Methods": [
+            {
               "Instructions": [
                 {
                   "Body": "IL_0000: nop"
@@ -122,10 +120,10 @@
                   "Body": "IL_004e: ret"
                 }
               ],
-              "CXXMethodName": "CXXMethod",
+              "CXXMethodName": "System::Void RTCLI::TestCase::TestCaseClass::Method(void)",
               "CXXRetType": "System.Void"
             },
-            "System.Void RTCLI.TestCase.TestCaseClass::.ctor()": {
+            {
               "Instructions": [
                 {
                   "Body": "IL_0000: ldarg.0"
@@ -140,10 +138,10 @@
                   "Body": "IL_0007: ret"
                 }
               ],
-              "CXXMethodName": "CXXMethod",
+              "CXXMethodName": "System::Void RTCLI::TestCase::TestCaseClass::.ctor(void)",
               "CXXRetType": "System.Void"
             }
-          },
+          ],
           "Fields": {
             "RTCLI.TestCase.Reference.RefClass RTCLI.TestCase.TestCaseClass::refed": {
               "FullName": "RTCLI.TestCase.Reference.RefClass RTCLI.TestCase.TestCaseClass::refed",
@@ -152,7 +150,9 @@
             }
           },
           "Properties": {},
-          "CXXTypeName": "RTCLI.TestCase.TestCaseClass"
+          "FullName": "RTCLI.TestCase.TestCaseClass",
+          "TypeName": "TestCaseClass",
+          "CXXTypeName": "RTCLI::TestCase::TestCaseClass"
         }
       }
     }
