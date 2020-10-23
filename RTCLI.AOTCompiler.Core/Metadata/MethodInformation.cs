@@ -41,12 +41,13 @@ namespace RTCLI.AOTCompiler.Metadata
             return "void";
         }
         public string CXXMethodName 
-            => MetadataContext.GetTypeInformation(definition.ReturnType)?.CXXTypeName // Return Type
-             + " " + MetadataContext.GetTypeInformation(definition.DeclaringType)?.CXXTypeName //Type Name
+            =>  // Return Type
+             MetadataContext.GetTypeInformation(definition.DeclaringType)?.CXXTypeName //Type Name
              + "::" + definition?.Name //MethodName
-             + "(" + CXXParamsSequence() + ")" //Param Sequence
             ;
-        public string CXXRetType => definition.ReturnType.FullName;
+        public string CXXParamSequence => "(" + CXXParamsSequence() + ")"; //Param Sequence
+        public string CXXRetType => MetadataContext.GetTypeInformation(definition.ReturnType)?.CXXTypeName;
+        public string CXXStackName => $"{string.Join("_", CXXMethodName.Split("::"))}__Stack";
 
         public readonly List<InstructionInformation> Instructions = new List<InstructionInformation>();
         public readonly List<VariableInformation> LocalVariables = new List<VariableInformation>();

@@ -14,7 +14,7 @@ namespace RTCLITestCase
             string[] TestArray = { "", "", "" };
             Array arr = TestArray;
             var test = (arr as string[])[1];
-            string[] arr_typed = (string[])arr;
+            string[][] arr_typed = { (string[])arr, (string[])arr };
         }
         RefClass refed;
     }

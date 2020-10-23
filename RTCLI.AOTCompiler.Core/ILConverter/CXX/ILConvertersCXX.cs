@@ -22,12 +22,12 @@ namespace RTCLI.AOTCompiler.ILConverters
             MethodReference calledMethod = instruction.Operand as MethodReference;
             var typeReference = calledMethod.DeclaringType;
             TypeInformation typeInformation = methodContext.TranslateContext.MetadataContext.GetTypeInformation(typeReference);
-            string paramSequenceCXX = $"{typeInformation.CXXTypeName}";
+            string paramSequenceCXX = "stack"; 
             foreach(var param in calledMethod.Parameters)
             {
                 paramSequenceCXX = paramSequenceCXX + ", " + (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             }
-            return $"RTCLI::object_ref {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = RTCLI::newobj({paramSequenceCXX});";
+            return $"{typeInformation.CXXTypeName}& {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = \n\t\t*RTCLI::newobj<{typeInformation.CXXTypeName}>({paramSequenceCXX});";
         }
         public string Convert(Instruction instruction, MethodTranslateContext methodContext) => ParseParams(instruction, methodContext);
     }
@@ -44,5 +44,12 @@ namespace RTCLI.AOTCompiler.ILConverters
         public OpCode TargetOpCode() => OpCodes.Ldstr;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext) 
             => $"const char* {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = \"{instruction.Operand}\";";
+    }
+
+    public class Stloc_0ConverterCXX : ICXXILConverter
+    {
+        public OpCode TargetOpCode() => OpCodes.Stloc_0;
+        public string Convert(Instruction instruction, MethodTranslateContext methodContext)
+            => $"stack.v0.Store<RTCLI::decay_t<decltype({(methodContext as CXXMethodTranslateContext).CmptStackObjectName})>, 1>({(methodContext as CXXMethodTranslateContext).CmptStackObjectName});";
     }
 }

@@ -56,7 +56,7 @@ namespace RTCLI.AOTCompiler.Translators
                 return targetConverter.Convert(inst, methodContext);
             return options.StaticAssertOnUnimplementatedILs 
                 ? $"static_assert(0, \"[{inst.ToString()}] Has No Converter Implementation!\");"
-                : $"RTCLI::unimplemented_il();//{inst.ToString()}";
+                : $"RTCLI::unimplemented_il(\"{ inst.ToString()}\"); //{inst.ToString()}";
         }
 
         private string EnvIncludes => "#include <RTCLI.h>\n";
@@ -74,10 +74,29 @@ namespace RTCLI.AOTCompiler.Translators
                         foreach (var method in type.Methods)
                         {
                             CXXMethodTranslateContext methodContext = new CXXMethodTranslateContext(translateContext);
-                            codeWriter.WriteLine(method.CXXMethodName);
+                            // [2-1] Stack Code
+                            codeWriter.WriteLine("//[2-1] Here Begins Stack Declaration");
+                            codeWriter.WriteLine($"struct {method.CXXStackName}");
                             codeWriter.WriteLine("{");
-                            // Method Body
                             codeWriter.indent();
+                            foreach (var localVar in method.LocalVariables)
+                            {
+                                codeWriter.WriteLine($"{localVar.CXXTypeName} v{localVar.Index};");
+                            }
+                            codeWriter.WriteLine("template<bool InitLocals> static void Init();//Active with MethodBody.InitLocals Property.");
+                            codeWriter.WriteLine("template<typename T, int index> void Store(RTCLI::StackFwd<T> toStore); //Store to Stack.");
+                            codeWriter.WriteLine("template<typename T, int index> RTCLI::StackFwd<T> Load(void); //Load from Stack.");
+                            codeWriter.unindent();
+                            codeWriter.WriteLine("};\n");
+
+                            // [2-2-1] Method Code
+                            codeWriter.WriteLine("//[2-2] Here Begins Method Body");
+                            codeWriter.WriteLine(
+                                method.CXXRetType + " " + method.CXXMethodName + method.CXXParamSequence);
+                            codeWriter.WriteLine("{");
+                            // [2-2-2] Code Body
+                            codeWriter.indent();
+                            codeWriter.WriteLine($"{method.CXXStackName} stack = {method.CXXStackName}::Init<{method.InitLocals.ToString().ToLower()}>();");
                             foreach (var instruction in method.Body.Instructions)
                             {
                                 codeWriter.WriteLine(NoteILInstruction(instruction, methodContext));
