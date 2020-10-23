@@ -15,7 +15,7 @@ namespace RTCLI.AOTCompiler.Metadata
         public readonly string[] NamespaceChain = null;
         public readonly string[] TypeAttributes = null;
 
-        public string CXXTypeName => string.Join("::", FullName.Split('.'));
+        public string CXXTypeName => "RTCLI::" + string.Join("::", FullName.Split('.'));
 
         public readonly List<MethodInformation> Methods = new List<MethodInformation>();
         public readonly List<FieldInformation> Fields = new List<FieldInformation>();

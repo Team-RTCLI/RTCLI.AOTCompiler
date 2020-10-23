@@ -31,7 +31,7 @@ namespace RTCLI.AOTCompiler.Metadata
         public string CXXMethodName 
             => MetadataContext.GetTypeInformation(definition.ReturnType)?.CXXTypeName // Return Type
              + " " + MetadataContext.GetTypeInformation(definition.DeclaringType)?.CXXTypeName //Type Name
-             + "::" + definition?.Name //MethodName
+             + "::" + definition?.Name??"emptyMethodName" //MethodName
              + "(" + CXXParamsSequence() + ")" //Param Sequence
             ;
         public string CXXRetType => definition.ReturnType.FullName;
