@@ -49,6 +49,7 @@ namespace RTCLI.AOTCompiler.Translators
                 return targetConverter.Note(inst, methodContext);
             return $"//{inst.ToString()}";
         }
+
         private string TranslateILInstruction(Instruction inst, MethodTranslateContext methodContext)
         {
             if (convertersCXX.TryGetValue(inst.OpCode, out ICXXILConverter targetConverter))
@@ -58,17 +59,18 @@ namespace RTCLI.AOTCompiler.Translators
                 : $"RTCLI::unimplemented_il();//{inst.ToString()}";
         }
 
+        private string EnvIncludes => "#include <RTCLI.h>\n";
         public void WriteSource(CodeTextStorage storage)
         {
             using (var _ = storage.EnterScope(translateContext.FocusedAssemblyInformation.IdentName))
             {
-
                 foreach (var module in translateContext.FocusedAssemblyInformation.Modules.Values)
                 {
                     foreach (var type in module.Types.Values)
                     {
                         var codeWriter = storage.Wirter(type.TypeName + ".cpp");
                         typeSourceWriters[type.FullName] = codeWriter;
+                        codeWriter.WriteLine(EnvIncludes);
                         foreach (var method in type.Methods)
                         {
                             CXXMethodTranslateContext methodContext = new CXXMethodTranslateContext(translateContext);

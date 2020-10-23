@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Newtonsoft.Json;
@@ -14,14 +15,25 @@ namespace RTCLI.AOTCompiler.Metadata
             this.MetadataContext = metadataContext;
 
             if (def.HasBody)
+            {
                 foreach (var Inst in def.Body.Instructions)
                 {
                     Instructions.Add(new InstructionInformation(Inst));
                 }
+                if(def.Body.HasVariables)
+                {
+                    foreach (var localVar in def.Body.Variables)
+                    {
+                        LocalVariables.Add(new VariableInformation(localVar, metadataContext));
+                    }
+                }
+            }
         }
 
         [JsonIgnore] public MethodBody Body => definition.Body;
         [JsonIgnore] private readonly MethodDefinition definition = null;
+
+        public bool InitLocals => definition.Body.InitLocals;
 
 
         private string CXXParamsSequence()
@@ -31,12 +43,13 @@ namespace RTCLI.AOTCompiler.Metadata
         public string CXXMethodName 
             => MetadataContext.GetTypeInformation(definition.ReturnType)?.CXXTypeName // Return Type
              + " " + MetadataContext.GetTypeInformation(definition.DeclaringType)?.CXXTypeName //Type Name
-             + "::" + definition?.Name??"emptyMethodName" //MethodName
+             + "::" + definition?.Name //MethodName
              + "(" + CXXParamsSequence() + ")" //Param Sequence
             ;
         public string CXXRetType => definition.ReturnType.FullName;
 
         public readonly List<InstructionInformation> Instructions = new List<InstructionInformation>();
+        public readonly List<VariableInformation> LocalVariables = new List<VariableInformation>();
         public IMetadataTokenProvider Definition => definition;
         public MetadataContext MetadataContext { get; }
     }

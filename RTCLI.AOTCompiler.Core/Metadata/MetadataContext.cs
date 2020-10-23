@@ -95,6 +95,7 @@ namespace RTCLI.AOTCompiler.Metadata
 
         public TypeInformation GetTypeInformation(string inType)
         {
+            // CTS
             if (Types.ContainsKey(inType))
                 return Types[inType];
             else
@@ -107,11 +108,15 @@ namespace RTCLI.AOTCompiler.Metadata
                                 Types.Add(type, module.Types[type]);
                                 return module.Types[type];
                             }
-                return null;
             }
+            return null;
         }
-        public TypeInformation GetTypeInformation(TypeReference inType) 
-            => GetTypeInformation(inType.FullName);
+        public TypeInformation GetTypeInformation(TypeReference inType)
+        {
+            if (inType.IsArray)
+                return new TypeInformation(inType as ArrayType, this);
+            return GetTypeInformation(inType.FullName);
+        }
 
         [JsonIgnore] public string FocusedAssembly;
     }

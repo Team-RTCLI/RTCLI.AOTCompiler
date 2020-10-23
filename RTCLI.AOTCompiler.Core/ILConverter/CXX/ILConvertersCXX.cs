@@ -27,7 +27,7 @@ namespace RTCLI.AOTCompiler.ILConverters
             {
                 paramSequenceCXX = paramSequenceCXX + ", " + (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             }
-            return $"RTCLI::newobj({paramSequenceCXX})";
+            return $"RTCLI::object_ref {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = RTCLI::newobj({paramSequenceCXX});";
         }
         public string Convert(Instruction instruction, MethodTranslateContext methodContext) => ParseParams(instruction, methodContext);
     }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RTCLI.TestCase.Reference
+namespace RTCLITestCase.Reference
 {
     public interface IGetName
     {

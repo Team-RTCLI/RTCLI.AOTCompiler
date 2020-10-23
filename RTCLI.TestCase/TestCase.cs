@@ -1,8 +1,8 @@
 ﻿using System;
 
-using RTCLI.TestCase.Reference;
+using RTCLITestCase.Reference;
 
-namespace RTCLI.TestCase
+namespace RTCLITestCase
 {
     public class TestCaseClass
     {

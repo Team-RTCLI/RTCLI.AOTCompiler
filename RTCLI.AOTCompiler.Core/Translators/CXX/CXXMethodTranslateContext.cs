@@ -37,5 +37,6 @@ namespace RTCLI.AOTCompiler.Translators
             return CmptStack.Count > 0;
         }
         Stack<int> CmptStack = new Stack<int>();
+        //List<>
     }
 }
