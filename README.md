@@ -34,6 +34,7 @@
 - nop
 - ldarg.0/1/2/s
 - ldarga
+- ldc.i4/i8/r4/r8.xx
 - stfld
 - stloc.0/1/2/s
 - ldloc.0/1/2/s

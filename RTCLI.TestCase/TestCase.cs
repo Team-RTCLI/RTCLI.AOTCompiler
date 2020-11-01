@@ -41,6 +41,7 @@ namespace RTCLITestCase
         {
             //var arg6Name = arg666.Name;
             arg5.CallTest(9);
+            arg5.CallTestF(9);
             arg666.Name = " Accessed";
         }
         void MethodWithArgsVirtCall(int arg0, float arg1, char arg2, byte arg3, string arg4, RefClass arg5, RefStruct arg666)

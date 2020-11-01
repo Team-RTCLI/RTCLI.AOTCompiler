@@ -18,6 +18,11 @@ namespace RTCLITestCase.Reference
             System.Console.WriteLine("Call Test");
             return;
         }
+        public void CallTestF(float u)
+        {
+            System.Console.WriteLine("Call Test F");
+            return;
+        }
         public string Name { get; }
     }
 
