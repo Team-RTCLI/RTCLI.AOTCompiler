@@ -13,6 +13,11 @@ namespace RTCLITestCase.Reference
         {
             this.Name = name;
         }
+        public void CallTest(int u)
+        {
+            System.Console.WriteLine("Call Test");
+            return;
+        }
         public string Name { get; }
     }
 

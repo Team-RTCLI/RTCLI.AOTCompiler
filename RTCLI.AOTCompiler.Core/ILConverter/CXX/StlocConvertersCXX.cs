@@ -13,7 +13,7 @@ namespace RTCLI.AOTCompiler.ILConverters
     {
         public static string Convert(Instruction instruction, MethodTranslateContext methodContext, int index)
         {
-            return $"stack.Store<RTCLI::decay_t<decltype({(methodContext as CXXMethodTranslateContext).CmptStackObjectName})>, {index}>({(methodContext as CXXMethodTranslateContext).CmptStackPopObject});";
+            return $"stack.v{index} = {(methodContext as CXXMethodTranslateContext).CmptStackPopObject};";
         }
     }
     public class Stloc_0ConverterCXX : ICXXILConverter

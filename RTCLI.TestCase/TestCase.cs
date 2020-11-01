@@ -6,7 +6,7 @@ namespace RTCLITestCase
 {
     public class TestCaseClass
     {
-        void Method()
+        /*void Method()
         {
             var reff = new RefClass("TestCase");
             refed = new RefClass("TestCase");
@@ -23,7 +23,7 @@ namespace RTCLITestCase
         string MethodWithConstStringRet()
         {
             return "RTCLI Test: Const String";
-        }
+        }*/
         void MethodWithArgsAccess(int arg0, float arg1, char arg2, byte arg3, string arg4, RefClass arg5, RefStruct arg666)
         {
             var arg00 = arg0;
@@ -40,6 +40,7 @@ namespace RTCLITestCase
         void MethodWithArgsFieldAccess(int arg0, float arg1, char arg2, byte arg3, string arg4, RefClass arg5, RefStruct arg666)
         {
             //var arg6Name = arg666.Name;
+            arg5.CallTest(9);
             arg666.Name = " Accessed";
         }
         void MethodWithArgsVirtCall(int arg0, float arg1, char arg2, byte arg3, string arg4, RefClass arg5, RefStruct arg666)
