@@ -66,4 +66,15 @@ namespace RTCLI.AOTCompiler.ILConverters
             return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = RTCLI::Sub({op0}, {op1});";
         }
     }
+
+    public class StfldConverterCXX : ICXXILConverter
+    {
+        public OpCode TargetOpCode() => OpCodes.Stfld;
+        public string Convert(Instruction instruction, MethodTranslateContext methodContext)
+        {
+            var val = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var obj = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            return $"{obj}.{(instruction.Operand as FieldReference).Name} = {val};";
+        }
+    }
 }

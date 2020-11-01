@@ -59,7 +59,25 @@ namespace RTCLI.AOTCompiler.Translators
                 : $"RTCLI::unimplemented_il(\"{ inst.ToString()}\"); //{inst.ToString()}";
         }
 
-        private string EnvIncludes => "#include <RTCLI.h>\n";
+        private string EnvIncludes => "#include <RTCLI.h>";
+        public void WriteHeader(CodeTextStorage storage)
+        {
+            using (var _ = storage.EnterScope(translateContext.FocusedAssemblyInformation.IdentName))
+            {
+                foreach (var module in translateContext.FocusedAssemblyInformation.Modules.Values)
+                {
+                    foreach (var type in module.Types.Values)
+                    {
+                        var codeWriter = storage.Wirter(type.TypeName + ".h");
+                        typeHeaderWriters[type.FullName] = codeWriter;
+                        codeWriter.WriteLine(EnvIncludes);
+                        
+                        typeHeaderWriters[type.FullName].Flush();
+                    }
+                }
+            }//End Dispose EnterScope
+        }
+
         public void WriteSource(CodeTextStorage storage)
         {
             using (var _ = storage.EnterScope(translateContext.FocusedAssemblyInformation.IdentName))
@@ -71,6 +89,7 @@ namespace RTCLI.AOTCompiler.Translators
                         var codeWriter = storage.Wirter(type.TypeName + ".cpp");
                         typeSourceWriters[type.FullName] = codeWriter;
                         codeWriter.WriteLine(EnvIncludes);
+                        codeWriter.WriteLine($"#include <{type.TypeName}.h>");
                         foreach (var method in type.Methods)
                         {
                             CXXMethodTranslateContext methodContext = new CXXMethodTranslateContext(translateContext, method);
@@ -84,8 +103,6 @@ namespace RTCLI.AOTCompiler.Translators
                                 codeWriter.WriteLine($"{localVar.CXXTypeName} v{localVar.Index};");
                             }
                             codeWriter.WriteLine("template<bool InitLocals> static void Init();//Active with MethodBody.InitLocals Property.");
-                            codeWriter.WriteLine("template<typename T, int index> void Store(RTCLI::StackFwd<T> toStore); //Store to Stack.");
-                            codeWriter.WriteLine("template<typename T, int index> RTCLI::StackFwd<T> Load(void); //Load from Stack.");
                             codeWriter.unindent();
                             codeWriter.WriteLine("};\n");
 
@@ -108,14 +125,13 @@ namespace RTCLI.AOTCompiler.Translators
                         typeSourceWriters[type.FullName].Flush();
                     }
                 }
-
             }//End Dispose EnterScope
-
         }
 
         public readonly CXXTranslateOptions options;
         private readonly TranslateContext translateContext = null;
         private readonly Dictionary<string, CodeTextWriter> typeSourceWriters = new Dictionary<string, CodeTextWriter>();
+        private readonly Dictionary<string, CodeTextWriter> typeHeaderWriters = new Dictionary<string, CodeTextWriter>();
         private readonly Dictionary<OpCode, ICXXILConverter> convertersCXX = new Dictionary<OpCode, ICXXILConverter>(); 
     }
 }

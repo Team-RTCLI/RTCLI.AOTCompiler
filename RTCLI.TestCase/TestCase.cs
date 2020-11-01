@@ -11,7 +11,7 @@ namespace RTCLITestCase
             var reff = new RefClass("TestCase");
             refed = new RefClass("TestCase");
 
-            string[] TestArray = { "", "", "" };
+            string[] TestArray = { "1", "2", "3" };
             Array arr = TestArray;
             var test = (arr as string[])[1];
             string[][] arr_typed = { (string[])arr, (string[])arr };
@@ -39,7 +39,8 @@ namespace RTCLITestCase
         }
         void MethodWithArgsFieldAccess(int arg0, float arg1, char arg2, byte arg3, string arg4, RefClass arg5, RefStruct arg666)
         {
-            var arg6Name = arg666.Name;
+            //var arg6Name = arg666.Name;
+            arg666.Name = " Accessed";
         }
         void MethodWithArgsVirtCall(int arg0, float arg1, char arg2, byte arg3, string arg4, RefClass arg5, RefStruct arg666)
         {

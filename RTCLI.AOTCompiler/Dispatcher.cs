@@ -27,7 +27,7 @@ namespace RTCLI.AOTCompiler
 
             using (var _ = storage.EnterScope("include"))
             {
-                //cxxTranslator.WriteHeader(storage);
+                cxxTranslator.WriteHeader(storage);
             }
 
             using (var _ = storage.EnterScope("src"))
