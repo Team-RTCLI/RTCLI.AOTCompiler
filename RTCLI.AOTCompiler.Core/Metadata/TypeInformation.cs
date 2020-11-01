@@ -17,7 +17,10 @@ namespace RTCLI.AOTCompiler.Metadata
 
         public bool IsArray => definitionArray != null;
 
-        public string CXXTypeName => IsArray ? $"RTCLI::System::ConstArray<{elementType.CXXTypeName}>" : "RTCLI::" + string.Join("::", FullName.Split('.'));
+        public string CXXTypeName => 
+            IsArray 
+            ? $"RTCLI::System::ElementArray<{elementType.CXXTypeName}>" 
+            : "RTCLI::" + string.Join("::", FullName.Split('.'));
 
         public readonly List<MethodInformation> Methods = new List<MethodInformation>();
         public readonly List<FieldInformation> Fields = new List<FieldInformation>();
@@ -48,6 +51,7 @@ namespace RTCLI.AOTCompiler.Metadata
             var dd = definitionArray.ElementType;
 
             this.elementType = IsArray ? MetadataContext.GetTypeInformation(dd) : null;
+            
         }
 
         private char[] sep = {',', ' '};

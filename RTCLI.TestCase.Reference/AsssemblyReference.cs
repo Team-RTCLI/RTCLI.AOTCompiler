@@ -15,4 +15,10 @@ namespace RTCLITestCase.Reference
         }
         public string Name { get; }
     }
+
+    public struct RefStruct
+    {
+        public string Name;
+        private string InternalName;
+    }
 }

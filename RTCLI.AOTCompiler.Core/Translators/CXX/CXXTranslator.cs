@@ -73,9 +73,9 @@ namespace RTCLI.AOTCompiler.Translators
                         codeWriter.WriteLine(EnvIncludes);
                         foreach (var method in type.Methods)
                         {
-                            CXXMethodTranslateContext methodContext = new CXXMethodTranslateContext(translateContext);
+                            CXXMethodTranslateContext methodContext = new CXXMethodTranslateContext(translateContext, method);
                             // [2-1] Stack Code
-                            codeWriter.WriteLine("//[2-1] Here Begins Stack Declaration");
+                            codeWriter.WriteLine($"\n//{method.CXXMethodName}\n//[2-1] Here Begins Stack Declaration");
                             codeWriter.WriteLine($"struct {method.CXXStackName}");
                             codeWriter.WriteLine("{");
                             codeWriter.indent();

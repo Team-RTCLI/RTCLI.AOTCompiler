@@ -27,6 +27,13 @@ namespace RTCLI.AOTCompiler.Metadata
                         LocalVariables.Add(new VariableInformation(localVar, metadataContext));
                     }
                 }
+                if(def.HasParameters)
+                {
+                    foreach (ParameterDefinition param in def.Parameters)
+                    {
+                        Parameters.Add(new ParameterInformation(param, metadataContext));
+                    }
+                }
             }
         }
 
@@ -38,7 +45,16 @@ namespace RTCLI.AOTCompiler.Metadata
 
         private string CXXParamsSequence()
         {
-            return "void";
+            string sequence = "\n\t";
+            //Since LdArg.0 -> this, start argument index from 1
+            uint i = 1;
+            foreach(var param in Parameters)
+            {
+                sequence += param.CXXParamDecorated + " " + param.Name;
+                if (i++ != Parameters.Count)
+                    sequence = sequence + ", " + ((i%3==1)?"\n\t":"");
+            }
+            return sequence;
         }
         public string CXXMethodName 
             =>  // Return Type
@@ -51,6 +67,7 @@ namespace RTCLI.AOTCompiler.Metadata
 
         public readonly List<InstructionInformation> Instructions = new List<InstructionInformation>();
         public readonly List<VariableInformation> LocalVariables = new List<VariableInformation>();
+        public readonly List<ParameterInformation> Parameters = new List<ParameterInformation>();
         public IMetadataTokenProvider Definition => definition;
         public MetadataContext MetadataContext { get; }
     }

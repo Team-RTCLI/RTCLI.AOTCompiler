@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RTCLI.AOTCompiler.Metadata;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,8 +7,8 @@ namespace RTCLI.AOTCompiler.Translators
 {
     public class CXXMethodTranslateContext : MethodTranslateContext
     {
-        public CXXMethodTranslateContext(TranslateContext translateContext)
-            : base(translateContext)
+        public CXXMethodTranslateContext(TranslateContext translateContext, MethodInformation methodInformation)
+            : base(translateContext, methodInformation)
         {
 
         }
@@ -32,11 +33,24 @@ namespace RTCLI.AOTCompiler.Translators
                 return "ERROR_CMPT_STACK_EMPTY";
             }
         }
+        public string CmptStackPopAll
+        {
+            get
+            {
+                string result = "";
+                while (CmptStackValidate())
+                    result += $"s{CmptStack.Pop()}";
+                return result;
+            }
+        }
         private bool CmptStackValidate()
         {
             return CmptStack.Count > 0;
         }
+
+        public int ArgumentsCount => ArgumentsStack.Count;
+
         Stack<int> CmptStack = new Stack<int>();
-        //List<>
+        List<string> ArgumentsStack = new List<string>();
     }
 }

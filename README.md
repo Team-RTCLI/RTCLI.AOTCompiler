@@ -32,7 +32,10 @@
 已经支持的IL(CXX后端)：
 
 - nop
+- ldarg.0/1/2/s
+- stloc.0/1/2/s
+- ldloc.0/1/2/s
+- Add/Sub 
 - newobj
-- ldarg.0
 - ldstr
-- stloc.0 
+- ret
