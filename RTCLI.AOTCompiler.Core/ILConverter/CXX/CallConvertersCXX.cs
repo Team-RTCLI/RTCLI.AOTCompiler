@@ -29,9 +29,11 @@ namespace RTCLI.AOTCompiler.ILConverters
                 args += $"{(methodContext as CXXMethodTranslateContext).CmptStackPopObject}"
                      + (i == mtd.Parameters.Count ? "" : ", ");
             }
-            return $"(({GetMethodOwner(instruction.Operand as MethodReference, methodContext)}&)" // Caster: ((DeclaringType&)
+            string callBody = $"(({GetMethodOwner(instruction.Operand as MethodReference, methodContext)}&)" // Caster: ((DeclaringType&)
                 + $"{(methodContext as CXXMethodTranslateContext).CmptStackPopObject})" // Caller: caller)
                 + $".{MethodCallConvert.GetMethodName(instruction.Operand as MethodReference, methodContext)}({args});"; // Method Call body.
+            return (mtd.ReturnType.FullName != "System.Void" ? $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = " : "")
+                + callBody;
         }
     }
     public class CallConverters : ICXXILConverter
