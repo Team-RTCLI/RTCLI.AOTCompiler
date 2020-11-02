@@ -102,7 +102,7 @@ namespace RTCLI.AOTCompiler.Translators
                             {
                                 codeWriter.WriteLine($"{localVar.CXXTypeName} v{localVar.Index};");
                             }
-                            codeWriter.WriteLine("template<bool InitLocals> static void Init();//Active with MethodBody.InitLocals Property.");
+                            codeWriter.WriteLine("template<bool InitLocals> static void Init(){};//Active with MethodBody.InitLocals Property.");
                             codeWriter.unindent();
                             codeWriter.WriteLine("};\n");
 
@@ -113,7 +113,8 @@ namespace RTCLI.AOTCompiler.Translators
                             codeWriter.WriteLine("{");
                             // [2-2-2] Code Body
                             codeWriter.indent();
-                            codeWriter.WriteLine($"{method.CXXStackName} stack = {method.CXXStackName}::Init<{method.InitLocals.ToString().ToLower()}>();");
+                            codeWriter.WriteLine($"{method.CXXStackName} stack;");
+                            codeWriter.WriteLine($"stack.Init<{method.InitLocals.ToString().ToLower()}>();");
                             foreach (var instruction in method.Body.Instructions)
                             {
                                 codeWriter.WriteLine(NoteILInstruction(instruction, methodContext));
