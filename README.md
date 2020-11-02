@@ -38,7 +38,7 @@
 - stfld
 - stloc.0/1/2/s
 - ldloc.0/1/2/s
-- Add/Sub 
+- add/sub 
 - newobj
 - ldstr
 - ret

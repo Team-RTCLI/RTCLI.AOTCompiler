@@ -59,8 +59,8 @@ namespace RTCLI.AOTCompiler.Metadata
         public string CXXMethodName 
             =>  // Return Type
              MetadataContext.GetTypeInformation(definition.DeclaringType)?.CXXTypeName //Type Name
-             + "::" + definition?.Name //MethodName
-            ;
+             + "::" + definition?.Name;//MethodName
+        public string CXXMethodNameShort => definition?.Name;
         public string CXXParamSequence => "(" + CXXParamsSequence() + ")"; //Param Sequence
         public string CXXRetType => MetadataContext.GetTypeInformation(definition.ReturnType)?.CXXTypeName;
         public string CXXStackName => $"{string.Join("_", CXXMethodName.Split("::"))}__Stack";
