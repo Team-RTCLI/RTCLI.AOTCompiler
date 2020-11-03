@@ -32,6 +32,7 @@
 已经支持的IL(CXX后端)：
 
 - nop
+- pop
 - ldarg.0/1/2/s
 - ldarga
 - ldc.i4/i8/r4/r8.xx
@@ -42,3 +43,4 @@
 - newobj
 - ldstr
 - ret
+- call/callvirt

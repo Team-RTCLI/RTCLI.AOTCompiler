@@ -66,6 +66,14 @@ namespace RTCLI.AOTCompiler.ILConverters
             return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = RTCLI::Sub({op0}, {op1});";
         }
     }
+    public class PopConverterCXX : ICXXILConverter
+    {
+        public OpCode TargetOpCode() => OpCodes.Pop;
+        public string Convert(Instruction instruction, MethodTranslateContext methodContext)
+        {
+            return $"RTCLI::Pop({(methodContext as CXXMethodTranslateContext).CmptStackPopObject});//pop operation";
+        }
+    }
 
     public class StfldConverterCXX : ICXXILConverter
     {
