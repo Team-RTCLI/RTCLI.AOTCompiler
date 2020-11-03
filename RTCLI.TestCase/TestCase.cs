@@ -6,6 +6,10 @@ namespace RTCLITestCase
 {
     public class TestCaseClass
     {
+        public TestCaseClass(string str)
+        {
+
+        }
         /*void Method()
         {
             var reff = new RefClass("TestCase");
@@ -24,30 +28,30 @@ namespace RTCLITestCase
         {
             return "RTCLI Test: Const String";
         }*/
-        void MethodWithArgsAccess(int arg0, float arg1, char arg2, byte arg3, string arg4, RefClass arg5, RefStruct arg666)
+        public void MethodWithArgsAccess(int argInt, string argStr, RefClass argClass, RefStruct argStruct)
         {
-            var arg00 = arg0;
-            var arg66 = arg666;
-            var arg222 = arg2;
-            var arg11 = arg1;
-            var arg55 = arg5;
+            var argI = argInt;
+            var argSt = argStr;
+            var argS = argStruct;
+            var argC = argClass;
         }
-        void MethodWithArgsOps(int arg0, int arg1)
+        public void MethodWithArgsOps(int arg0, int arg1)
         {
             var arg = arg0 + arg1;
             arg -= arg0;
         }
-        void MethodWithArgsFieldAccess(int arg0, float arg1, char arg2, byte arg3, string arg4, RefClass arg5, RefStruct arg666)
+        public void MethodWithArgsFieldAccess(int argInt, string argStr, RefClass argClass, RefStruct argStruct)
         {
             //var arg6Name = arg666.Name;
-            arg5.CallTest(9);
-            arg5.CallTestF(9);
-            arg666.Name = " Accessed";
+            Single.Parse("1.22");
+            argClass.CallTest(9);
+            argClass.CallTestF(9);
+            argStruct.Name = " Accessed";
         }
-        void MethodWithArgsVirtCall(int arg0, float arg1, char arg2, byte arg3, string arg4, RefClass arg5, RefStruct arg666)
+        public void MethodWithArgsVirtCall(int argInt, string argStr, RefClass argClass, RefStruct argStruct)
         {
-            var arg55 = arg5;
-            var arg5Name = arg5.Name;
+            var argC = argClass;
+            var argCName = argClass.Name;
         }
         RefClass refed;
     }

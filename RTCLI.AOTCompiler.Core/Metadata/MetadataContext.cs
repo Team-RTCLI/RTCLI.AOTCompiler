@@ -120,4 +120,20 @@ namespace RTCLI.AOTCompiler.Metadata
 
         [JsonIgnore] public string FocusedAssembly;
     }
+
+    public static class MetaExtension
+    {
+        public static MethodInformation GetMetaInformation(
+            this MethodReference methodReference, MetadataContext context)
+        {
+            var type = context.GetTypeInformation(methodReference.DeclaringType);
+            foreach (var mtdInfo in type.Methods)
+            {
+                if (mtdInfo.Definition is MethodReference mtdRef)
+                    if (mtdRef.FullName == methodReference.FullName)
+                        return mtdInfo;
+            }
+            return null;
+        }
+    }
 }

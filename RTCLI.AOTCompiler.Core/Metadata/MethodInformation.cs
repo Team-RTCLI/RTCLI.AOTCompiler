@@ -45,7 +45,7 @@ namespace RTCLI.AOTCompiler.Metadata
 
         private string CXXParamsSequence()
         {
-            string sequence = "\n\t";
+            string sequence = "";
             //Since LdArg.0 -> this, start argument index from 1
             uint i = 1;
             foreach(var param in Parameters)
@@ -59,11 +59,17 @@ namespace RTCLI.AOTCompiler.Metadata
         public string CXXMethodName 
             =>  // Return Type
              MetadataContext.GetTypeInformation(definition.DeclaringType)?.CXXTypeName //Type Name
-             + "::" + definition?.Name;//MethodName
-        public string CXXMethodNameShort => definition?.Name;
+             + "::" + CXXMethodNameShort;//MethodName
+        public string CXXMethodNameShort 
+            => (definition.IsConstructor ? "Constructor" : definition?.Name);
+        public string CXXMethodSignature => CXXMethodNameShort + CXXParamSequence;
         public string CXXParamSequence => "(" + CXXParamsSequence() + ")"; //Param Sequence
         public string CXXRetType => MetadataContext.GetTypeInformation(definition.ReturnType)?.CXXTypeName;
         public string CXXStackName => $"{string.Join("_", CXXMethodName.Split("::"))}__Stack";
+        public bool IsPrivate => definition.IsPrivate;
+        public bool IsStatic => definition.IsStatic;
+        public bool IsPublic => definition.IsPublic;
+        public bool IsFamily => definition.IsFamily;
 
         public readonly List<InstructionInformation> Instructions = new List<InstructionInformation>();
         public readonly List<VariableInformation> LocalVariables = new List<VariableInformation>();

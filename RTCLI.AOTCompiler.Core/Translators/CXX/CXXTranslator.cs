@@ -71,7 +71,45 @@ namespace RTCLI.AOTCompiler.Translators
                         var codeWriter = storage.Wirter(type.TypeName + ".h");
                         typeHeaderWriters[type.FullName] = codeWriter;
                         codeWriter.WriteLine(EnvIncludes);
-                        
+                        using (var ___ = new CXXScopeDisposer(codeWriter, "\nnamespace " + type.CXXNamespace))
+                        {
+                            using (var classScope = new CXXScopeDisposer(codeWriter, $"RTCLI_API class {type.CXXTypeNameShort} : public RTCLI::System::Object", true))
+                            {
+                                codeWriter.WriteLine("public:");
+                                foreach(var method in type.Methods)
+                                {
+                                    if (method.IsPublic)
+                                        codeWriter.WriteLine(method.CXXMethodSignature);
+                                }
+                                foreach(var field in type.Fields)
+                                {
+                                    if (field.IsPublic)
+                                        codeWriter.WriteLine(field.CXXFieldDeclaration);
+                                }
+                                codeWriter.WriteLine("private:");
+                                foreach (var method in type.Methods)
+                                {
+                                    if (method.IsPrivate)
+                                        codeWriter.WriteLine(method.CXXMethodSignature);
+                                }
+                                foreach (var field in type.Fields)
+                                {
+                                    if (field.IsPrivate)
+                                        codeWriter.WriteLine(field.CXXFieldDeclaration);
+                                }
+                                codeWriter.WriteLine("protected:");
+                                foreach (var method in type.Methods)
+                                {
+                                    if (method.IsFamily)
+                                        codeWriter.WriteLine(method.CXXMethodSignature);
+                                }
+                                foreach (var field in type.Fields)
+                                {
+                                    if (field.IsFamily)
+                                        codeWriter.WriteLine(field.CXXFieldDeclaration);
+                                }
+                            }
+                        }
                         typeHeaderWriters[type.FullName].Flush();
                     }
                 }
@@ -129,6 +167,29 @@ namespace RTCLI.AOTCompiler.Translators
             }//End Dispose EnterScope
         }
 
+        private sealed class CXXScopeDisposer : IDisposable
+        {
+            private CodeTextWriter parent;
+            private bool EndWithSemicolon = false;
+            public CXXScopeDisposer(CodeTextWriter parent, string Scope, bool bEndWithSemicolon = false)
+            {
+                this.parent = parent;
+                this.EndWithSemicolon = bEndWithSemicolon;
+                parent.WriteLine(Scope);
+                parent.WriteLine("{");
+                parent.indent();
+            }
+
+            public void Dispose()
+            {
+                if (parent != null)
+                {
+                    parent.unindent();
+                    parent.WriteLine("}" + (EndWithSemicolon?";":""));
+                    parent = null;
+                }
+            }
+        }
         public readonly CXXTranslateOptions options;
         private readonly TranslateContext translateContext = null;
         private readonly Dictionary<string, CodeTextWriter> typeSourceWriters = new Dictionary<string, CodeTextWriter>();
