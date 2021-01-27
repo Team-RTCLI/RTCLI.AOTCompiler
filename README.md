@@ -1,29 +1,42 @@
 # RTCLI.AOTCompiler
-用于将MSIL编译到C++/MicroCode的AOT编译器。
-
-旨在生成易于扩展实现的富模板代码。如：
+用于将MSIL编译到C++/MacroCode的AOT编译器。
 
 ``` c++
-    //[2-1] Here Begins Stack Declaration
-    struct RTCLI_RTCLITestCase_TestCaseClass_Method__Stack
+    RTCLI::System::Void RTCLI::RTCLITestCase::TestCaseClass::MethodWithArgsFieldAccess  (RTCLI::System::Int32 argInt, RTCLI::System::String& argStr, RTCLI::RTCLITestCase::Reference::RefClass& argClass, 
+        RTCLI::RTCLITestCase::Reference::RefStruct argStruct)
     {
-        RTCLI::RTCLITestCase::Reference::RefClass v0;
-        RTCLI::System::ConstArray<RTCLI::System::String> v1;
-        RTCLI::System::Array v2;
-        RTCLI::System::String v3;
-        RTCLI::System::ConstArray<RTCLI::System::ConstArray<RTCLI::System::String>> v4;
-        template<bool InitLocals> static void Init();//Active with MethodBody.InitLocals Property.
-        template<typename T, int index> void Store(RTCLI::StackFwd<T> toStore); //Store to Stack.
-        template<typename T, int index> RTCLI::StackFwd<T> Load(void); //Load from Stack.
-    };
-    
-    //[2-2] Here Begins Method Body
-    RTCLI::System::Void RTCLI::RTCLITestCase::TestCaseClass::Method(void)
-    {
-        RTCLI_RTCLITestCase_TestCaseClass_Method__Stack stack =
-            RTCLI_RTCLITestCase_TestCaseClass_Method__Stack::Init<true/*InitLocals*/>();
-        //...
-        stack.v0.Store<RTCLI::decay_t<decltype(s1)>, 1>(s1);
+        // IL_0000: nop
+        RTCLI::nop();
+        // IL_0001: ldstr "1.22"
+        const char* s0 = "1.22";
+        // IL_0006: call System.Single System.Single::Parse(System.String)
+        auto s1 = RTCLI::System::Single::Parse(s0);
+        // IL_000b: pop
+        RTCLI::Pop(s1);//pop operation
+        // IL_000c: ldarg.3
+        auto& s2 = argClass;
+        // IL_000d: ldc.i4.s 9
+        s3 = RTCLI::StaticCast<RTCLI::System::Int32>(9);
+        // IL_000f: callvirt System.Void RTCLITestCase.Reference.RefClass::CallTest(System.Int32)
+        ((RTCLI::RTCLITestCase::Reference::RefClass&)s2).CallTest(s3);
+        // IL_0014: nop
+        RTCLI::nop();
+        // IL_0015: ldarg.3
+        auto& s4 = argClass;
+        // IL_0016: ldc.r4 9
+        s5 = RTCLI::StaticCast<RTCLI::System::Single>(9);
+        // IL_001b: callvirt System.Void RTCLITestCase.Reference.RefClass::CallTestF(System.Single)
+        ((RTCLI::RTCLITestCase::Reference::RefClass&)s4).CallTestF(s5);
+        // IL_0020: nop
+        RTCLI::nop();
+        // IL_0021: ldarga.s argStruct
+        auto&& s6 = argStruct;
+        // IL_0023: ldstr " Accessed"
+        const char* s7 = " Accessed";
+        // IL_0028: stfld System.String RTCLITestCase.Reference.RefStruct::Name
+        s6.Name = s7;
+        // IL_002d: ret
+        return ;
     }
 ```
 

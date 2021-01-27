@@ -74,7 +74,6 @@ namespace RTCLI.AOTCompiler.Translators
                         using (var ___ = new CXXScopeDisposer(codeWriter, "\nnamespace " + type.CXXNamespace))
                         {
                             using (var classScope = new CXXScopeDisposer(codeWriter,
-
                                 type.IsStruct ?
                                   $"struct {type.CXXTypeNameShort}"
                                 : $"RTCLI_API class {type.CXXTypeNameShort} : public RTCLI::System::Object",
@@ -138,17 +137,17 @@ namespace RTCLI.AOTCompiler.Translators
                         {
                             CXXMethodTranslateContext methodContext = new CXXMethodTranslateContext(translateContext, method);
                             // [2-1] Stack Code
-                            codeWriter.WriteLine($"\n//{method.CXXMethodName}\n//[2-1] Here Begins Stack Declaration");
-                            codeWriter.WriteLine($"struct {method.CXXStackName}");
-                            codeWriter.WriteLine("{");
-                            codeWriter.indent();
-                            foreach (var localVar in method.LocalVariables)
-                            {
-                                codeWriter.WriteLine($"{localVar.CXXTypeName} v{localVar.Index};");
-                            }
-                            codeWriter.WriteLine("template<bool InitLocals> static void Init(){};//Active with MethodBody.InitLocals Property.");
-                            codeWriter.unindent();
-                            codeWriter.WriteLine("};\n");
+                            //codeWriter.WriteLine($"\n//{method.CXXMethodName}\n//[2-1] Here Begins Stack Declaration");
+                            //codeWriter.WriteLine($"struct {method.CXXStackName}");
+                            //codeWriter.WriteLine("{");
+                            //codeWriter.indent();
+                            //foreach (var localVar in method.LocalVariables)
+                            //{
+                            //    codeWriter.WriteLine($"{localVar.CXXTypeName} v{localVar.Index};");
+                            //}
+                            //codeWriter.WriteLine("template<bool InitLocals> static void Init(){};//Active with MethodBody.InitLocals Property.");
+                            //codeWriter.unindent();
+                            //codeWriter.WriteLine("};\n");
 
                             // [2-2-1] Method Code
                             codeWriter.WriteLine("//[2-2] Here Begins Method Body");
@@ -157,8 +156,8 @@ namespace RTCLI.AOTCompiler.Translators
                             codeWriter.WriteLine("{");
                             // [2-2-2] Code Body
                             codeWriter.indent();
-                            codeWriter.WriteLine($"{method.CXXStackName} stack;");
-                            codeWriter.WriteLine($"stack.Init<{method.InitLocals.ToString().ToLower()}>();");
+                            //codeWriter.WriteLine($"{method.CXXStackName} stack;");
+                            //codeWriter.WriteLine($"stack.Init<{method.InitLocals.ToString().ToLower()}>();");
                             foreach (var instruction in method.Body.Instructions)
                             {
                                 codeWriter.WriteLine(NoteILInstruction(instruction, methodContext));
