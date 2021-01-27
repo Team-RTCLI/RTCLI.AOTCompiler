@@ -1,6 +1,19 @@
 # RTCLI.AOTCompiler
 用于将MSIL编译到C++/MacroCode的AOT编译器。
 
+source：
+``` c#
+public void MethodWithArgsFieldAccess(int argInt, string argStr, RefClass argClass, RefStruct argStruct)
+{
+    //var arg6Name = arg666.Name;
+    Single.Parse("1.22");
+    argClass.CallTest(9);
+    argClass.CallTestF(9);
+    argStruct.Name = " Accessed";
+}
+```
+
+generated：
 ``` c++
 RTCLI::System::Void RTCLI::RTCLITestCase::TestCaseClass::MethodWithArgsFieldAccess(RTCLI::System::Int32 argInt, RTCLI::System::String& argStr, RTCLI::RTCLITestCase::Reference::RefClass& argClass, 
     RTCLI::RTCLITestCase::Reference::RefStruct argStruct)
