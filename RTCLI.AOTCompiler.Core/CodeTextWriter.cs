@@ -12,19 +12,22 @@ namespace RTCLI.AOTCompiler
             sw = new StreamWriter(relatedPath, false, Encoding.UTF8);
         }
 
-        public void WriteLine(string toWrite)
+        public CodeTextWriter WriteLine(string toWrite)
         {
             sw.WriteLine(indentString + toWrite);
+            return this;
         }
 
-        public void indent()
+        public CodeTextWriter indent()
         {
             indentString += "\t";
+            return this;
         }
-        public void unindent()
+        public CodeTextWriter unindent()
         {
             if(indentString.Length > 0)
                 indentString = indentString.Remove(indentString.Length - 1);
+            return this;
         }
 
         public void Flush()

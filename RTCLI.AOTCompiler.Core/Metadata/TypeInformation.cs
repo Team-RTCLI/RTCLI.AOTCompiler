@@ -8,9 +8,8 @@ using RTCLI.AOTCompiler.Internal;
 
 namespace RTCLI.AOTCompiler.Metadata
 {
-    public class TypeInformation : IMemberInformation
+    public partial class TypeInformation : IMemberInformation
     {
-
         public string FullName => IsArray ? definitionArray.FullName : definition.FullName;
         public string Namespace => IsArray ? definitionArray.Namespace : definition.Namespace;
         public string TypeName => IsArray ? definitionArray.Name : definition.Name;
@@ -18,13 +17,7 @@ namespace RTCLI.AOTCompiler.Metadata
         public readonly string[] TypeAttributes = null;
 
         public bool IsArray => definitionArray != null;
-
-        public string CXXNamespace => "RTCLI::" + string.Join("::", Namespace.Split('.'));
-        public string CXXTypeName => 
-            IsArray 
-            ? $"RTCLI::System::ElementArray<{elementType.CXXTypeName}>" 
-            : "RTCLI::" + string.Join("::", FullName.Split('.'));
-        public string CXXTypeNameShort => definition.Name;
+        public bool IsStruct => definition.IsValueType;
 
         public readonly List<MethodInformation> Methods = new List<MethodInformation>();
         public readonly List<FieldInformation> Fields = new List<FieldInformation>();

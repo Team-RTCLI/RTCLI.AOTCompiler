@@ -73,35 +73,41 @@ namespace RTCLI.AOTCompiler.Translators
                         codeWriter.WriteLine(EnvIncludes);
                         using (var ___ = new CXXScopeDisposer(codeWriter, "\nnamespace " + type.CXXNamespace))
                         {
-                            using (var classScope = new CXXScopeDisposer(codeWriter, $"RTCLI_API class {type.CXXTypeNameShort} : public RTCLI::System::Object", true))
+                            using (var classScope = new CXXScopeDisposer(codeWriter,
+
+                                type.IsStruct ?
+                                  $"struct {type.CXXTypeNameShort}"
+                                : $"RTCLI_API class {type.CXXTypeNameShort} : public RTCLI::System::Object",
+
+                                true))
                             {
-                                codeWriter.WriteLine("public:");
-                                foreach(var method in type.Methods)
+                                codeWriter.unindent().WriteLine("public:").indent();
+                                foreach (var method in type.Methods)
                                 {
                                     if (method.IsPublic)
-                                        codeWriter.WriteLine(method.CXXMethodSignature);
+                                        codeWriter.WriteLine($"{method.CXXMethodSignature};");
                                 }
                                 foreach(var field in type.Fields)
                                 {
                                     if (field.IsPublic)
                                         codeWriter.WriteLine(field.CXXFieldDeclaration);
                                 }
-                                codeWriter.WriteLine("private:");
+                                codeWriter.unindent().WriteLine("private:").indent();
                                 foreach (var method in type.Methods)
                                 {
                                     if (method.IsPrivate)
-                                        codeWriter.WriteLine(method.CXXMethodSignature);
+                                        codeWriter.WriteLine($"{method.CXXMethodSignature};");
                                 }
                                 foreach (var field in type.Fields)
                                 {
                                     if (field.IsPrivate)
                                         codeWriter.WriteLine(field.CXXFieldDeclaration);
                                 }
-                                codeWriter.WriteLine("protected:");
+                                codeWriter.unindent().WriteLine("protected:").indent();
                                 foreach (var method in type.Methods)
                                 {
                                     if (method.IsFamily)
-                                        codeWriter.WriteLine(method.CXXMethodSignature);
+                                        codeWriter.WriteLine($"{method.CXXMethodSignature};");
                                 }
                                 foreach (var field in type.Fields)
                                 {

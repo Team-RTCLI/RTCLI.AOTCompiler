@@ -38,7 +38,7 @@ namespace RTCLI.AOTCompiler
                 var extra = options.Parse(args);
                 if (help || (extra.Count < 2))
                 {
-                    Console.Out.WriteLine("usage: il2c.exe [options] <output_path> <assembly_path>");
+                    Console.Out.WriteLine("usage: RTCLI.AOTCompiler.exe <output_path> <assembly_path> [options]");  
                     options.WriteOptionDescriptions(Console.Out);
                 }
                 else

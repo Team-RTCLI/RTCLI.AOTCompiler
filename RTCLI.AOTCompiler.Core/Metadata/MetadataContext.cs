@@ -31,7 +31,7 @@ namespace RTCLI.AOTCompiler.Metadata
                 }
             }
 
-            if(Assemblies.ContainsKey(loaded.Name.Name))//Already Exists this Assembly
+            if (Assemblies.ContainsKey(loaded.Name.Name))//Already Exists this Assembly
             {
                 if (Assemblies[loaded.Name.Name].FullName != loaded.FullName)//Version Diff
                     Trace.Assert(false, "Assembly: " + loaded.Name.Name + " already exists!");
@@ -39,6 +39,7 @@ namespace RTCLI.AOTCompiler.Metadata
             }
             else
                 Assemblies.Add(loaded.Name.Name, new AssemblyInformation(loaded, this));
+
             return loaded;
         }
 

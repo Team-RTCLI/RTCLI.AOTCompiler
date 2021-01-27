@@ -14,8 +14,12 @@ namespace RTCLI.AOTCompiler.Metadata
             this.Definition = defination;
         }
         public string CXXParamDecorated 
-            => CXXTypeName + (IsValueType?"":"&"); 
-        public string CXXTypeName => MetadataContext.GetTypeInformation(Definition.ParameterType).CXXTypeName;
+            => CXXTypeName + (IsValueType ? "" : "&"); 
+        public string CXXTypeName
+            => MetadataContext.GetTypeInformation(Definition.ParameterType.GetElementType()).CXXTypeName;
+
+        public bool IsByReference => Definition.ParameterType.IsByReference;
+
         public string Name => Definition.Name;
         public bool IsValueType => Definition.ParameterType.IsValueType;
         [JsonIgnore] public TypeInformation Type => MetadataContext.GetTypeInformation(Definition.ParameterType);

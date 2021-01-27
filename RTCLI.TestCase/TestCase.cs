@@ -4,6 +4,12 @@ using RTCLITestCase.Reference;
 
 namespace RTCLITestCase
 {
+    public struct PureStruct
+    {
+        public String name;
+        public float val;
+    }
+
     public class TestCaseClass
     {
         public TestCaseClass(string str)

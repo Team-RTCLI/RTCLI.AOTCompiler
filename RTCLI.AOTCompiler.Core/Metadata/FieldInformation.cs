@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace RTCLI.AOTCompiler.Metadata
 {
-    public class FieldInformation : IMemberInformation
+    public partial class FieldInformation : IMemberInformation
     {
         public readonly string FullName = "None";
         public string Name => definition.Name;
@@ -24,9 +24,6 @@ namespace RTCLI.AOTCompiler.Metadata
         public bool IsStatic => definition.IsStatic;
         public bool IsPublic => definition.IsPublic;
         public bool IsFamily => definition.IsFamily;
-        public string CXXTypeName => MetadataContext.GetTypeInformation(definition.FieldType).CXXTypeName;
-        public string CXXTypeNameShort => MetadataContext.GetTypeInformation(definition.FieldType).CXXTypeNameShort;
-        public string CXXFieldDeclaration => $"{CXXTypeName} {Name};";
 
         [JsonIgnore] private readonly FieldDefinition definition = null;
         public IMetadataTokenProvider Definition => definition;
