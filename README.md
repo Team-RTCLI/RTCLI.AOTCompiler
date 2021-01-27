@@ -2,7 +2,7 @@
 用于将MSIL编译到C++/MacroCode的AOT编译器。
 
 ``` c++
-    RTCLI::System::Void RTCLI::RTCLITestCase::TestCaseClass::MethodWithArgsFieldAccess  (RTCLI::System::Int32 argInt, RTCLI::System::String& argStr, RTCLI::RTCLITestCase::Reference::RefClass& argClass, 
+    RTCLI::System::Void RTCLI::RTCLITestCase::TestCaseClass::MethodWithArgsFieldAccess(RTCLI::System::Int32 argInt, RTCLI::System::String& argStr, RTCLI::RTCLITestCase::Reference::RefClass& argClass, 
         RTCLI::RTCLITestCase::Reference::RefStruct argStruct)
     {
         // IL_0000: nop
