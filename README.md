@@ -29,22 +29,7 @@
 
 ## IL-Converters
 
-已经支持的IL(CXX后端)：
-
-- ldarg.0/1/2/s
-- ldarga
-- ldc.i4/i8/r4/r8.xx
-- stfld
-- stloc.0/1/2/s
-- ldloc.0/1/2/s
-- add/sub 
-- newobj
-- ldstr
-- ret
-- call/callvirt
-
-
-| OpCode                                                       | Binary | CXXCvt | CXXRuntime | Test |
+| OpCode | Binary | CXXCvt | CXXRuntime | Test |
 | ------------------------------------------------------------ | ------ | ------ | ---------- | ---- |
 | [add](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.emit.opcodes.add) | 0x58   | ✅      |            |      |
 | [add.ovf](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.emit.opcodes.add_ovf) | 0xd6   |        |            |      |
