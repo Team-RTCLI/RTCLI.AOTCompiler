@@ -49,6 +49,9 @@ namespace RTCLITestCase
         public void MethodWithArgsFieldAccess(int argInt, string argStr, RefClass argClass, RefStruct argStruct)
         {
             //var arg6Name = arg666.Name;
+            int a = 11111111;
+            int b = 11111111;
+            int c = a + b;
             Single.Parse("1.22");
             argClass.CallTest(9);
             argClass.CallTestF(9);

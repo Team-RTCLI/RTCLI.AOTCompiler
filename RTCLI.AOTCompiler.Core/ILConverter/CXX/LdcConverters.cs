@@ -32,6 +32,13 @@ namespace RTCLI.AOTCompiler.ILConverters
         }
     }
 
+    public class Ldc_I4Converters : ICXXILConverter
+    {
+        public string Convert(Instruction instruction, MethodTranslateContext methodContext)
+                    => Ldc_Convert.I4Convert(instruction, methodContext, Int32.Parse(instruction.Operand.ToString()));
+
+        public OpCode TargetOpCode() => OpCodes.Ldc_I4;
+    }
     public class Ldc_I4_0Converters : ICXXILConverter
     {
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
