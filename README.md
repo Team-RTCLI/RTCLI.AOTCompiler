@@ -96,7 +96,7 @@ RTCLI::System::Void RTCLI::RTCLITestCase::TestCaseClass::MethodWithArgsFieldAcce
 | [castclass](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.emit.opcodes.castclass) | 0x74   |        |            |      |
 | [ceq](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.emit.opcodes.ceq) | 0xfe01 |        |            |      |
 | [cgt](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.emit.opcodes.cgt) | 0xfe02 |        |            |      |
-| [cgt.un](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.emit.opcodes.cgt_un) | 0xfe03 |        |            |      |
+| [cgt.un](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.emit.opcodes.cgt_un) | 0xfe03 | ✅   |            |      |
 | [ckfinite](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.emit.opcodes.ckfinite) | 0xc3   |        |            |      |
 | [clt](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.emit.opcodes.clt) | 0xfe04 |        |            |      |
 | [clt.un](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.emit.opcodes.clt_un) | 0xfe05 |        |            |      |

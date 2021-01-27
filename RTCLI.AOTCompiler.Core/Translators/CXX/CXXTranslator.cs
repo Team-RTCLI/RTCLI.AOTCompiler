@@ -137,17 +137,17 @@ namespace RTCLI.AOTCompiler.Translators
                         {
                             CXXMethodTranslateContext methodContext = new CXXMethodTranslateContext(translateContext, method);
                             // [2-1] Stack Code
-                            //codeWriter.WriteLine($"\n//{method.CXXMethodName}\n//[2-1] Here Begins Stack Declaration");
-                            //codeWriter.WriteLine($"struct {method.CXXStackName}");
-                            //codeWriter.WriteLine("{");
-                            //codeWriter.indent();
-                            //foreach (var localVar in method.LocalVariables)
-                            //{
-                            //    codeWriter.WriteLine($"{localVar.CXXTypeName} v{localVar.Index};");
-                            //}
-                            //codeWriter.WriteLine("template<bool InitLocals> static void Init(){};//Active with MethodBody.InitLocals Property.");
-                            //codeWriter.unindent();
-                            //codeWriter.WriteLine("};\n");
+                            codeWriter.WriteLine($"\n//{method.CXXMethodName}\n//[2-1] Here Begins Stack Declaration");
+                            codeWriter.WriteLine($"struct {method.CXXStackName}");
+                            codeWriter.WriteLine("{");
+                            codeWriter.indent();
+                            foreach (var localVar in method.LocalVariables)
+                            {
+                                codeWriter.WriteLine($"{localVar.CXXTypeName} v{localVar.Index};");
+                            }
+                            codeWriter.WriteLine("template<bool InitLocals> static void Init(){};//Active with MethodBody.InitLocals Property.");
+                            codeWriter.unindent();
+                            codeWriter.WriteLine("};\n");
 
                             // [2-2-1] Method Code
                             codeWriter.WriteLine("//[2-2] Here Begins Method Body");
@@ -161,7 +161,9 @@ namespace RTCLI.AOTCompiler.Translators
                             foreach (var instruction in method.Body.Instructions)
                             {
                                 codeWriter.WriteLine(NoteILInstruction(instruction, methodContext));
-                                codeWriter.WriteLine(TranslateILInstruction(instruction, methodContext));
+                                codeWriter.WriteLine(
+                                    instruction.GetLabel() + ": "+ 
+                                    TranslateILInstruction(instruction, methodContext));
                             }
                             codeWriter.unindent();
                             codeWriter.WriteLine("}");

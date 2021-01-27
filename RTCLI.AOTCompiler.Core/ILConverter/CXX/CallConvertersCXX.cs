@@ -42,13 +42,13 @@ namespace RTCLI.AOTCompiler.ILConverters
             return "ERROR_METHOD_NAME";
         }
     }
-    public class CallConverters : ICXXILConverter
+    public class CallConverterCXX : ICXXILConverter
     {
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
             => MethodCallConvert.Convert(instruction, methodContext, false);
         public OpCode TargetOpCode() => OpCodes.Call;
     }
-    public class CallVirtConverters : ICXXILConverter
+    public class CallVirtConverterCXX : ICXXILConverter
     {
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
             => MethodCallConvert.Convert(instruction, methodContext, true);

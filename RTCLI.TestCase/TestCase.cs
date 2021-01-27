@@ -16,24 +16,10 @@ namespace RTCLITestCase
         {
 
         }
-        /*void Method()
+        public static TestCaseClass operator +(TestCaseClass b, TestCaseClass c)
         {
-            var reff = new RefClass("TestCase");
-            refed = new RefClass("TestCase");
-
-            string[] TestArray = { "1", "2", "3" };
-            Array arr = TestArray;
-            var test = (arr as string[])[1];
-            string[][] arr_typed = { (string[])arr, (string[])arr };
+            return b;
         }
-        float MethodWithConstRet()
-        {
-            return 5;
-        }
-        string MethodWithConstStringRet()
-        {
-            return "RTCLI Test: Const String";
-        }*/
         public void MethodWithArgsAccess(int argInt, string argStr, RefClass argClass, RefStruct argStruct)
         {
             var argI = argInt;
@@ -61,6 +47,19 @@ namespace RTCLITestCase
         {
             var argC = argClass;
             var argCName = argClass.Name;
+        }
+        public object ThrowTest(object value)
+        {
+            try
+            {
+                if(value != null)
+                    throw new Exception();
+            }
+            catch
+            {
+                return value;
+            }
+            return null;
         }
         RefClass refed;
     }

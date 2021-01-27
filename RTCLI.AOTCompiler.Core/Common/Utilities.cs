@@ -1,7 +1,9 @@
+using Mono.Cecil.Cil;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RTCLI.AOTCompiler.Internal
+namespace RTCLI.AOTCompiler
 {
     public static class Utilities
     {
@@ -10,6 +12,10 @@ namespace RTCLI.AOTCompiler.Internal
 
         public static string GetCXXLanguageScopedPath(params string[] scopeNames) =>
             GetCXXLanguageScopedPath((IEnumerable<string>)scopeNames);
-    }
 
+        public static string GetLabel(this Instruction instruction)
+        {
+            return instruction.ToString().Split(":")[0];
+        }
+    }
 }

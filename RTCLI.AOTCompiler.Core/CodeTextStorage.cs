@@ -4,8 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-using RTCLI.AOTCompiler.Internal;
-
 namespace RTCLI.AOTCompiler
 {
     public class CodeTextStorage

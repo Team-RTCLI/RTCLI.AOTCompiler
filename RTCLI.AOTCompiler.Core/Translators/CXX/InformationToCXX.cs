@@ -4,8 +4,6 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using Mono.Cecil;
 using Newtonsoft.Json;
-using RTCLI.AOTCompiler.Internal;
-
 
 namespace RTCLI.AOTCompiler.Metadata
 {

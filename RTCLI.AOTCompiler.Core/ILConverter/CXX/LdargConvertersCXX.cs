@@ -8,6 +8,12 @@ using RTCLI.AOTCompiler.Metadata;
 
 namespace RTCLI.AOTCompiler.ILConverters
 {
+    public class LdnullConverterCXX : ICXXILConverter
+    {
+        public OpCode TargetOpCode() => OpCodes.Ldnull;
+        public string Convert(Instruction instruction, MethodTranslateContext methodContext)
+            => $"auto& {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = RTCLI::null;";
+    }
     public class Ldarg_0ConverterCXX : ICXXILConverter
     {
         public OpCode TargetOpCode() => OpCodes.Ldarg_0;
