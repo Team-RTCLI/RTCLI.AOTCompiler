@@ -33,7 +33,7 @@ namespace RTCLI.AOTCompiler.ILConverters
         {
             Instruction to = instruction.Operand as Instruction;
             var op = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
-            return $"if (RTCLI::Cond({op}))" +
+            return $"if(RTCLI::Cond({op}))" +
                 $" goto {to.GetLabel()};";
         }
         public OpCode TargetOpCode() => OpCodes.Brtrue;
@@ -44,7 +44,7 @@ namespace RTCLI.AOTCompiler.ILConverters
         {
             Instruction to = instruction.Operand as Instruction;
             var op = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
-            return $"if (RTCLI::Cond({op})) goto {to.GetLabel()};";
+            return $"if(RTCLI::Cond({op})) goto {to.GetLabel()};";
         }
         public OpCode TargetOpCode() => OpCodes.Brtrue_S;
     }
@@ -55,7 +55,7 @@ namespace RTCLI.AOTCompiler.ILConverters
         {
             Instruction to = instruction.Operand as Instruction;
             var op = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
-            return $"if (!RTCLI::Cond({op})) goto {to.GetLabel()};";
+            return $"if(!RTCLI::Cond({op})) goto {to.GetLabel()};";
         }
         public OpCode TargetOpCode() => OpCodes.Brfalse;
     }
@@ -65,7 +65,7 @@ namespace RTCLI.AOTCompiler.ILConverters
         {
             Instruction to = instruction.Operand as Instruction;
             var op = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
-            return $"if (!RTCLI::Cond({op})) goto {to.GetLabel()};";
+            return $"if(!RTCLI::Cond({op})) goto {to.GetLabel()};";
         }
         public OpCode TargetOpCode() => OpCodes.Brfalse_S;
     }
