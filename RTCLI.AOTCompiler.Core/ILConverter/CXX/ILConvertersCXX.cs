@@ -129,7 +129,18 @@ namespace RTCLI.AOTCompiler.ILConverters
         {
             var val = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var obj = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
-            return $"{obj}.{(instruction.Operand as FieldReference).Name} = {val};";
+            var op = instruction.Operand;
+
+            if(op is PropertyReference prop)
+            {
+                return "RTCLI::unimplemented_il(\"stfld prop\");";
+            }
+            else if(op is FieldReference fld)
+            {
+
+                return $"{obj}.{Utilities.GetCXXValidTokenString(fld.Name)} = {val};";
+            }
+            return "";
         }
     }
 }

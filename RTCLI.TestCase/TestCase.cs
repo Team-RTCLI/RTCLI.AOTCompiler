@@ -27,6 +27,9 @@ namespace RTCLITestCase
             var argS = argStruct;
             var argC = argClass;
         }
+   
+        public float prop { get; set; }
+
         public void MethodWithArgsOps(int arg0, int arg1)
         {
             var arg = arg0 + arg1;

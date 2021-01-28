@@ -13,6 +13,9 @@ namespace RTCLI.AOTCompiler
         public static string GetCXXLanguageScopedPath(params string[] scopeNames) =>
             GetCXXLanguageScopedPath((IEnumerable<string>)scopeNames);
 
+        public static string GetCXXValidTokenString(string raw_token) =>
+            raw_token.Replace('<', '_').Replace('>', '_');
+
         public static string GetLabel(this Instruction instruction)
         {
             return instruction.ToString().Split(":")[0];

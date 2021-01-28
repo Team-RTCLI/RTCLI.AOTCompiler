@@ -1,6 +1,12 @@
 # RTCLI.AOTCompiler
 用于将MSIL编译到C++/MacroCode的AOT编译器。
 
+如何编译与测试：
+- 打开sln，以RTCLI.AOTCompiler为启动项目;
+- usage: RTCLI.AOTCompiler.exe <output_path> <assembly_path>;
+- 内置了一个TestCase项目进行开发前期代码生成测试，在调试选项中为RTCLI.AOTCompiler附加调试参数$(SolutionDir)RTCLI.Generated $(SolutionDir)RTCLI.TestCase/bin/Debug/netstandardX.X/RTCLI.TestCase.dll;
+- 对于netstandard和mscorlib的分析，需要手动提供期望的目标版本dll。请Everything定位到netstandard.dll，将其路径下的全部dll拷贝到RTCLI.AOTCompiler的运行目录下。
+
 source：
 ``` c#
 public void MethodWithArgsFieldAccess(int argInt, string argStr, RefClass argClass, RefStruct argStruct)
@@ -211,8 +217,8 @@ RTCLI::System::Void RTCLI::RTCLITestCase::TestCaseClass::MethodWithArgsFieldAcce
 | [ldstr](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.emit.opcodes.ldstr) | 0x72   | ✅      |            |      |
 | [ldtoken](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.emit.opcodes.ldtoken) | 0xd0   |        |            |      |
 | [ldvirtftn](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.emit.opcodes.ldvirtftn) | 0xfe07 |        |            |      |
-| [leave](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.emit.opcodes.leave) | 0xdd   |        |            |      |
-| [leave.s](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.emit.opcodes.leave_s) | 0xde   |        |            |      |
+| [leave](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.emit.opcodes.leave) | 0xdd   | ✅       |            |      |
+| [leave.s](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.emit.opcodes.leave_s) | 0xde   | ✅      |            |      |
 | [localloc](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.emit.opcodes.localloc) | 0xfe0f |        |            |      |
 | [mkrefany](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.emit.opcodes.mkrefany) | 0xc6   |        |            |      |
 | [mul](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.emit.opcodes.mul) | 0x5a   |        |            |      |

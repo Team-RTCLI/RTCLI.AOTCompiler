@@ -51,7 +51,7 @@ namespace RTCLI.AOTCompiler.Metadata
     {
         public string CXXTypeName => MetadataContext.GetTypeInformation(definition.FieldType).CXXTypeName;
         public string CXXTypeNameShort => MetadataContext.GetTypeInformation(definition.FieldType).CXXTypeNameShort;
-        public string CXXFieldDeclaration => $"{CXXTypeName} {Name};";
+        public string CXXFieldDeclaration => $"{CXXTypeName} {Utilities.GetCXXValidTokenString(Name)};";
     }
 
 
