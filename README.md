@@ -217,8 +217,8 @@ RTCLI::System::Void RTCLI::RTCLITestCase::TestCaseClass::MethodWithArgsFieldAcce
 | [ldstr](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.emit.opcodes.ldstr) | 0x72   | ✅      |            |      |
 | [ldtoken](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.emit.opcodes.ldtoken) | 0xd0   |        |            |      |
 | [ldvirtftn](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.emit.opcodes.ldvirtftn) | 0xfe07 |        |            |      |
-| [leave](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.emit.opcodes.leave) | 0xdd   |        |            |      |
-| [leave.s](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.emit.opcodes.leave_s) | 0xde   |        |            |      |
+| [leave](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.emit.opcodes.leave) | 0xdd   | ✅       |            |      |
+| [leave.s](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.emit.opcodes.leave_s) | 0xde   | ✅      |            |      |
 | [localloc](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.emit.opcodes.localloc) | 0xfe0f |        |            |      |
 | [mkrefany](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.emit.opcodes.mkrefany) | 0xc6   |        |            |      |
 | [mul](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.emit.opcodes.mul) | 0x5a   |        |            |      |
