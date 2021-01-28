@@ -5,7 +5,7 @@
 - 打开sln，以RTCLI.AOTCompiler为启动项目;
 - usage: RTCLI.AOTCompiler.exe <output_path> <assembly_path>;
 - 内置了一个TestCase项目进行开发前期代码生成测试，在调试选项中为RTCLI.AOTCompiler附加调试参数$(SolutionDir)RTCLI.Generated $(SolutionDir)RTCLI.TestCase/bin/Debug/netstandardX.X/RTCLI.TestCase.dll;
-- 对于netstandard和mscorlib的分析，需要手动提供期望的目标版本dll。请Everything定位到netstandard.dll，将其路径下的全部dll拷贝到TCLI.AOTCompiler的运行目录下。
+- 对于netstandard和mscorlib的分析，需要手动提供期望的目标版本dll。请Everything定位到netstandard.dll，将其路径下的全部dll拷贝到RTCLI.AOTCompiler的运行目录下。
 
 source：
 ``` c#
