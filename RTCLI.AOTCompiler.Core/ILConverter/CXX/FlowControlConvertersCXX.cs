@@ -12,8 +12,9 @@ namespace RTCLI.AOTCompiler.ILConverters
     {
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
+            Instruction to = instruction.Operand as Instruction;
             var op = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
-            return $"goto {instruction.GetLabel()};";
+            return $"goto {to.GetLabel()};";
         }
         public OpCode TargetOpCode() => OpCodes.Br;
     }
@@ -21,8 +22,9 @@ namespace RTCLI.AOTCompiler.ILConverters
     {
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
+            Instruction to = instruction.Operand as Instruction;
             var op = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
-            return $"goto {instruction.GetLabel()};";
+            return $"goto {to.GetLabel()};";
         }
         public OpCode TargetOpCode() => OpCodes.Br_S;
     }
@@ -31,8 +33,10 @@ namespace RTCLI.AOTCompiler.ILConverters
     {
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
+            Instruction to = instruction.Operand as Instruction;
             var op = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
-            return $"if (RTCLI::Cond({op})) goto {instruction.GetLabel()};";
+            return $"if (RTCLI::Cond({op}))" +
+                $" goto {to.GetLabel()};";
         }
         public OpCode TargetOpCode() => OpCodes.Brtrue;
     }
@@ -40,8 +44,9 @@ namespace RTCLI.AOTCompiler.ILConverters
     {
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
+            Instruction to = instruction.Operand as Instruction;
             var op = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
-            return $"if (RTCLI::Cond({op})) goto {instruction.GetLabel()};";
+            return $"if (RTCLI::Cond({op})) goto {to.GetLabel()};";
         }
         public OpCode TargetOpCode() => OpCodes.Brtrue_S;
     }
@@ -50,8 +55,9 @@ namespace RTCLI.AOTCompiler.ILConverters
     {
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
+            Instruction to = instruction.Operand as Instruction;
             var op = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
-            return $"if (!RTCLI::Cond({op})) goto {instruction.GetLabel()};";
+            return $"if (!RTCLI::Cond({op})) goto {to.GetLabel()};";
         }
         public OpCode TargetOpCode() => OpCodes.Brfalse;
     }
@@ -59,8 +65,9 @@ namespace RTCLI.AOTCompiler.ILConverters
     {
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
+            Instruction to = instruction.Operand as Instruction;
             var op = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
-            return $"if (!RTCLI::Cond({op})) goto {instruction.GetLabel()};";
+            return $"if (!RTCLI::Cond({op})) goto {to.GetLabel()};";
         }
         public OpCode TargetOpCode() => OpCodes.Brfalse_S;
     }
