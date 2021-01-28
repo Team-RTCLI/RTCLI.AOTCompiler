@@ -29,7 +29,10 @@ namespace RTCLI.AOTCompiler.ILConverters
             {
                 string caller = $"(({GetMethodOwner(mtd, methodContext)}&)" // Caster: ((DeclaringType&)
                     + $"{(methodContext as CXXMethodTranslateContext).CmptStackPopObject})."; // Caller: caller)
-                string callBody = $"{caller}{mtd.GetMetaInformation(methodContext.MetadataContext).CXXMethodNameShort}({args});"; // Method Call body.
+                string callBody =
+                    $"{caller}" +
+                    (Virt ? "" : $"{GetMethodOwner(mtd, methodContext)}::") +
+                    $"{mtd.GetMetaInformation(methodContext.MetadataContext).CXXMethodNameShort}({args});"; // Method Call body.
                 return (mtd.ReturnType.FullName != "System.Void" ? $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = " : "")
                     + callBody;
             }
@@ -42,6 +45,7 @@ namespace RTCLI.AOTCompiler.ILConverters
             return "ERROR_METHOD_NAME";
         }
     }
+
     public class CallConverterCXX : ICXXILConverter
     {
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)

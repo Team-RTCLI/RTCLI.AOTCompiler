@@ -52,7 +52,30 @@ namespace RTCLI.AOTCompiler.ILConverters
         {
             var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
-            return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = RTCLI::Add({op0}, {op1});";
+            return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject}" +
+                $" = RTCLI::Add({op0}, {op1});";
+        }
+    }
+    public class Add_OvfConverterCXX : ICXXILConverter
+    {
+        public OpCode TargetOpCode() => OpCodes.Add_Ovf;
+        public string Convert(Instruction instruction, MethodTranslateContext methodContext)
+        {
+            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject}" +
+                $" = RTCLI::Add_Ovf({op0}, {op1});";
+        }
+    }
+    public class Add_Ovf_UnConverterCXX : ICXXILConverter
+    {
+        public OpCode TargetOpCode() => OpCodes.Add_Ovf_Un;
+        public string Convert(Instruction instruction, MethodTranslateContext methodContext)
+        {
+            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject}" +
+                $" = RTCLI::Add_Ovf({op0}, {op1});";
         }
     }
 
@@ -63,9 +86,33 @@ namespace RTCLI.AOTCompiler.ILConverters
         {
             var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
-            return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = RTCLI::Sub({op0}, {op1});";
+            return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject}" +
+                $" = RTCLI::Sub({op0}, {op1});";
         }
     }
+    public class Sub_OvfConverterCXX : ICXXILConverter
+    {
+        public OpCode TargetOpCode() => OpCodes.Sub_Ovf;
+        public string Convert(Instruction instruction, MethodTranslateContext methodContext)
+        {
+            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject}" +
+                $" = RTCLI::Sub_Ovf({op0}, {op1});";
+        }
+    }
+    public class Sub_Ovf_UnConverterCXX : ICXXILConverter
+    {
+        public OpCode TargetOpCode() => OpCodes.Sub_Ovf_Un;
+        public string Convert(Instruction instruction, MethodTranslateContext methodContext)
+        {
+            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject}" +
+                $" = RTCLI::Sub_Ovf({op0}, {op1});";
+        }
+    }
+
     public class PopConverterCXX : ICXXILConverter
     {
         public OpCode TargetOpCode() => OpCodes.Pop;

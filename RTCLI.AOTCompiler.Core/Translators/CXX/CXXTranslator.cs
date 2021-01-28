@@ -39,8 +39,10 @@ namespace RTCLI.AOTCompiler.Translators
                 {
                     var newConv = System.Activator.CreateInstance(type) as ILConverters.ICXXILConverter;
                     convertersCXX.Add(newConv.TargetOpCode(), newConv);
+                    System.Console.WriteLine($"Registered: {newConv.TargetOpCode()}");
                 }
             }
+            System.Console.WriteLine($"Total Converters: {convertersCXX.Count}/{Enum.GetValues(typeof(Code)).Length}");
         }
 
         private string NoteILInstruction(Instruction inst, MethodTranslateContext methodContext)
