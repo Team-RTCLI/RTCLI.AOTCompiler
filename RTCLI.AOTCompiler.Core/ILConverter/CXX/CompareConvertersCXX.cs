@@ -8,6 +8,18 @@ using RTCLI.AOTCompiler.Metadata;
 
 namespace RTCLI.AOTCompiler.ILConverters
 {
+    public class CgtConverterCXX : ICXXILConverter
+    {
+        public OpCode TargetOpCode() => OpCodes.Cgt;
+        public string Convert(Instruction instruction, MethodTranslateContext methodContext)
+        {
+            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject}" +
+                $" = RTCLI::Cgt({op0}, {op1});";
+        }
+    }
+
     public class Cgt_UnConverterCXX : ICXXILConverter
     {
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
@@ -18,5 +30,41 @@ namespace RTCLI.AOTCompiler.ILConverters
         }
 
         public OpCode TargetOpCode() => OpCodes.Cgt_Un;
+    }
+
+    public class CeqConverterCXX : ICXXILConverter
+    {
+        public OpCode TargetOpCode() => OpCodes.Ceq;
+        public string Convert(Instruction instruction, MethodTranslateContext methodContext)
+        {
+            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject}" +
+                $" = RTCLI::Ceq({op0}, {op1});";
+        }
+    }
+
+    public class CltConverterCXX : ICXXILConverter
+    {
+        public OpCode TargetOpCode() => OpCodes.Clt;
+        public string Convert(Instruction instruction, MethodTranslateContext methodContext)
+        {
+            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject}" +
+                $" = RTCLI::Clt({op0}, {op1});";
+        }
+    }
+
+    public class Clt_UnConverterCXX : ICXXILConverter
+    {
+        public OpCode TargetOpCode() => OpCodes.Clt_Un;
+        public string Convert(Instruction instruction, MethodTranslateContext methodContext)
+        {
+            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject}" +
+                $" = RTCLI::Clt_Un({op0}, {op1});";
+        }
     }
 }
