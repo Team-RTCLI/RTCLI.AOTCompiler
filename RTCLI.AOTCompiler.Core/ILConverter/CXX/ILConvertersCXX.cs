@@ -31,6 +31,19 @@ namespace RTCLI.AOTCompiler.ILConverters
         }
         public string Convert(Instruction instruction, MethodTranslateContext methodContext) => ParseParams(instruction, methodContext);
     }
+
+    public class NewarrConverterCXX : ICXXILConverter
+    {
+        public OpCode TargetOpCode() => OpCodes.Newarr;
+        public string Convert(Instruction instruction, MethodTranslateContext methodContext)
+        {
+            var typeReference = instruction.Operand as TypeReference;
+            TypeInformation typeInformation = methodContext.TranslateContext.MetadataContext.GetTypeInformation(typeReference);
+            return $"RTCLI::ArrayT<{typeInformation.CXXTypeName}>& {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = \n" +
+                $"\t\t*RTCLI::newarr<{typeInformation.CXXTypeName}>({(methodContext as CXXMethodTranslateContext).CmptStackPopObject});";
+        }
+    }
+
     public class LdstrConverterCXX : ICXXILConverter
     {
         public OpCode TargetOpCode() => OpCodes.Ldstr;
