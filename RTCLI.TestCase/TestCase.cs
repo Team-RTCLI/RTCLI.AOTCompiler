@@ -73,14 +73,14 @@ namespace RTCLITestCase
             argInt = list[0];
             argInt = list[argInt];
         }
-
-        public delegate void DelegateTest(params int[] args);
-        public DelegateTest asd;
-        public Action<int[]> asd2;
-        public void ParamsTest(params int[] args)
+        public float StructTest(PureStruct arg)
         {
-            asd.Invoke(args);
-            asd2(args);
+            PureStruct local = new PureStruct();
+            local.name = "asd";
+            arg = local;
+            arg = new PureStruct();
+            arg = new PureStruct { val = 10f };
+            return arg.val;
         }
         RefClass refed;
     }

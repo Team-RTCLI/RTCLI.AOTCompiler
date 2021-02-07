@@ -43,7 +43,7 @@ namespace RTCLI.AOTCompiler.ILConverters
     }
     public class CpobjConverterCXX : ICXXILConverter
     {
-        public OpCode TargetOpCode() => OpCodes.Cpblk;
+        public OpCode TargetOpCode() => OpCodes.Cpobj;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
             var typeReference = instruction.Operand as TypeReference;
@@ -96,9 +96,10 @@ namespace RTCLI.AOTCompiler.ILConverters
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
             var typeReference = instruction.Operand as TypeReference;
+            var len = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             TypeInformation typeInformation = methodContext.TranslateContext.MetadataContext.GetTypeInformation(typeReference);
-            return $"RTCLI::ArrayT<{typeInformation.CXXTypeName}>& {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = \n" +
-                $"\t\t*RTCLI::newarr<{typeInformation.CXXTypeName}>({(methodContext as CXXMethodTranslateContext).CmptStackPopObject});";
+            return $"RTCLI::ElementArray<{typeInformation.CXXTypeName}>& {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = \n" +
+                $"\t\t*RTCLI::newarr<{typeInformation.CXXTypeName}>({len});";
         }
     }
     public class LdlenConverterCXX : ICXXILConverter

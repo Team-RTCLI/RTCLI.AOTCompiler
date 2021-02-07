@@ -44,7 +44,7 @@ namespace RTCLI.AOTCompiler.ILConverters
     {
         public OpCode TargetOpCode() => OpCodes.Stloc_S;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
-            => StlocConvert.Convert(instruction, methodContext, (instruction.Operand as Mono.Cecil.Cil.VariableDefinition).Index);
+            => StlocConvert.Convert(instruction, methodContext, (instruction.Operand as VariableDefinition).Index);
     }
 
 }

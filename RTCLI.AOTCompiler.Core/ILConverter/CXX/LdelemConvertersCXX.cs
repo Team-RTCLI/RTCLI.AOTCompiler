@@ -15,7 +15,7 @@ namespace RTCLI.AOTCompiler.ILConverters
             var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject}" +
-                $" = RTCLI::ArrayGet<{type}>({op0}, {op1});";
+                $" = RTCLI::ArrayGet<{type}>({op1}, {op0});";
         }
     }
 

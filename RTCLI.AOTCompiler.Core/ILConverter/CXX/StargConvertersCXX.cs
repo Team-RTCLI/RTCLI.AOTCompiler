@@ -12,12 +12,12 @@ namespace RTCLI.AOTCompiler.ILConverters
     {
         public OpCode TargetOpCode() => OpCodes.Starg;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
-            => $"{methodContext.MethodInfo.Parameters[(instruction.Operand as Mono.Cecil.Cil.VariableDefinition).Index].Name} = {(methodContext as CXXMethodTranslateContext).CmptStackPopObject};";
+            => $"{methodContext.MethodInfo.Parameters[(instruction.Operand as ParameterDefinition).Index].Name} = {(methodContext as CXXMethodTranslateContext).CmptStackPopObject};";
     }
     public class Starg_SConverterCXX : ICXXILConverter
     {
         public OpCode TargetOpCode() => OpCodes.Starg_S;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
-            => $"{methodContext.MethodInfo.Parameters[(instruction.Operand as Mono.Cecil.Cil.VariableDefinition).Index].Name} = {(methodContext as CXXMethodTranslateContext).CmptStackPopObject};";
+            => $"{methodContext.MethodInfo.Parameters[(instruction.Operand as ParameterDefinition).Index].Name} = {(methodContext as CXXMethodTranslateContext).CmptStackPopObject};";
     }
 }
