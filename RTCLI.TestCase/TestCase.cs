@@ -73,6 +73,15 @@ namespace RTCLITestCase
             argInt = list[0];
             argInt = list[argInt];
         }
+
+        public delegate void DelegateTest(params int[] args);
+        public DelegateTest asd;
+        public Action<int[]> asd2;
+        public void ParamsTest(params int[] args)
+        {
+            asd.Invoke(args);
+            asd2(args);
+        }
         RefClass refed;
     }
 }

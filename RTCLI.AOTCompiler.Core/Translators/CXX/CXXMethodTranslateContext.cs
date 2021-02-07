@@ -43,6 +43,13 @@ namespace RTCLI.AOTCompiler.Translators
                 return result;
             }
         }
+        public string CmptStackPeek
+        {
+            get
+            {
+                return $"s{CmptStack.Peek()}";
+            }
+        }
         private bool CmptStackValidate()
         {
             return CmptStack.Count > 0;

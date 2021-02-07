@@ -58,4 +58,10 @@ namespace RTCLI.AOTCompiler.ILConverters
             => MethodCallConvert.Convert(instruction, methodContext, true);
         public OpCode TargetOpCode() => OpCodes.Callvirt;
     }
+    public class TailcallConverterCXX : ICXXILConverter
+    {
+        public string Convert(Instruction instruction, MethodTranslateContext methodContext)
+            => "";
+        public OpCode TargetOpCode() => OpCodes.Tail;
+    }
 }

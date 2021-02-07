@@ -31,7 +31,65 @@ namespace RTCLI.AOTCompiler.ILConverters
         }
         public string Convert(Instruction instruction, MethodTranslateContext methodContext) => ParseParams(instruction, methodContext);
     }
+    public class InitobjConverterCXX : ICXXILConverter
+    {
+        public OpCode TargetOpCode() => OpCodes.Initobj;
+        public string Convert(Instruction instruction, MethodTranslateContext methodContext)
+        {
+            var typeReference = instruction.Operand as TypeReference;
+            TypeInformation typeInformation = methodContext.TranslateContext.MetadataContext.GetTypeInformation(typeReference);
+            return $"RTCLI::initobj<{typeInformation.CXXTypeName}>({(methodContext as CXXMethodTranslateContext).CmptStackPopObject});";
+        }
+    }
+    public class CpobjConverterCXX : ICXXILConverter
+    {
+        public OpCode TargetOpCode() => OpCodes.Cpblk;
+        public string Convert(Instruction instruction, MethodTranslateContext methodContext)
+        {
+            var typeReference = instruction.Operand as TypeReference;
+            var typeDefinition = instruction.Operand as TypeDefinition;
 
+            TypeInformation typeInformation = methodContext.TranslateContext.MetadataContext.GetTypeInformation(typeReference);
+            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            return $"RTCLI::cpobj<{typeInformation.CXXTypeName}>({op0}, {op1});";
+        }
+    }
+    public class DupConverterCXX : ICXXILConverter
+    {
+        public OpCode TargetOpCode() => OpCodes.Dup;
+        public string Convert(Instruction instruction, MethodTranslateContext methodContext)
+        {
+            var typeReference = instruction.Operand as TypeReference;
+            var typeDefinition = instruction.Operand as TypeDefinition;
+
+            TypeInformation typeInformation = methodContext.TranslateContext.MetadataContext.GetTypeInformation(typeReference);
+            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPeek;
+            return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = RTCLI::dup({op0});";
+        }
+    }
+    public class InitblkConverterCXX : ICXXILConverter
+    {
+        public OpCode TargetOpCode() => OpCodes.Initblk;
+        public string Convert(Instruction instruction, MethodTranslateContext methodContext)
+        {
+            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            return $"RTCLI::initblk({op0}, {op1}, {op2});";
+        }
+    }
+    public class CpblkConverterCXX : ICXXILConverter
+    {
+        public OpCode TargetOpCode() => OpCodes.Cpblk;
+        public string Convert(Instruction instruction, MethodTranslateContext methodContext)
+        {
+            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            return $"RTCLI::cpblk({op0}, {op1}, {op2});";
+        }
+    }
     public class NewarrConverterCXX : ICXXILConverter
     {
         public OpCode TargetOpCode() => OpCodes.Newarr;
@@ -41,6 +99,37 @@ namespace RTCLI.AOTCompiler.ILConverters
             TypeInformation typeInformation = methodContext.TranslateContext.MetadataContext.GetTypeInformation(typeReference);
             return $"RTCLI::ArrayT<{typeInformation.CXXTypeName}>& {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = \n" +
                 $"\t\t*RTCLI::newarr<{typeInformation.CXXTypeName}>({(methodContext as CXXMethodTranslateContext).CmptStackPopObject});";
+        }
+    }
+    public class LdlenConverterCXX : ICXXILConverter
+    {
+        public OpCode TargetOpCode() => OpCodes.Ldlen;
+        public string Convert(Instruction instruction, MethodTranslateContext methodContext)
+        {
+            var arr = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = RTCLI::ArrayLen({arr});";
+        }
+    }
+    public class IsinstConverterCXX : ICXXILConverter
+    {
+        public OpCode TargetOpCode() => OpCodes.Isinst;
+        public string Convert(Instruction instruction, MethodTranslateContext methodContext)
+        {
+            var typeReference = instruction.Operand as TypeReference;
+            TypeInformation typeInformation = methodContext.TranslateContext.MetadataContext.GetTypeInformation(typeReference);
+            return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = \n" +
+                $"\t\tRTCLI::Isinst<{typeInformation.CXXTypeName}>({(methodContext as CXXMethodTranslateContext).CmptStackPopObject});";
+        }
+    }
+    public class CastclassConverterCXX : ICXXILConverter
+    {
+        public OpCode TargetOpCode() => OpCodes.Castclass;
+        public string Convert(Instruction instruction, MethodTranslateContext methodContext)
+        {
+            var typeReference = instruction.Operand as TypeReference;
+            TypeInformation typeInformation = methodContext.TranslateContext.MetadataContext.GetTypeInformation(typeReference);
+            return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = \n" +
+                $"\t\tRTCLI::Castclass<{typeInformation.CXXTypeName}>({(methodContext as CXXMethodTranslateContext).CmptStackPopObject});";
         }
     }
 
@@ -343,6 +432,104 @@ namespace RTCLI.AOTCompiler.ILConverters
                 return $"{obj}.{Utilities.GetCXXValidTokenString(fld.Name)} = {val};";
             }
             return "";
+        }
+    }
+
+    public class LdfldConverterCXX : ICXXILConverter
+    {
+        public OpCode TargetOpCode() => OpCodes.Ldfld;
+        public string Convert(Instruction instruction, MethodTranslateContext methodContext)
+        {
+            var obj = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op = instruction.Operand;
+
+            if (op is PropertyReference prop)
+            {
+                return "RTCLI::unimplemented_il(\"ldfld prop\");";
+            }
+            else if (op is FieldReference fld)
+            {
+
+                return $"auto& {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = {obj}.{Utilities.GetCXXValidTokenString(fld.Name)};";
+            }
+            return "";
+        }
+    }
+
+    public class LdsfldConverterCXX : ICXXILConverter
+    {
+        public OpCode TargetOpCode() => OpCodes.Ldsfld;
+        public string Convert(Instruction instruction, MethodTranslateContext methodContext)
+        {
+            var fld = instruction.Operand as FieldReference;
+            TypeInformation typeInformation = methodContext.TranslateContext.MetadataContext.GetTypeInformation(fld.DeclaringType);
+            return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = {typeInformation.CXXTypeName}::{Utilities.GetCXXValidTokenString(fld.Name)};";
+        }
+    }
+
+    public class LdsfldaConverterCXX : ICXXILConverter
+    {
+        public OpCode TargetOpCode() => OpCodes.Ldsflda;
+        public string Convert(Instruction instruction, MethodTranslateContext methodContext)
+        {
+            var fld = instruction.Operand as FieldReference;
+            TypeInformation typeInformation = methodContext.TranslateContext.MetadataContext.GetTypeInformation(fld.DeclaringType);
+            return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = RTCLI_ADDRESSOF({typeInformation.CXXTypeName}::{Utilities.GetCXXValidTokenString(fld.Name)});";
+        }
+    }
+
+    public class StsfldConverterCXX : ICXXILConverter
+    {
+        public OpCode TargetOpCode() => OpCodes.Ldflda;
+        public string Convert(Instruction instruction, MethodTranslateContext methodContext)
+        {
+            var fld = instruction.Operand as FieldReference;
+            TypeInformation typeInformation = methodContext.TranslateContext.MetadataContext.GetTypeInformation(fld.DeclaringType);
+            return $"{typeInformation.CXXTypeName}::{Utilities.GetCXXValidTokenString(fld.Name)} = {(methodContext as CXXMethodTranslateContext).CmptStackPopObject};";
+        }
+    }
+
+    public class SizeofConverterCXX : ICXXILConverter
+    {
+        public OpCode TargetOpCode() => OpCodes.Sizeof;
+        public string Convert(Instruction instruction, MethodTranslateContext methodContext)
+        {
+            var op = instruction.Operand;
+            if (op is TypeDefinition typeDefinition)
+            {
+                return "RTCLI::unimplemented_il(\"sizeof typedef\");";
+            }
+            else if (op is TypeReference typeReference)
+            {
+                TypeInformation typeInformation = methodContext.TranslateContext.MetadataContext.GetTypeInformation(typeReference);
+                return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = RTCLI_SIZEOF({typeInformation.CXXTypeName});";
+            }
+            else
+                return "";
+        }
+    }
+
+    public class LdobjConverterCXX : ICXXILConverter
+    {
+        public OpCode TargetOpCode() => OpCodes.Ldobj;
+        public string Convert(Instruction instruction, MethodTranslateContext methodContext)
+        {
+            var typeReference = instruction.Operand as TypeReference;
+            TypeInformation typeInformation = methodContext.TranslateContext.MetadataContext.GetTypeInformation(typeReference);
+            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            return $"auto& {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = RTCLI::ldobj<{typeInformation.CXXTypeName}>({op0});";
+        }
+    }
+    public class StobjConverterCXX : ICXXILConverter
+    {
+        public OpCode TargetOpCode() => OpCodes.Stobj;
+        public string Convert(Instruction instruction, MethodTranslateContext methodContext)
+        {
+            var typeReference = instruction.Operand as TypeReference;
+            TypeInformation typeInformation = methodContext.TranslateContext.MetadataContext.GetTypeInformation(typeReference);
+            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            return $"RTCLI::stobj<{typeInformation.CXXTypeName}>({op0}, {op1});";
         }
     }
 }
