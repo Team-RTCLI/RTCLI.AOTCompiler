@@ -18,7 +18,7 @@ namespace RTCLI.AOTCompiler.Metadata
                 if (IsArray)
                     return $"RTCLI::System::ElementArray<{elementType.CXXTypeName}>";
                 if (IsGenericInstance)
-                    return $"{genericDeclaringType.CXXTypeName}<{string.Join(',', genericArgumentTypes.Select(a=>a.CXXTypeName))}>";
+                    return $"{genericDeclaringType.CXXTypeName}<{string.Join(',', genericArgumentTypes.Select(a => a.CXXTypeName))}>";
                 else return "RTCLI::" + string.Join("::", FullName.Split('.', '/')).Replace("<>", "__").Replace('`', '_'); ;
             }
         }
@@ -74,5 +74,11 @@ namespace RTCLI.AOTCompiler.Metadata
             $"{Utilities.GetCXXValidTokenString(Name)};";
     }
 
+    public partial class VariableInformation
+    {
+        public string CXXTypeName => MetadataContext.GetTypeInformation(Definition.VariableType).CXXTypeName;
 
+        public string CXXVarDeclaration => this.Definition.VariableType.IsValueType ? $"{CXXTypeName}" : $"{CXXTypeName}&";
+        public string CXXVarInitVal => this.Definition.VariableType.IsValueType ? $"{CXXVarDeclaration}()" : $"({CXXVarDeclaration})RTCLI::null";
+    }
 }

@@ -61,7 +61,7 @@ namespace RTCLI.AOTCompiler.Translators
                 : $"RTCLI::unimplemented_il(\"{ inst.ToString()}\"); //{inst.ToString()}";
         }
 
-        private string EnvIncludes => "#include <RTCLI.h>";
+        private string EnvIncludes => "#include <RTCLI/RTCLI.hpp>";
         public void WriteTypeRecursively(CodeTextWriter codeWriter, Metadata.TypeInformation type)
         {
             using (var classScope = new CXXScopeDisposer(codeWriter,
@@ -126,7 +126,7 @@ namespace RTCLI.AOTCompiler.Translators
                 codeWriter.indent();
                 foreach (var localVar in method.LocalVariables)
                 {
-                    codeWriter.WriteLine($"{localVar.CXXTypeName} v{localVar.Index};");
+                    codeWriter.WriteLine($"{localVar.CXXVarDeclaration} v{localVar.Index} = {localVar.CXXVarInitVal};");
                 }
                 codeWriter.WriteLine("template<bool InitLocals> static void Init(){};//Active with MethodBody.InitLocals Property.");
                 codeWriter.unindent();
@@ -139,8 +139,8 @@ namespace RTCLI.AOTCompiler.Translators
                 codeWriter.WriteLine("{");
                 // [2-2-2] Code Body
                 codeWriter.indent();
-                //codeWriter.WriteLine($"{method.CXXStackName} stack;");
-                //codeWriter.WriteLine($"stack.Init<{method.InitLocals.ToString().ToLower()}>();");
+                codeWriter.WriteLine($"{method.CXXStackName} stack;");
+                codeWriter.WriteLine($"stack.Init<{method.InitLocals.ToString().ToLower()}>();");
                 foreach (var instruction in method.Body.Instructions)
                 {
                     codeWriter.WriteLine(NoteILInstruction(instruction, methodContext));

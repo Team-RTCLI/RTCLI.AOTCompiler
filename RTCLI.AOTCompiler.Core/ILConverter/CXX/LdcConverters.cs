@@ -13,22 +13,22 @@ namespace RTCLI.AOTCompiler.ILConverters
         public static string I4Convert(Instruction instruction, MethodTranslateContext methodContext, Int32 val)
         {
             CXXMethodTranslateContext ctx = methodContext as CXXMethodTranslateContext;
-            return $"{ctx.CmptStackPushObject} = RTCLI::StaticCast<{/*ctx.MetadataContext.UInt32Type.CXXTypeName*/"RTCLI::System::Int32"}>({val});";
+            return $"RTCLI::System::Int32 {ctx.CmptStackPushObject} = RTCLI::StaticCast<{/*ctx.MetadataContext.UInt32Type.CXXTypeName*/"RTCLI::System::Int32"}>({val});";
         }
         public static string I8Convert(Instruction instruction, MethodTranslateContext methodContext, Int64 val)
         {
             CXXMethodTranslateContext ctx = methodContext as CXXMethodTranslateContext;
-            return $"{ctx.CmptStackPushObject} = RTCLI::StaticCast<{/*ctx.MetadataContext.UInt32Type.CXXTypeName*/"RTCLI::System::Int64"}>({val});";
+            return $"RTCLI::System::Int64 {ctx.CmptStackPushObject} = RTCLI::StaticCast<{/*ctx.MetadataContext.UInt32Type.CXXTypeName*/"RTCLI::System::Int64"}>({val});";
         }
         public static string R4Convert(Instruction instruction, MethodTranslateContext methodContext, Single val)
         {
             CXXMethodTranslateContext ctx = methodContext as CXXMethodTranslateContext;
-            return $"{ctx.CmptStackPushObject} = RTCLI::StaticCast<{/*ctx.MetadataContext.UInt32Type.CXXTypeName*/"RTCLI::System::Single"}>({val});";
+            return $"RTCLI::System::Single {ctx.CmptStackPushObject} = RTCLI::StaticCast<{/*ctx.MetadataContext.UInt32Type.CXXTypeName*/"RTCLI::System::Single"}>({val});";
         }
         public static string R8Convert(Instruction instruction, MethodTranslateContext methodContext, Double val)
         {
             CXXMethodTranslateContext ctx = methodContext as CXXMethodTranslateContext;
-            return $"{ctx.CmptStackPushObject} = RTCLI::StaticCast<{/*ctx.MetadataContext.UInt32Type.CXXTypeName*/"RTCLI::System::Double"}>({val});";
+            return $"RTCLI::System::Double {ctx.CmptStackPushObject} = RTCLI::StaticCast<{/*ctx.MetadataContext.UInt32Type.CXXTypeName*/"RTCLI::System::Double"}>({val});";
         }
     }
 
