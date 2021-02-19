@@ -12,11 +12,11 @@ namespace RTCLI.AOTCompiler.ILConverters
     {
         public static string Convert(Instruction instruction, MethodTranslateContext methodContext, string type)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
-            var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op3 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             return $"auto " +
-                $" = RTCLI::ArraySet<{type}>({op2}, {op1}, {op0});";
+                $" = RTCLI::ArraySet<{type}>({op1}, {op2}, {op3});";
         }
     }
 

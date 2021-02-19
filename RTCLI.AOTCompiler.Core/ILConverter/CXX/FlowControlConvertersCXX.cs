@@ -94,10 +94,10 @@ namespace RTCLI.AOTCompiler.ILConverters
     {
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             Instruction to = instruction.Operand as Instruction;
-            return $"if(RTCLI::Ceq({op0}, {op1})) goto {to.GetLabel()};";
+            return $"if(RTCLI::Ceq({op1}, {op2})) goto {to.GetLabel()};";
         }
         public OpCode TargetOpCode() => OpCodes.Beq;
     }
@@ -105,10 +105,10 @@ namespace RTCLI.AOTCompiler.ILConverters
     {
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             Instruction to = instruction.Operand as Instruction;
-            return $"if(RTCLI::Ceq({op0}, {op1})) goto {to.GetLabel()};";
+            return $"if(RTCLI::Ceq({op1}, {op2})) goto {to.GetLabel()};";
         }
         public OpCode TargetOpCode() => OpCodes.Beq_S;
     }
@@ -117,10 +117,10 @@ namespace RTCLI.AOTCompiler.ILConverters
     {
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             Instruction to = instruction.Operand as Instruction;
-            return $"if(!RTCLI::Clt({op0}, {op1})) goto {to.GetLabel()};";
+            return $"if(!RTCLI::Clt({op1}, {op2})) goto {to.GetLabel()};";
         }
         public OpCode TargetOpCode() => OpCodes.Bge;
     }
@@ -128,10 +128,10 @@ namespace RTCLI.AOTCompiler.ILConverters
     {
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             Instruction to = instruction.Operand as Instruction;
-            return $"if(!RTCLI::Clt({op0}, {op1})) goto {to.GetLabel()};";
+            return $"if(!RTCLI::Clt({op1}, {op2})) goto {to.GetLabel()};";
         }
         public OpCode TargetOpCode() => OpCodes.Bge_S;
     }
@@ -139,10 +139,10 @@ namespace RTCLI.AOTCompiler.ILConverters
     {
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             Instruction to = instruction.Operand as Instruction;
-            return $"if(!RTCLI::Clt_Un({op0}, {op1})) goto {to.GetLabel()};";
+            return $"if(!RTCLI::Clt_Un({op1}, {op2})) goto {to.GetLabel()};";
         }
         public OpCode TargetOpCode() => OpCodes.Bge_Un;
     }
@@ -150,10 +150,10 @@ namespace RTCLI.AOTCompiler.ILConverters
     {
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             Instruction to = instruction.Operand as Instruction;
-            return $"if(!RTCLI::Clt_Un({op0}, {op1})) goto {to.GetLabel()};";
+            return $"if(!RTCLI::Clt_Un({op1}, {op2})) goto {to.GetLabel()};";
         }
         public OpCode TargetOpCode() => OpCodes.Bge_Un_S;
     }
@@ -162,10 +162,10 @@ namespace RTCLI.AOTCompiler.ILConverters
     {
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             Instruction to = instruction.Operand as Instruction;
-            return $"if(RTCLI::Cgt({op0}, {op1})) goto {to.GetLabel()};";
+            return $"if(RTCLI::Cgt({op1}, {op2})) goto {to.GetLabel()};";
         }
         public OpCode TargetOpCode() => OpCodes.Bgt;
     }
@@ -173,10 +173,10 @@ namespace RTCLI.AOTCompiler.ILConverters
     {
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             Instruction to = instruction.Operand as Instruction;
-            return $"if(RTCLI::Cgt({op0}, {op1})) goto {to.GetLabel()};";
+            return $"if(RTCLI::Cgt({op1}, {op2})) goto {to.GetLabel()};";
         }
         public OpCode TargetOpCode() => OpCodes.Bgt_S;
     }
@@ -184,10 +184,10 @@ namespace RTCLI.AOTCompiler.ILConverters
     {
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             Instruction to = instruction.Operand as Instruction;
-            return $"if(RTCLI::Cgt_Un({op0}, {op1})) goto {to.GetLabel()};";
+            return $"if(RTCLI::Cgt_Un({op1}, {op2})) goto {to.GetLabel()};";
         }
         public OpCode TargetOpCode() => OpCodes.Bgt_Un;
     }
@@ -195,10 +195,10 @@ namespace RTCLI.AOTCompiler.ILConverters
     {
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             Instruction to = instruction.Operand as Instruction;
-            return $"if(RTCLI::Cgt_Un({op0}, {op1})) goto {to.GetLabel()};";
+            return $"if(RTCLI::Cgt_Un({op1}, {op2})) goto {to.GetLabel()};";
         }
         public OpCode TargetOpCode() => OpCodes.Bgt_Un_S;
     }
@@ -207,10 +207,10 @@ namespace RTCLI.AOTCompiler.ILConverters
     {
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             Instruction to = instruction.Operand as Instruction;
-            return $"if(!RTCLI::Cgt({op0}, {op1})) goto {to.GetLabel()};";
+            return $"if(!RTCLI::Cgt({op1}, {op2})) goto {to.GetLabel()};";
         }
         public OpCode TargetOpCode() => OpCodes.Ble;
     }
@@ -218,10 +218,10 @@ namespace RTCLI.AOTCompiler.ILConverters
     {
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             Instruction to = instruction.Operand as Instruction;
-            return $"if(!RTCLI::Cgt({op0}, {op1})) goto {to.GetLabel()};";
+            return $"if(!RTCLI::Cgt({op1}, {op2})) goto {to.GetLabel()};";
         }
         public OpCode TargetOpCode() => OpCodes.Ble_S;
     }
@@ -229,10 +229,10 @@ namespace RTCLI.AOTCompiler.ILConverters
     {
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             Instruction to = instruction.Operand as Instruction;
-            return $"if(!RTCLI::Cgt_Un({op0}, {op1})) goto {to.GetLabel()};";
+            return $"if(!RTCLI::Cgt_Un({op1}, {op2})) goto {to.GetLabel()};";
         }
         public OpCode TargetOpCode() => OpCodes.Ble_Un;
     }
@@ -240,24 +240,23 @@ namespace RTCLI.AOTCompiler.ILConverters
     {
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             Instruction to = instruction.Operand as Instruction;
-            return $"if(!RTCLI::Cgt_Un({op0}, {op1})) goto {to.GetLabel()};";
+            return $"if(!RTCLI::Cgt_Un({op1}, {op2})) goto {to.GetLabel()};";
         }
         public OpCode TargetOpCode() => OpCodes.Ble_Un_S;
     }
-
 
 
     public class BltConverterCXX : ICXXILConverter
     {
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             Instruction to = instruction.Operand as Instruction;
-            return $"if(RTCLI::Clt({op0}, {op1})) goto {to.GetLabel()};";
+            return $"if(RTCLI::Clt({op1}, {op2})) goto {to.GetLabel()};";
         }
         public OpCode TargetOpCode() => OpCodes.Blt;
     }
@@ -265,10 +264,10 @@ namespace RTCLI.AOTCompiler.ILConverters
     {
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             Instruction to = instruction.Operand as Instruction;
-            return $"if(RTCLI::Clt({op0}, {op1})) goto {to.GetLabel()};";
+            return $"if(RTCLI::Clt({op1}, {op2})) goto {to.GetLabel()};";
         }
         public OpCode TargetOpCode() => OpCodes.Blt_S;
     }
@@ -276,10 +275,10 @@ namespace RTCLI.AOTCompiler.ILConverters
     {
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             Instruction to = instruction.Operand as Instruction;
-            return $"if(RTCLI::Clt_Un({op0}, {op1})) goto {to.GetLabel()};";
+            return $"if(RTCLI::Clt_Un({op1}, {op2})) goto {to.GetLabel()};";
         }
         public OpCode TargetOpCode() => OpCodes.Blt_Un;
     }
@@ -287,22 +286,21 @@ namespace RTCLI.AOTCompiler.ILConverters
     {
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             Instruction to = instruction.Operand as Instruction;
-            return $"if(RTCLI::Clt_Un({op0}, {op1})) goto {to.GetLabel()};";
+            return $"if(RTCLI::Clt_Un({op1}, {op2})) goto {to.GetLabel()};";
         }
         public OpCode TargetOpCode() => OpCodes.Blt_Un_S;
     }
-
     public class Bne_UnConverterCXX : ICXXILConverter
     {
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             Instruction to = instruction.Operand as Instruction;
-            return $"if(!RTCLI::Ceq({op0}, {op1})) goto {to.GetLabel()};";
+            return $"if(!RTCLI::Ceq({op1}, {op2})) goto {to.GetLabel()};";
         }
         public OpCode TargetOpCode() => OpCodes.Bne_Un;
     }
@@ -310,10 +308,10 @@ namespace RTCLI.AOTCompiler.ILConverters
     {
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             Instruction to = instruction.Operand as Instruction; 
-            return $"if(!RTCLI::Ceq({op0}, {op1})) goto {to.GetLabel()};";
+            return $"if(!RTCLI::Ceq({op1}, {op2})) goto {to.GetLabel()};";
         }
         public OpCode TargetOpCode() => OpCodes.Bne_Un_S;
     }

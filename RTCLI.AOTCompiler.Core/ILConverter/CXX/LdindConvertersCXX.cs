@@ -12,8 +12,8 @@ namespace RTCLI.AOTCompiler.ILConverters
     {
         public static string Convert(Instruction instruction, MethodTranslateContext methodContext, string type)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
-            return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = RTCLI::Deref<{type}>({op0});";
+            var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = RTCLI::Deref<{type}>({op1});";
         }
     }
 

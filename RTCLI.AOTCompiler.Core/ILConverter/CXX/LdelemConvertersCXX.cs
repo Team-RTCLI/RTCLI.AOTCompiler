@@ -12,10 +12,10 @@ namespace RTCLI.AOTCompiler.ILConverters
     {
         public static string Convert(Instruction instruction, MethodTranslateContext methodContext, string type)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject}" +
-                $" = RTCLI::ArrayGet<{type}>({op1}, {op0});";
+                $" = RTCLI::ArrayGet<{type}>({op1}, {op2});";
         }
     }
 
@@ -105,10 +105,10 @@ namespace RTCLI.AOTCompiler.ILConverters
         public OpCode TargetOpCode() => OpCodes.Ldelema;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject}" +
-                $" = RTCLI::ArrayGet_Addr({op0}, {op1});";
+                $" = RTCLI::ArrayGet_Addr({op1}, {op2});";
         }
     }
 }

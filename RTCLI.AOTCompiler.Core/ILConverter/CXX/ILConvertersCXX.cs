@@ -47,9 +47,9 @@ namespace RTCLI.AOTCompiler.ILConverters
             var typeDefinition = instruction.Operand as TypeDefinition;
 
             TypeInformation typeInformation = methodContext.TranslateContext.MetadataContext.GetTypeInformation(typeReference);
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
-            return $"RTCLI::cpobj<{typeInformation.CXXTypeName}>({op0}, {op1});";
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            return $"RTCLI::cpobj<{typeInformation.CXXTypeName}>({op1}, {op2});";
         }
     }
     public class DupConverterCXX : ICXXILConverter
@@ -57,8 +57,8 @@ namespace RTCLI.AOTCompiler.ILConverters
         public OpCode TargetOpCode() => OpCodes.Dup;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPeek;
-            return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = RTCLI::dup({op0});";
+            var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPeek;
+            return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = RTCLI::dup({op1});";
         }
     }
     public class InitblkConverterCXX : ICXXILConverter
@@ -66,10 +66,10 @@ namespace RTCLI.AOTCompiler.ILConverters
         public OpCode TargetOpCode() => OpCodes.Initblk;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
-            var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op3 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
-            return $"RTCLI::initblk({op0}, {op1}, {op2});";
+            var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            return $"RTCLI::initblk({op1}, {op2}, {op3});";
         }
     }
     public class CpblkConverterCXX : ICXXILConverter
@@ -77,10 +77,10 @@ namespace RTCLI.AOTCompiler.ILConverters
         public OpCode TargetOpCode() => OpCodes.Cpblk;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
-            var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op3 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
-            return $"RTCLI::cpblk({op0}, {op1}, {op2});";
+            var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            return $"RTCLI::cpblk({op1}, {op2}, {op3});";
         }
     }
     public class NewarrConverterCXX : ICXXILConverter
@@ -146,10 +146,10 @@ namespace RTCLI.AOTCompiler.ILConverters
         public OpCode TargetOpCode() => OpCodes.Add;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject}" +
-                $" = RTCLI::Add({op0}, {op1});";
+                $" = RTCLI::Add({op1}, {op2});";
         }
     }
     public class Add_OvfConverterCXX : ICXXILConverter
@@ -157,10 +157,10 @@ namespace RTCLI.AOTCompiler.ILConverters
         public OpCode TargetOpCode() => OpCodes.Add_Ovf;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject}" +
-                $" = RTCLI::Add_Ovf({op0}, {op1});";
+                $" = RTCLI::Add_Ovf({op1}, {op2});";
         }
     }
     public class Add_Ovf_UnConverterCXX : ICXXILConverter
@@ -168,10 +168,10 @@ namespace RTCLI.AOTCompiler.ILConverters
         public OpCode TargetOpCode() => OpCodes.Add_Ovf_Un;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject}" +
-                $" = RTCLI::Add_Ovf({op0}, {op1});";
+                $" = RTCLI::Add_Ovf({op1}, {op2});";
         }
     }
 
@@ -180,9 +180,9 @@ namespace RTCLI.AOTCompiler.ILConverters
         public OpCode TargetOpCode() => OpCodes.Neg;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject}" +
-                $" = RTCLI::Neg({op0});";
+                $" = RTCLI::Neg({op1});";
         }
     }
 
@@ -191,10 +191,10 @@ namespace RTCLI.AOTCompiler.ILConverters
         public OpCode TargetOpCode() => OpCodes.Xor;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject}" +
-                $" = RTCLI::Xor({op0}, {op1});";
+                $" = RTCLI::Xor({op1}, {op2});";
         }
     }
 
@@ -203,10 +203,10 @@ namespace RTCLI.AOTCompiler.ILConverters
         public OpCode TargetOpCode() => OpCodes.Shl;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject}" +
-                $" = RTCLI::Shl({op0}, {op1});";
+                $" = RTCLI::Shl({op1}, {op2});";
         }
     }
 
@@ -215,10 +215,10 @@ namespace RTCLI.AOTCompiler.ILConverters
         public OpCode TargetOpCode() => OpCodes.Shr;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject}" +
-                $" = RTCLI::Shr({op0}, {op1});";
+                $" = RTCLI::Shr({op1}, {op2});";
         }
     }
 
@@ -227,10 +227,10 @@ namespace RTCLI.AOTCompiler.ILConverters
         public OpCode TargetOpCode() => OpCodes.Shr_Un;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject}" +
-                $" = RTCLI::Shr_Un({op0}, {op1});";
+                $" = RTCLI::Shr_Un({op1}, {op2});";
         }
     }
 
@@ -239,10 +239,10 @@ namespace RTCLI.AOTCompiler.ILConverters
         public OpCode TargetOpCode() => OpCodes.Mul;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject}" +
-                $" = RTCLI::Mul({op0}, {op1});";
+                $" = RTCLI::Mul({op1}, {op2});";
         }
     }
 
@@ -251,10 +251,10 @@ namespace RTCLI.AOTCompiler.ILConverters
         public OpCode TargetOpCode() => OpCodes.Mul_Ovf;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject}" +
-                $" = RTCLI::Mul_Ovf({op0}, {op1});";
+                $" = RTCLI::Mul_Ovf({op1}, {op2});";
         }
     }
 
@@ -263,10 +263,10 @@ namespace RTCLI.AOTCompiler.ILConverters
         public OpCode TargetOpCode() => OpCodes.Mul_Ovf_Un;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject}" +
-                $" = RTCLI::Mul_Ovf_Un({op0}, {op1});";
+                $" = RTCLI::Mul_Ovf_Un({op1}, {op2});";
         }
     }
 
@@ -275,10 +275,10 @@ namespace RTCLI.AOTCompiler.ILConverters
         public OpCode TargetOpCode() => OpCodes.Div;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject}" +
-                $" = RTCLI::Div({op0}, {op1});";
+                $" = RTCLI::Div({op1}, {op2});";
         }
     }
 
@@ -287,10 +287,10 @@ namespace RTCLI.AOTCompiler.ILConverters
         public OpCode TargetOpCode() => OpCodes.Div_Un;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject}" +
-                $" = RTCLI::Div_Un({op0}, {op1});";
+                $" = RTCLI::Div_Un({op1}, {op2});";
         }
     }
 
@@ -299,10 +299,10 @@ namespace RTCLI.AOTCompiler.ILConverters
         public OpCode TargetOpCode() => OpCodes.Rem;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject}" +
-                $" = RTCLI::Rem({op0}, {op1});";
+                $" = RTCLI::Rem({op1}, {op2});";
         }
     }
 
@@ -311,10 +311,10 @@ namespace RTCLI.AOTCompiler.ILConverters
         public OpCode TargetOpCode() => OpCodes.Rem_Un;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject}" +
-                $" = RTCLI::Rem_Un({op0}, {op1});";
+                $" = RTCLI::Rem_Un({op1}, {op2});";
         }
     }
 
@@ -323,10 +323,10 @@ namespace RTCLI.AOTCompiler.ILConverters
         public OpCode TargetOpCode() => OpCodes.Sub;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject}" +
-                $" = RTCLI::Sub({op0}, {op1});";
+                $" = RTCLI::Sub({op1}, {op2});";
         }
     }
     public class Sub_OvfConverterCXX : ICXXILConverter
@@ -334,10 +334,10 @@ namespace RTCLI.AOTCompiler.ILConverters
         public OpCode TargetOpCode() => OpCodes.Sub_Ovf;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject}" +
-                $" = RTCLI::Sub_Ovf({op0}, {op1});";
+                $" = RTCLI::Sub_Ovf({op1}, {op2});";
         }
     }
     public class Sub_Ovf_UnConverterCXX : ICXXILConverter
@@ -345,10 +345,10 @@ namespace RTCLI.AOTCompiler.ILConverters
         public OpCode TargetOpCode() => OpCodes.Sub_Ovf_Un;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject}" +
-                $" = RTCLI::Sub_Ovf({op0}, {op1});";
+                $" = RTCLI::Sub_Ovf({op1}, {op2});";
         }
     }
 
@@ -357,10 +357,10 @@ namespace RTCLI.AOTCompiler.ILConverters
         public OpCode TargetOpCode() => OpCodes.And;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject}" +
-                $" = RTCLI::And({op0}, {op1});";
+                $" = RTCLI::And({op1}, {op2});";
         }
     }
 
@@ -369,10 +369,10 @@ namespace RTCLI.AOTCompiler.ILConverters
         public OpCode TargetOpCode() => OpCodes.Or;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject}" +
-                $" = RTCLI::Or({op0}, {op1});";
+                $" = RTCLI::Or({op1}, {op2});";
         }
     }
 
@@ -381,9 +381,9 @@ namespace RTCLI.AOTCompiler.ILConverters
         public OpCode TargetOpCode() => OpCodes.Not;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject}" +
-                $" = RTCLI::Not({op0});";
+                $" = RTCLI::Not({op1});";
         }
     }
 
@@ -392,9 +392,9 @@ namespace RTCLI.AOTCompiler.ILConverters
         public OpCode TargetOpCode() => OpCodes.Ckfinite;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject}" +
-                $" = RTCLI::Ckfinite({op0});";
+                $" = RTCLI::Ckfinite({op1});";
         }
     }
 
@@ -510,8 +510,9 @@ namespace RTCLI.AOTCompiler.ILConverters
         {
             var typeReference = instruction.Operand as TypeReference;
             TypeInformation typeInformation = methodContext.TranslateContext.MetadataContext.GetTypeInformation(typeReference);
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
-            return $"auto& {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = RTCLI::ldobj<{typeInformation.CXXTypeName}>({op0});";
+            var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            return $"auto& {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} =" +
+                $" RTCLI::ldobj<{typeInformation.CXXTypeName}>({op1});";
         }
     }
     public class StobjConverterCXX : ICXXILConverter
@@ -521,9 +522,9 @@ namespace RTCLI.AOTCompiler.ILConverters
         {
             var typeReference = instruction.Operand as TypeReference;
             TypeInformation typeInformation = methodContext.TranslateContext.MetadataContext.GetTypeInformation(typeReference);
-            var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
-            return $"RTCLI::stobj<{typeInformation.CXXTypeName}>({op0}, {op1});";
+            return $"RTCLI::stobj<{typeInformation.CXXTypeName}>({op1}, {op2});";
         }
     }
 
