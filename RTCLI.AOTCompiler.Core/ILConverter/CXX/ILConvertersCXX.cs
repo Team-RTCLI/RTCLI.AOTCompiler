@@ -23,7 +23,7 @@ namespace RTCLI.AOTCompiler.ILConverters
             MethodReference calledMethod = instruction.Operand as MethodReference;
             var typeReference = calledMethod.DeclaringType;
             TypeInformation typeInformation = methodContext.TranslateContext.MetadataContext.GetTypeInformation(typeReference);
-            string paramSequenceCXX = string.Join(',', calledMethod.Parameters.Select(_ => (methodContext as CXXMethodTranslateContext).CmptStackPopObject)); 
+            string paramSequenceCXX = string.Join(',', calledMethod.Parameters.Select(_ => (methodContext as CXXMethodTranslateContext).CmptStackPopObject).Reverse()); 
             return $"{typeInformation.CXXTypeName}& {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = \n\t\t*RTCLI::newobj<{typeInformation.CXXTypeName}>({paramSequenceCXX});";
         }
         public string Convert(Instruction instruction, MethodTranslateContext methodContext) => ParseParams(instruction, methodContext);
