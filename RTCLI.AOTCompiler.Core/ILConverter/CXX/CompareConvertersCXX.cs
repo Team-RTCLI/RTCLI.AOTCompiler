@@ -15,7 +15,7 @@ namespace RTCLI.AOTCompiler.ILConverters
         {
             var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
-            return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject}" +
+            return $"RTCLI::i32 {(methodContext as CXXMethodTranslateContext).CmptStackPushObject}" +
                 $" = RTCLI::Cgt({op0}, {op1});";
         }
     }
@@ -26,7 +26,7 @@ namespace RTCLI.AOTCompiler.ILConverters
         {
             var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
-            return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = RTCLI::Cgt_Un({op0}, {op1});";
+            return $"RTCLI::i32 {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = RTCLI::Cgt_Un({op0}, {op1});";
         }
 
         public OpCode TargetOpCode() => OpCodes.Cgt_Un;
