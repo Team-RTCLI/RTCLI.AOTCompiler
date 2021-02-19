@@ -12,6 +12,10 @@ namespace RTCLITestCase
 
     public class TestCaseClass
     {
+        public class TestInnerClass
+        {
+
+        };
         public TestCaseClass(string str)
         {
 
@@ -22,6 +26,7 @@ namespace RTCLITestCase
         }
         public void MethodWithArgsAccess(int argInt, string argStr, RefClass argClass, RefStruct argStruct)
         {
+            TestInnerClass test;
             var argI = argInt;
             var argSt = argStr;
             var argS = argStruct;
@@ -81,6 +86,16 @@ namespace RTCLITestCase
             arg = new PureStruct();
             arg = new PureStruct { val = 10f };
             return arg.val;
+        }
+
+        public delegate void TestDelegate(float arg);
+        public float DelegateTest(TestDelegate arg)
+        {
+            arg(1.0f);
+            float upvalue = 0;
+            arg = arg2 => { upvalue = arg2; };
+            arg(2.0f);
+            return upvalue;
         }
         RefClass refed;
     }

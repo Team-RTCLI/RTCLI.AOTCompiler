@@ -13,7 +13,7 @@ namespace RTCLI.AOTCompiler.Metadata
         public string CXXTypeName =>
             IsArray
             ? $"RTCLI::System::ElementArray<{elementType.CXXTypeName}>"
-            : "RTCLI::" + string.Join("::", FullName.Split('.'));
+            : "RTCLI::" + string.Join("::", FullName.Split('.', '/'));
         public string CXXTypeNameShort => definition.Name;
     }
 

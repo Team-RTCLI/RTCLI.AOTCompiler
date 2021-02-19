@@ -40,7 +40,7 @@ namespace RTCLI.AOTCompiler.Metadata
         [JsonIgnore] public MethodBody Body => definition.Body;
         [JsonIgnore] private readonly MethodDefinition definition = null;
 
-        public bool InitLocals => definition.Body.InitLocals;
+        public bool InitLocals => definition.Body!=null ? definition.Body.InitLocals : false;
         
         public bool IsPrivate => definition.IsPrivate;
         public bool IsStatic => definition.IsStatic;

@@ -75,6 +75,13 @@ namespace RTCLI.AOTCompiler.Metadata
             return AssemblyLoadedRecursively;
         }
 
+        public void BuildTypeMapRecursively(TypeInformation type)
+        {
+            Types.Add(type.FullName, type);
+            foreach (var nested in type.Nested)
+                BuildTypeMapRecursively(nested);
+        }
+
         public MetadataContext(string assemblyPath, bool readSymbols)
         {
             // Initialize Assembly Resolver.
@@ -91,6 +98,11 @@ namespace RTCLI.AOTCompiler.Metadata
             assemblyFindDir.Add(Directory.GetCurrentDirectory());
 
             var FocusedAssemblyLoaded = ReadAssemblyRecursively(assemblyPath, parameter);
+
+            foreach (var assembly in Assemblies.Values)
+                foreach (var module in assembly.Modules.Values)
+                    foreach (var type in module.Types.Values)
+                        BuildTypeMapRecursively(type);
             FocusedAssembly = FocusedAssemblyLoaded.Name.Name;
         }
 
@@ -99,17 +111,6 @@ namespace RTCLI.AOTCompiler.Metadata
             // CTS
             if (Types.ContainsKey(inType))
                 return Types[inType];
-            else
-            {
-                foreach (var assembly in Assemblies.Values)
-                    foreach (var module in assembly.Modules.Values)
-                        foreach (var type in module.Types.Keys)
-                            if (type == inType)
-                            {
-                                Types.Add(type, module.Types[type]);
-                                return module.Types[type];
-                            }
-            }
             return null;
         }
         public TypeInformation GetTypeInformation(TypeReference inType)

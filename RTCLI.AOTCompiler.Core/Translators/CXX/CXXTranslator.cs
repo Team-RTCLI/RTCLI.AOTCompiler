@@ -62,6 +62,55 @@ namespace RTCLI.AOTCompiler.Translators
         }
 
         private string EnvIncludes => "#include <RTCLI.h>";
+        public void WriteTypeRecursively(CodeTextWriter codeWriter, Metadata.TypeInformation type)
+        {
+            using (var classScope = new CXXScopeDisposer(codeWriter,
+                               type.IsStruct ?
+                                 $"struct {type.CXXTypeNameShort}"
+                               : $"RTCLI_API class {type.CXXTypeNameShort} : public RTCLI::System::Object",
+
+                               true))
+            {
+                codeWriter.unindent().WriteLine("public:").indent();
+                foreach (var nested in type.Nested)
+                {
+                    WriteTypeRecursively(codeWriter, nested);
+                }
+                foreach (var method in type.Methods)
+                {
+                    if (method.IsPublic)
+                        codeWriter.WriteLine($"{method.CXXMethodSignature};");
+                }
+                foreach (var field in type.Fields)
+                {
+                    if (field.IsPublic)
+                        codeWriter.WriteLine(field.CXXFieldDeclaration);
+                }
+                codeWriter.unindent().WriteLine("private:").indent();
+                foreach (var method in type.Methods)
+                {
+                    if (method.IsPrivate)
+                        codeWriter.WriteLine($"{method.CXXMethodSignature};");
+                }
+                foreach (var field in type.Fields)
+                {
+                    if (field.IsPrivate)
+                        codeWriter.WriteLine(field.CXXFieldDeclaration);
+                }
+                codeWriter.unindent().WriteLine("protected:").indent();
+                foreach (var method in type.Methods)
+                {
+                    if (method.IsFamily)
+                        codeWriter.WriteLine($"{method.CXXMethodSignature};");
+                }
+                foreach (var field in type.Fields)
+                {
+                    if (field.IsFamily)
+                        codeWriter.WriteLine(field.CXXFieldDeclaration);
+                }
+            }
+        }
+
         public void WriteHeader(CodeTextStorage storage)
         {
             using (var _ = storage.EnterScope(translateContext.FocusedAssemblyInformation.IdentName))
@@ -75,52 +124,57 @@ namespace RTCLI.AOTCompiler.Translators
                         codeWriter.WriteLine(EnvIncludes);
                         using (var ___ = new CXXScopeDisposer(codeWriter, "\nnamespace " + type.CXXNamespace))
                         {
-                            using (var classScope = new CXXScopeDisposer(codeWriter,
-                                type.IsStruct ?
-                                  $"struct {type.CXXTypeNameShort}"
-                                : $"RTCLI_API class {type.CXXTypeNameShort} : public RTCLI::System::Object",
-
-                                true))
-                            {
-                                codeWriter.unindent().WriteLine("public:").indent();
-                                foreach (var method in type.Methods)
-                                {
-                                    if (method.IsPublic)
-                                        codeWriter.WriteLine($"{method.CXXMethodSignature};");
-                                }
-                                foreach(var field in type.Fields)
-                                {
-                                    if (field.IsPublic)
-                                        codeWriter.WriteLine(field.CXXFieldDeclaration);
-                                }
-                                codeWriter.unindent().WriteLine("private:").indent();
-                                foreach (var method in type.Methods)
-                                {
-                                    if (method.IsPrivate)
-                                        codeWriter.WriteLine($"{method.CXXMethodSignature};");
-                                }
-                                foreach (var field in type.Fields)
-                                {
-                                    if (field.IsPrivate)
-                                        codeWriter.WriteLine(field.CXXFieldDeclaration);
-                                }
-                                codeWriter.unindent().WriteLine("protected:").indent();
-                                foreach (var method in type.Methods)
-                                {
-                                    if (method.IsFamily)
-                                        codeWriter.WriteLine($"{method.CXXMethodSignature};");
-                                }
-                                foreach (var field in type.Fields)
-                                {
-                                    if (field.IsFamily)
-                                        codeWriter.WriteLine(field.CXXFieldDeclaration);
-                                }
-                            }
+                            WriteTypeRecursively(codeWriter, type);
                         }
                         typeHeaderWriters[type.FullName].Flush();
                     }
                 }
             }//End Dispose EnterScope
+        }
+
+        public void WriteMethodRecursive(CodeTextWriter codeWriter, Metadata.TypeInformation type)
+        {
+            foreach (var nested in type.Nested)
+            {
+                WriteMethodRecursive(codeWriter, nested);
+            }
+            foreach (var method in type.Methods)
+            {
+                if (method.Body == null)
+                    continue;
+                CXXMethodTranslateContext methodContext = new CXXMethodTranslateContext(translateContext, method);
+                // [2-1] Stack Code
+                codeWriter.WriteLine($"\n//{method.CXXMethodName}\n//[2-1] Here Begins Stack Declaration");
+                codeWriter.WriteLine($"struct {method.CXXStackName}");
+                codeWriter.WriteLine("{");
+                codeWriter.indent();
+                foreach (var localVar in method.LocalVariables)
+                {
+                    codeWriter.WriteLine($"{localVar.CXXTypeName} v{localVar.Index};");
+                }
+                codeWriter.WriteLine("template<bool InitLocals> static void Init(){};//Active with MethodBody.InitLocals Property.");
+                codeWriter.unindent();
+                codeWriter.WriteLine("};\n");
+
+                // [2-2-1] Method Code
+                codeWriter.WriteLine("//[2-2] Here Begins Method Body");
+                codeWriter.WriteLine(
+                    method.CXXRetType + " " + method.CXXMethodName + method.CXXParamSequence);
+                codeWriter.WriteLine("{");
+                // [2-2-2] Code Body
+                codeWriter.indent();
+                //codeWriter.WriteLine($"{method.CXXStackName} stack;");
+                //codeWriter.WriteLine($"stack.Init<{method.InitLocals.ToString().ToLower()}>();");
+                foreach (var instruction in method.Body.Instructions)
+                {
+                    codeWriter.WriteLine(NoteILInstruction(instruction, methodContext));
+                    codeWriter.WriteLine(
+                        instruction.GetLabel() + ": " +
+                        TranslateILInstruction(instruction, methodContext));
+                }
+                codeWriter.unindent();
+                codeWriter.WriteLine("}");
+            }
         }
 
         public void WriteSource(CodeTextStorage storage)
@@ -135,41 +189,7 @@ namespace RTCLI.AOTCompiler.Translators
                         typeSourceWriters[type.FullName] = codeWriter;
                         codeWriter.WriteLine(EnvIncludes);
                         codeWriter.WriteLine($"#include <{type.TypeName}.h>");
-                        foreach (var method in type.Methods)
-                        {
-                            CXXMethodTranslateContext methodContext = new CXXMethodTranslateContext(translateContext, method);
-                            // [2-1] Stack Code
-                            codeWriter.WriteLine($"\n//{method.CXXMethodName}\n//[2-1] Here Begins Stack Declaration");
-                            codeWriter.WriteLine($"struct {method.CXXStackName}");
-                            codeWriter.WriteLine("{");
-                            codeWriter.indent();
-                            foreach (var localVar in method.LocalVariables)
-                            {
-                                codeWriter.WriteLine($"{localVar.CXXTypeName} v{localVar.Index};");
-                            }
-                            codeWriter.WriteLine("template<bool InitLocals> static void Init(){};//Active with MethodBody.InitLocals Property.");
-                            codeWriter.unindent();
-                            codeWriter.WriteLine("};\n");
-
-                            // [2-2-1] Method Code
-                            codeWriter.WriteLine("//[2-2] Here Begins Method Body");
-                            codeWriter.WriteLine(
-                                method.CXXRetType + " " + method.CXXMethodName + method.CXXParamSequence);
-                            codeWriter.WriteLine("{");
-                            // [2-2-2] Code Body
-                            codeWriter.indent();
-                            //codeWriter.WriteLine($"{method.CXXStackName} stack;");
-                            //codeWriter.WriteLine($"stack.Init<{method.InitLocals.ToString().ToLower()}>();");
-                            foreach (var instruction in method.Body.Instructions)
-                            {
-                                codeWriter.WriteLine(NoteILInstruction(instruction, methodContext));
-                                codeWriter.WriteLine(
-                                    instruction.GetLabel() + ": "+ 
-                                    TranslateILInstruction(instruction, methodContext));
-                            }
-                            codeWriter.unindent();
-                            codeWriter.WriteLine("}");
-                        }
+                        WriteMethodRecursive(codeWriter, type);
                         typeSourceWriters[type.FullName].Flush();
                     }
                 }

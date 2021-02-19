@@ -21,6 +21,7 @@ namespace RTCLI.AOTCompiler.Metadata
         public readonly List<MethodInformation> Methods = new List<MethodInformation>();
         public readonly List<FieldInformation> Fields = new List<FieldInformation>();
         public readonly List<PropertyInformation> Properties = new List<PropertyInformation>();
+        public readonly List<TypeInformation> Nested = new List<TypeInformation>();
         public TypeInformation GetElementType() => elementType;
 
         public TypeInformation(TypeDefinition def, MetadataContext metadataContext)
@@ -36,6 +37,8 @@ namespace RTCLI.AOTCompiler.Metadata
                 Properties.Add(new PropertyInformation(prop, metadataContext));
             foreach(var field in def.Fields)
                 Fields.Add(new FieldInformation(field, metadataContext));
+            foreach(var nested in def.NestedTypes)
+                Nested.Add(new TypeInformation(nested, metadataContext));
 
             TypeAttributes = def.Attributes.ToString().Split(sep, StringSplitOptions.RemoveEmptyEntries);
         }
