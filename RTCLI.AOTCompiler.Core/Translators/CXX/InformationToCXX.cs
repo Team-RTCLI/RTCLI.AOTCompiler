@@ -69,7 +69,9 @@ namespace RTCLI.AOTCompiler.Metadata
     {
         public string CXXTypeName => MetadataContext.GetTypeInformation(definition.FieldType).CXXTypeName;
         public string CXXTypeNameShort => MetadataContext.GetTypeInformation(definition.FieldType).CXXTypeNameShort;
-        public string CXXFieldDeclaration => $"{CXXTypeName} {Utilities.GetCXXValidTokenString(Name)};";
+        public string CXXFieldDeclaration => (IsStatic ? "static " : "") +
+            (this.definition.FieldType.IsValueType ? $"{CXXTypeName} " : $"RTCLI::ref<{CXXTypeName}> ") +
+            $"{Utilities.GetCXXValidTokenString(Name)};";
     }
 
 
