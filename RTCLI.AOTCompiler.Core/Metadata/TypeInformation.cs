@@ -3,20 +3,22 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Mono.Cecil;
+using System.Linq;
 using Newtonsoft.Json;
 
 namespace RTCLI.AOTCompiler.Metadata
 {
     public partial class TypeInformation : IMemberInformation
     {
-        public string FullName => IsArray ? definitionArray.FullName : definition.FullName;
-        public string Namespace => IsArray ? definitionArray.Namespace : definition.Namespace;
-        public string TypeName => IsArray ? definitionArray.Name : definition.Name;
+        public string FullName => IsArray ? definitionArray.FullName : IsGenericInstance ? definitionGI.FullName : definition.FullName;
+        public string Namespace => IsArray ? definitionArray.Namespace : IsGenericInstance ? definitionGI.Namespace : definition.Namespace;
+        public string TypeName => IsArray ? definitionArray.Name : IsGenericInstance ? definitionGI.Name : definition.Name;
         public readonly string[] NamespaceChain = null;
         public readonly string[] TypeAttributes = null;
 
         public bool IsArray => definitionArray != null;
         public bool IsStruct => definition.IsValueType;
+        public bool IsGenericInstance => definitionGI != null;
 
         public readonly List<MethodInformation> Methods = new List<MethodInformation>();
         public readonly List<FieldInformation> Fields = new List<FieldInformation>();
@@ -53,10 +55,22 @@ namespace RTCLI.AOTCompiler.Metadata
             
         }
 
+        public TypeInformation(GenericInstanceType def, MetadataContext metadataContext)
+        {
+            this.definitionGI = def;
+            this.MetadataContext = metadataContext;
+            var dd = def.ElementType;
+            this.genericDeclaringType = IsGenericInstance ? MetadataContext.GetTypeInformation(dd) : null;
+            this.genericArgumentTypes = def.GenericArguments.Select(a => MetadataContext.GetTypeInformation(a)).ToArray();
+        }
+
         private char[] sep = {',', ' '};
 
         [JsonIgnore] private readonly ArrayType definitionArray = null;
         [JsonIgnore] private readonly TypeInformation elementType = null;
+        [JsonIgnore] private readonly GenericInstanceType definitionGI = null;
+        [JsonIgnore] private readonly TypeInformation genericDeclaringType = null;
+        [JsonIgnore] private readonly TypeInformation[] genericArgumentTypes = null;
 
         [JsonIgnore] private readonly TypeDefinition definition = null;
         [JsonIgnore] public IMetadataTokenProvider Definition => definition;

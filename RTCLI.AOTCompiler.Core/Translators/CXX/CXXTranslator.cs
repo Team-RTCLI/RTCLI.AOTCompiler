@@ -78,35 +78,11 @@ namespace RTCLI.AOTCompiler.Translators
                 }
                 foreach (var method in type.Methods)
                 {
-                    if (method.IsPublic)
-                        codeWriter.WriteLine($"{method.CXXMethodSignature};");
+                    codeWriter.WriteLine($"{method.CXXMethodSignature};");
                 }
                 foreach (var field in type.Fields)
                 {
-                    if (field.IsPublic)
-                        codeWriter.WriteLine(field.CXXFieldDeclaration);
-                }
-                codeWriter.unindent().WriteLine("private:").indent();
-                foreach (var method in type.Methods)
-                {
-                    if (method.IsPrivate)
-                        codeWriter.WriteLine($"{method.CXXMethodSignature};");
-                }
-                foreach (var field in type.Fields)
-                {
-                    if (field.IsPrivate)
-                        codeWriter.WriteLine(field.CXXFieldDeclaration);
-                }
-                codeWriter.unindent().WriteLine("protected:").indent();
-                foreach (var method in type.Methods)
-                {
-                    if (method.IsFamily)
-                        codeWriter.WriteLine($"{method.CXXMethodSignature};");
-                }
-                foreach (var field in type.Fields)
-                {
-                    if (field.IsFamily)
-                        codeWriter.WriteLine(field.CXXFieldDeclaration);
+                    codeWriter.WriteLine(field.CXXFieldDeclaration);
                 }
             }
         }
