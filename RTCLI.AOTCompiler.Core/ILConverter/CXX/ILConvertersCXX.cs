@@ -1,5 +1,6 @@
 ﻿using Mono.Cecil.Cil;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 using RTCLI.AOTCompiler.Translators;
@@ -22,11 +23,7 @@ namespace RTCLI.AOTCompiler.ILConverters
             MethodReference calledMethod = instruction.Operand as MethodReference;
             var typeReference = calledMethod.DeclaringType;
             TypeInformation typeInformation = methodContext.TranslateContext.MetadataContext.GetTypeInformation(typeReference);
-            string paramSequenceCXX = "stack"; 
-            foreach(var param in calledMethod.Parameters)
-            {
-                paramSequenceCXX = paramSequenceCXX + ", " + (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
-            }
+            string paramSequenceCXX = string.Join(',', calledMethod.Parameters.Select(_ => (methodContext as CXXMethodTranslateContext).CmptStackPopObject)); 
             return $"{typeInformation.CXXTypeName}& {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = \n\t\t*RTCLI::newobj<{typeInformation.CXXTypeName}>({paramSequenceCXX});";
         }
         public string Convert(Instruction instruction, MethodTranslateContext methodContext) => ParseParams(instruction, methodContext);
@@ -60,10 +57,6 @@ namespace RTCLI.AOTCompiler.ILConverters
         public OpCode TargetOpCode() => OpCodes.Dup;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
-            var typeReference = instruction.Operand as TypeReference;
-            var typeDefinition = instruction.Operand as TypeDefinition;
-
-            TypeInformation typeInformation = methodContext.TranslateContext.MetadataContext.GetTypeInformation(typeReference);
             var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPeek;
             return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = RTCLI::dup({op0});";
         }
@@ -481,7 +474,7 @@ namespace RTCLI.AOTCompiler.ILConverters
 
     public class StsfldConverterCXX : ICXXILConverter
     {
-        public OpCode TargetOpCode() => OpCodes.Ldflda;
+        public OpCode TargetOpCode() => OpCodes.Stsfld;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
             var fld = instruction.Operand as FieldReference;
@@ -531,6 +524,18 @@ namespace RTCLI.AOTCompiler.ILConverters
             var op0 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             return $"RTCLI::stobj<{typeInformation.CXXTypeName}>({op0}, {op1});";
+        }
+    }
+
+    public class LdftnConverterCXX : ICXXILConverter
+    {
+        public OpCode TargetOpCode() => OpCodes.Ldftn;
+        public string Convert(Instruction instruction, MethodTranslateContext methodContext)
+        {
+            var method = instruction.Operand as MethodReference;
+            TypeInformation typeInformation = methodContext.TranslateContext.MetadataContext.GetTypeInformation(method.DeclaringType);
+            var methodInformation = typeInformation.Methods.Find(m => m.Definition == method);
+            return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = &{methodInformation.CXXMethodName};";
         }
     }
 }

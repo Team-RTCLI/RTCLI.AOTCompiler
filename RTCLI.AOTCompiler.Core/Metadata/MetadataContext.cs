@@ -117,6 +117,8 @@ namespace RTCLI.AOTCompiler.Metadata
         {
             if (inType.IsArray)
                 return new TypeInformation(inType as ArrayType, this);
+            if(inType.IsGenericInstance)
+                return new TypeInformation(inType as GenericInstanceType, this);
             return GetTypeInformation(inType.FullName);
         }
 

@@ -95,6 +95,7 @@ namespace RTCLITestCase
             float upvalue = 0;
             arg = arg2 => { upvalue = arg2; };
             arg(2.0f);
+            Func<float, float> asd = arg2 => arg2;
             return upvalue;
         }
         RefClass refed;

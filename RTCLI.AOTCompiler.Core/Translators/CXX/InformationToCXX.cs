@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -10,11 +11,28 @@ namespace RTCLI.AOTCompiler.Metadata
     public partial class TypeInformation : IMemberInformation
     {
         public string CXXNamespace => "RTCLI::" + string.Join("::", Namespace.Split('.'));
-        public string CXXTypeName =>
-            IsArray
-            ? $"RTCLI::System::ElementArray<{elementType.CXXTypeName}>"
-            : "RTCLI::" + string.Join("::", FullName.Split('.', '/'));
-        public string CXXTypeNameShort => definition.Name;
+        public string CXXTypeName
+        {
+            get
+            {
+                if (IsArray)
+                    return $"RTCLI::System::ElementArray<{elementType.CXXTypeName}>";
+                if (IsGenericInstance)
+                    return $"{genericDeclaringType.CXXTypeName}<{string.Join(',', genericArgumentTypes.Select(a=>a.CXXTypeName))}>";
+                else return "RTCLI::" + string.Join("::", FullName.Split('.', '/')).Replace("<>", "__").Replace('`', '_'); ;
+            }
+        }
+        public string CXXTypeNameShort
+        {
+            get
+            {
+                if (IsArray)
+                    return $"RTCLI::System::ElementArray<{elementType.CXXTypeName}>";
+                if (IsGenericInstance)
+                    return $"{genericDeclaringType.CXXTypeName}<{string.Join(',', genericArgumentTypes.Select(a => a.CXXTypeName))}>";
+                else return definition.Name.Replace("<>", "__"); ;
+            }
+        }
     }
 
     public partial class MethodInformation : IMemberInformation
@@ -38,9 +56,9 @@ namespace RTCLI.AOTCompiler.Metadata
              MetadataContext.GetTypeInformation(definition.DeclaringType)?.CXXTypeName //Type Name
              + "::" + CXXMethodNameShort;//MethodName
         public string CXXMethodNameShort
-            => (definition.IsConstructor ? "Constructor" : definition?.Name);
+            => (definition.IsConstructor ? "Constructor" : definition?.Name.Replace('<', '_').Replace('>', '_'));
 
-        public string CXXMethodSignature => CXXMethodNameShort + CXXParamSequence;
+        public string CXXMethodSignature => CXXRetType + " " + CXXMethodNameShort + CXXParamSequence;
         public string CXXParamSequence => "(" + CXXParamsSequence() + ")"; //Param Sequence
 
         public string CXXRetType => MetadataContext.GetTypeInformation(definition.ReturnType)?.CXXTypeName;
