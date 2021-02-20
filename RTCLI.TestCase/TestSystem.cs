@@ -1,15 +1,14 @@
 ﻿using System;
 
-namespace RTCLI.TestCase
+namespace TestCase
 {
-    //[TestExecute($"Test({12})")]
     public class TestSystem
     {
         public TestSystem(int val)
         {
 
         }
-        public static void Test(int argInt)
+        public static void Test()
         {
             System.Console.Write("Write Tested!\n");
             System.Console.WriteLine("WriteLine Tested!");

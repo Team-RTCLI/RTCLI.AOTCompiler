@@ -58,7 +58,7 @@ namespace RTCLI.AOTCompiler.Metadata
         public string CXXMethodNameShort
             => (definition.IsConstructor ? "Constructor" : definition?.Name.Replace('<', '_').Replace('>', '_'));
 
-        public string CXXMethodSignature => CXXRetType + " " + CXXMethodNameShort + CXXParamSequence;
+        public string CXXMethodSignature => (IsStatic ? "static " : "")+  CXXRetType + " " + CXXMethodNameShort + CXXParamSequence;
         public string CXXParamSequence => "(" + CXXParamsSequence() + ")"; //Param Sequence
 
         public string CXXRetType => MetadataContext.GetTypeInformation(definition.ReturnType)?.CXXTypeName;

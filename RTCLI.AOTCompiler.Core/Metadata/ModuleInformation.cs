@@ -31,6 +31,7 @@ namespace RTCLI.AOTCompiler.Metadata
             }
         }
 
+        public string CXXHeaderName => definition.Name.Replace(".dll", "").Replace(".", "_");
         [JsonIgnore] private readonly ModuleDefinition definition = null;
         public IMetadataTokenProvider Definition => definition;
         public MetadataContext MetadataContext { get; }

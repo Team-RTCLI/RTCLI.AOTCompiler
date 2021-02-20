@@ -31,37 +31,12 @@ namespace RTCLI.AOTCompiler
             {
                 cxxTranslator.WriteHeader(storage);
             }
-
             using (var _ = storage.EnterScope("src"))
             {
                 cxxTranslator.WriteSource(storage);
             }
 
             System.Console.WriteLine(" done.");
-        }
-
-        public static void TranslateAll(
-            CodeTextStorage storage,
-            DispatchArgs dispatchArgs,
-            IEnumerable<string> assemblyPaths)
-        {
-            Parallel.ForEach(assemblyPaths, aseemblyPath => {
-                Translate(
-                    storage,
-                    dispatchArgs,
-                    aseemblyPath);
-            });
-        }
-
-        public static void TranslateAll(
-            CodeTextStorage storage,
-            DispatchArgs dispatchArgs,
-            params string[] assemblyPaths)
-        {
-            TranslateAll(
-                storage,
-                dispatchArgs,
-                (IEnumerable<string>)assemblyPaths);
         }
 
         public static void TranslateAll(

@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\RTCLI.TestCase.Reference\RTCLI.TestCase.Reference.csproj" />
+    <ProjectReference Include="..\RTCLI.TestCase.Reference\TestCase.Reference.csproj" />
   </ItemGroup>
 
 </Project>

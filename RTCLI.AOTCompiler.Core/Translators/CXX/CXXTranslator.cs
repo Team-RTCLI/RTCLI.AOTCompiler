@@ -31,6 +31,8 @@ namespace RTCLI.AOTCompiler.Translators
 
             Assembly assembly = Assembly.GetAssembly(typeof(ILConverters.IILConverter));
             TypeFilter typeNameFilter = new TypeFilter(TypeNameFilter);
+            int currentLineCursor = Console.CursorTop;
+            int index = 0;
             foreach (var type in assembly.GetTypes())
             {
                 Type[] typeInterfaces = type.FindInterfaces(typeNameFilter, typeof(ILConverters.ICXXILConverter));
@@ -38,10 +40,14 @@ namespace RTCLI.AOTCompiler.Translators
                 {
                     var newConv = System.Activator.CreateInstance(type) as ILConverters.ICXXILConverter;
                     ConvertersCXX.Add(newConv.TargetOpCode(), newConv);
-                    System.Console.WriteLine($"Registered: {newConv.TargetOpCode()}");
+
+                    System.Console.SetCursorPosition(0, currentLineCursor);
+                    Console.Write(new string(' ', Console.WindowWidth));
+                    System.Console.SetCursorPosition(0, currentLineCursor);
+                    System.Console.WriteLine($"Registered: {newConv.TargetOpCode()}, {++index} / {Enum.GetValues(typeof(Code)).Length}");
                 }
             }
-            System.Console.WriteLine($"Total Converters: {ConvertersCXX.Count}/{Enum.GetValues(typeof(Code)).Length}");
+            System.Console.WriteLine($"Total Converters: {ConvertersCXX.Count} / {Enum.GetValues(typeof(Code)).Length}");
         }
 
         public static readonly Dictionary<OpCode, ICXXILConverter> ConvertersCXX = new Dictionary<OpCode, ICXXILConverter>();
@@ -77,7 +83,7 @@ namespace RTCLI.AOTCompiler.Translators
             using (var classScope = new CXXScopeDisposer(codeWriter,
                                type.IsStruct ?
                                  $"struct {type.CXXTypeNameShort}"
-                               : $"RTCLI_API class {type.CXXTypeNameShort} : public RTCLI::System::Object",
+                               : $"class {type.CXXTypeNameShort} : public RTCLI::System::Object",
 
                                true))
             {
@@ -95,27 +101,6 @@ namespace RTCLI.AOTCompiler.Translators
                     codeWriter.WriteLine(field.CXXFieldDeclaration);
                 }
             }
-        }
-
-        public void WriteHeader(CodeTextStorage storage)
-        {
-            using (var _ = storage.EnterScope(translateContext.FocusedAssemblyInformation.IdentName))
-            {
-                foreach (var module in translateContext.FocusedAssemblyInformation.Modules.Values)
-                {
-                    foreach (var type in module.Types.Values)
-                    {
-                        var codeWriter = storage.Wirter(type.TypeName + ".h");
-                        typeHeaderWriters[type.FullName] = codeWriter;
-                        codeWriter.WriteLine(EnvIncludes);
-                        using (var ___ = new CXXScopeDisposer(codeWriter, "\nnamespace " + type.CXXNamespace))
-                        {
-                            WriteTypeRecursively(codeWriter, type);
-                        }
-                        typeHeaderWriters[type.FullName].Flush();
-                    }
-                }
-            }//End Dispose EnterScope
         }
 
         public void WriteMethodRecursive(CodeTextWriter codeWriter, Metadata.TypeInformation type)
@@ -163,6 +148,35 @@ namespace RTCLI.AOTCompiler.Translators
             }
         }
 
+        public void WriteHeader(CodeTextStorage storage)
+        {
+            using (var _ = storage.EnterScope(translateContext.FocusedAssemblyInformation.IdentName))
+            {
+                foreach (var module in translateContext.FocusedAssemblyInformation.Modules.Values)
+                {
+                    var totalHeaderWriter = storage.Wirter(module.CXXHeaderName + ".h");
+                    totalHeaderWriter.WriteLine("#pragma once");
+                    totalHeaderWriter.WriteLine(EnvIncludes);
+                    foreach (var type in module.Types.Values)
+                    {
+                        var codeWriter = storage.Wirter(type.TypeName + ".h");
+                        typeHeaderWriters[type.FullName] = codeWriter;
+                        codeWriter.WriteLine("#pragma once");
+                        codeWriter.WriteLine(EnvIncludes);
+                        using (var ___ = new CXXScopeDisposer(codeWriter, "\nnamespace " + type.CXXNamespace))
+                        {
+                            WriteTypeRecursively(codeWriter, type);
+                        }
+                        typeHeaderWriters[type.FullName].Flush();
+
+                        totalHeaderWriter.WriteLine($"#include \"{type.TypeName}.h\"");
+                    }
+
+                    totalHeaderWriter.Flush();
+                }
+            }//End Dispose EnterScope
+        }
+
         public void WriteSource(CodeTextStorage storage)
         {
             using (var _ = storage.EnterScope(translateContext.FocusedAssemblyInformation.IdentName))
@@ -174,7 +188,7 @@ namespace RTCLI.AOTCompiler.Translators
                         var codeWriter = storage.Wirter(type.TypeName + ".cpp");
                         typeSourceWriters[type.FullName] = codeWriter;
                         codeWriter.WriteLine(EnvIncludes);
-                        codeWriter.WriteLine($"#include <{type.TypeName}.h>");
+                        codeWriter.WriteLine($"#include <{translateContext.FocusedAssemblyInformation.IdentName}/{type.TypeName}.h>");
                         codeWriter.WriteLine($"#ifdef RTCLI_COMPILER_MSVC");
                         codeWriter.WriteLine($"#pragma warning(push)");
                         codeWriter.WriteLine($"#pragma warning(disable: 4102)");
@@ -185,6 +199,14 @@ namespace RTCLI.AOTCompiler.Translators
                         codeWriter.WriteLine($"#ifdef RTCLI_COMPILER_MSVC");
                         codeWriter.WriteLine($"#pragma warning(pop)");
                         codeWriter.WriteLine($"#endif");
+
+                        codeWriter.WriteLine($"#ifdef RTCLI_TEST_POINT");
+                        codeWriter.WriteLine("int main(void){");
+                        codeWriter.WriteLine($"\t{type.CXXTypeName}::Test();");
+                        codeWriter.WriteLine("\treturn 0;");
+                        codeWriter.WriteLine("}");
+                        codeWriter.WriteLine($"#endif");
+                        
                         typeSourceWriters[type.FullName].Flush();
                     }
                 }

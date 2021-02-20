@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace RTCLI.TestCase
+namespace TestCase
 {
      public class TestInnerClass
     {
@@ -34,9 +34,9 @@ namespace RTCLI.TestCase
             public int ID2 { get; }
         };
 
-        public void Test(TestInnerClass argClass)
+        public static void Test()
         {
-            TestInnerClass test = argClass;
+            TestInnerClass test = null;
         }
 
     }

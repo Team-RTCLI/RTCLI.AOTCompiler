@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using RTCLITestCase.Reference;
+using Reference;
 
-namespace RTCLI.TestCase
+namespace TestCase
 {
     public struct PureStruct
     {
@@ -13,14 +13,12 @@ namespace RTCLI.TestCase
 
     class TestStruct
     {
-        public float Test(PureStruct arg)
+        public static void Test()
         {
             PureStruct local = new PureStruct();
             local.name = "asd";
-            arg = local;
-            arg = new PureStruct();
-            arg = new PureStruct { val = 10f };
-            return arg.val;
+            local = new PureStruct();
+            local = new PureStruct { val = 10f };
         }
     }
 }

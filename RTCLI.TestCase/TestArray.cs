@@ -2,18 +2,16 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace RTCLI.TestCase
+namespace TestCase
 {
     class TestArray
     {
-        public void Test(int argInt)
+        public static void Test()
         {
-            int[] list = new int[argInt];
+            int[] list = new int[12];
             list[0] = 1111111;
-            list[argInt] = 111111;
-            list[0] = argInt;
-            argInt = list[0];
-            argInt = list[argInt];
+            list[11] = 111111;
+            list[0] = 12;
         }
     }
 }

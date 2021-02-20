@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace RTCLI.TestCase
+namespace TestCase
 {
     public class Program
     {

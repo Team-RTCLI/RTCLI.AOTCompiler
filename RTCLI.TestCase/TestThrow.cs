@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace RTCLI.TestCase
+namespace TestCase
 {
     class TestThrow
     {
-        public object Test(object value)
+        public static void Test()
         {
+            object value = null;
             try
             {
                 if (value != null)
@@ -15,9 +16,8 @@ namespace RTCLI.TestCase
             }
             catch
             {
-                return value;
+
             }
-            return null;
         }
     }
 }
