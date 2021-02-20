@@ -96,6 +96,8 @@ namespace RTCLI.AOTCompiler.Translators
                 }
                 foreach (var method in type.Methods)
                 {
+                    if(method.HasGenericParameters)
+                        codeWriter.WriteLine($"template<{method.CXXTemplateParam}>");
                     codeWriter.WriteLine($"{method.CXXMethodSignature};");
                 }
                 foreach (var field in type.Fields)

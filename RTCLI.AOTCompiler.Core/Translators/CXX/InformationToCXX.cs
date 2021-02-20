@@ -38,7 +38,7 @@ namespace RTCLI.AOTCompiler.Metadata
                     return $"{genericDeclaringType.CXXTypeName}<{string.Join(',', genericArgumentTypes.Select(a => a.CXXTypeName))}>";
                 if (IsGenericParameter)
                     return definitionGP.FullName;
-                else return definition.Name.Replace("<>", "__");
+                else return definition.Name.Replace("<>", "__").Replace('`', '_');
             }
         }
     }

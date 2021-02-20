@@ -68,7 +68,7 @@ namespace RTCLI.AOTCompiler.Metadata
         public TypeInformation(GenericInstanceType def, MetadataContext metadataContext)
         {
             this.definitionGI = def;
-            this.definition = def.ElementType as TypeDefinition;
+            this.definition = metadataContext.GetTypeInformation(def.ElementType).definition;
             this.MetadataContext = metadataContext;
             var dd = def.ElementType;
             this.genericDeclaringType = IsGenericInstance ? MetadataContext.GetTypeInformation(dd) : null;
