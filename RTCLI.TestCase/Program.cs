@@ -8,7 +8,7 @@ namespace TestCase
     {
         public static int Main(string[] args)
         {
-            System.Console.Write("Write Tested!\n");
+            TestCase.TestSystem.Test();
 
             return 0;
         }

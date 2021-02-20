@@ -12,6 +12,8 @@ namespace TestCase
         {
             System.Console.Write("Write Tested!\n");
             System.Console.WriteLine("WriteLine Tested!");
+
+            System.Console.WriteLine($"WriteLine with Integer {12}");
         }
     }
 }
