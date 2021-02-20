@@ -13,7 +13,21 @@ namespace TestCase
             System.Console.Write("Write Tested!\n");
             System.Console.WriteLine("WriteLine Tested!");
 
-            System.Console.WriteLine($"WriteLine with Integer {12}");
+            /*
+            string notInterned = "This string is not Interned!";
+            if(String.IsInterned(notInterned) == null)
+            {
+                System.Console.WriteLine(notInterned);
+            }
+            else
+            {
+                System.Console.WriteLine("ERROR: String:notInsterned is not Interned!");
+            }
+            */
+
+            //string readed = System.Console.ReadLine();
+            //String.Intern(readed);
+            //System.Console.Write(readed);
         }
     }
 }

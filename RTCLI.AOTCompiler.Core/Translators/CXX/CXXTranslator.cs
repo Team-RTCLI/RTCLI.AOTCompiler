@@ -189,14 +189,17 @@ namespace RTCLI.AOTCompiler.Translators
                         typeSourceWriters[type.FullName] = codeWriter;
                         codeWriter.WriteLine(EnvIncludes);
                         codeWriter.WriteLine($"#include <{translateContext.FocusedAssemblyInformation.IdentName}/{type.TypeName}.h>");
-                        codeWriter.WriteLine($"#ifdef RTCLI_COMPILER_MSVC");
+                        codeWriter.WriteLine($"#if defined(RTCLI_COMPILER_CLANG)");
+                        codeWriter.WriteLine($"#pragma clang diagnostic push");
+                        codeWriter.WriteLine($"#pragma clang diagnostic ignored \"-Wunused-label\"");
+                        codeWriter.WriteLine($"#elif defined(RTCLI_COMPILER_MSVC)");
                         codeWriter.WriteLine($"#pragma warning(push)");
                         codeWriter.WriteLine($"#pragma warning(disable: 4102)");
-                        codeWriter.WriteLine($"#elif defined(RTCLI_COMPILER_CLANG)");
-                        codeWriter.WriteLine($"#pragma clang diagnostic ignored \"-Wunused-label\"");
                         codeWriter.WriteLine($"#endif");
                         WriteMethodRecursive(codeWriter, type);
-                        codeWriter.WriteLine($"#ifdef RTCLI_COMPILER_MSVC");
+                        codeWriter.WriteLine($"#if defined(RTCLI_COMPILER_CLANG)");
+                        codeWriter.WriteLine($"#pragma clang diagnostic pop");
+                        codeWriter.WriteLine($"#elif defined(RTCLI_COMPILER_MSVC)");
                         codeWriter.WriteLine($"#pragma warning(pop)");
                         codeWriter.WriteLine($"#endif");
 
