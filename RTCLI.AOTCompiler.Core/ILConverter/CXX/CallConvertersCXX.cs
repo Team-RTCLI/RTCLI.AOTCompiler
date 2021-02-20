@@ -5,6 +5,7 @@ using System.Text;
 using RTCLI.AOTCompiler.Translators;
 using Mono.Cecil;
 using RTCLI.AOTCompiler.Metadata;
+using System.Linq;
 
 namespace RTCLI.AOTCompiler.ILConverters
 {
@@ -24,7 +25,17 @@ namespace RTCLI.AOTCompiler.ILConverters
                 args += $"{(methodContext as CXXMethodTranslateContext).CmptStackPopObject}"
                      + (i == mtd.Parameters.Count ? "" : ", ");
             }
+            if(mtd.FullName.StartsWith("!!0"))
+            {
+                var garg = (mtd as GenericInstanceMethod).GenericArguments[0];
+                var type = methodContext.MetadataContext.GetTypeInformation(garg);
+                return $"{type.CXXTypeName}& {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = \n\t\t*RTCLI::newobj<{type.CXXTypeName}>({args});";
+            }
+                
             var methodInformation = mtd.GetMetaInformation(methodContext.MetadataContext);
+            string genericArgs = "";
+            if(mtd is GenericInstanceMethod gmtd)
+                genericArgs = $"<{string.Join(',', gmtd.GenericArguments.Select(a => methodContext.MetadataContext.GetTypeInformation(a).CXXTypeName))}>";
             if (!methodInformation.IsStatic)
             {
                 string caller = $"(({GetMethodOwner(mtd, methodContext)}&)" // Caster: ((DeclaringType&)
@@ -32,13 +43,13 @@ namespace RTCLI.AOTCompiler.ILConverters
                 string callBody =
                     $"{caller}" +
                     (Virt ? "" : $"{GetMethodOwner(mtd, methodContext)}::") +
-                    $"{mtd.GetMetaInformation(methodContext.MetadataContext).CXXMethodNameShort}({args});"; // Method Call body.
+                    $"{methodInformation.CXXMethodNameShort + genericArgs}({args});"; // Method Call body.
                 return (mtd.ReturnType.FullName != "System.Void" ? $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = " : "")
                     + callBody;
             }
             if(methodInformation.IsStatic)
             {
-                string callBody = $"{mtd.GetMetaInformation(methodContext.MetadataContext).CXXMethodName}({args});"; // Method Call body.
+                string callBody = $"{methodInformation.CXXMethodName + genericArgs}({args});"; // Method Call body.
                 return (mtd.ReturnType.FullName != "System.Void" ? $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = " : "")
                     + callBody;
             }

@@ -13,16 +13,23 @@ namespace TestCase
             {
                 arg = new T();
             }
+            public static void StaticMethodInGenericClass(T arg)
+            {
+                arg = new T();
+            }
+            public void GenericMethodInGenericClass<Y>(Y arg) where Y : new()
+            {
+                arg = new Y();
+            }
         }
         public static void GenericMethod<T>() where T : new()
         {
             var a = new GenericClass<T>();
             a.MethodInGenericClass(new T());
+            GenericClass<T>.StaticMethodInGenericClass(new T());
         }
         public void MethodUseGenericClass()
         {
-            GenericMethod<PureStruct>();
-            GenericMethod<float>();
             GenericMethod<TestGeneric>();
         }
 

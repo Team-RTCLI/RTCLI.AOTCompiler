@@ -19,9 +19,15 @@ namespace RTCLI.AOTCompiler.Metadata
                     return $"RTCLI::System::ElementArray<{elementType.CXXTypeName}>";
                 if (IsGenericInstance)
                     return $"{genericDeclaringType.CXXTypeName}<{string.Join(',', genericArgumentTypes.Select(a => a.CXXTypeName))}>";
+                if (IsGenericParameter)
+                    return definitionGP.FullName;
                 else return "RTCLI::" + string.Join("::", FullName.Split('.', '/')).Replace("<>", "__").Replace('`', '_'); ;
             }
         }
+        public string CXXTemplateParam =>
+            genericParameterTypes != null ? string.Join(',', genericParameterTypes.Select(a => $"class {a.CXXTypeName}")) : "";
+        public string CXXTemplateArg =>
+            genericParameterTypes != null ? string.Join(',', genericParameterTypes.Select(a => a.CXXTypeName)) : "";
         public string CXXTypeNameShort
         {
             get
@@ -30,7 +36,9 @@ namespace RTCLI.AOTCompiler.Metadata
                     return $"RTCLI::System::ElementArray<{elementType.CXXTypeName}>";
                 if (IsGenericInstance)
                     return $"{genericDeclaringType.CXXTypeName}<{string.Join(',', genericArgumentTypes.Select(a => a.CXXTypeName))}>";
-                else return definition.Name.Replace("<>", "__"); ;
+                if (IsGenericParameter)
+                    return definitionGP.FullName;
+                else return definition.Name.Replace("<>", "__");
             }
         }
     }
@@ -50,19 +58,27 @@ namespace RTCLI.AOTCompiler.Metadata
             }
             return sequence;
         }
-
+         
         public string CXXMethodName
-            =>  // Return Type
-             MetadataContext.GetTypeInformation(definition.DeclaringType)?.CXXTypeName //Type Name
-             + "::" + CXXMethodNameShort;//MethodName
+        {
+            get
+            {
+                var type = MetadataContext.GetTypeInformation(definition.DeclaringType);
+                return type.CXXTypeName + (type.HasGenericParameters ? $"<{type.CXXTemplateArg}>" : "") + "::" + CXXMethodNameShort;
+            }
+        }
         public string CXXMethodNameShort
             => (definition.IsConstructor ? "Constructor" : definition?.Name.Replace('<', '_').Replace('>', '_'));
 
         public string CXXMethodSignature => (IsStatic ? "static " : "")+  CXXRetType + " " + CXXMethodNameShort + CXXParamSequence;
         public string CXXParamSequence => "(" + CXXParamsSequence() + ")"; //Param Sequence
 
+        public string CXXTemplateParam =>
+            genericParameterTypes != null ? string.Join(',', genericParameterTypes.Select(a => $"class {a.CXXTypeName}")) : "";
+        public string CXXTemplateArg =>
+            genericParameterTypes != null ? string.Join(',', genericParameterTypes.Select(a => a.CXXTypeName)) : "";
         public string CXXRetType => MetadataContext.GetTypeInformation(definition.ReturnType)?.CXXTypeName;
-        public string CXXStackName => $"{string.Join("_", CXXMethodName.Split("::"))}__Stack";
+        public string CXXStackName => $"{string.Join("_", CXXMethodName.Split(new string[] { "::", "<", ">" }, StringSplitOptions.None))}__Stack";
     }
 
     public partial class FieldInformation : IMemberInformation

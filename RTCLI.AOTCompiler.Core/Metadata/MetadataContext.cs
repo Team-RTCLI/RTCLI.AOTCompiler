@@ -135,6 +135,8 @@ namespace RTCLI.AOTCompiler.Metadata
                 return new TypeInformation(inType as ArrayType, this);
             if(inType.IsGenericInstance)
                 return new TypeInformation(inType as GenericInstanceType, this);
+            if(inType.IsGenericParameter)
+                return new TypeInformation(inType as GenericParameter, this);
             return GetTypeInformation(inType.FullName);
         }
 
@@ -150,7 +152,7 @@ namespace RTCLI.AOTCompiler.Metadata
             foreach (var mtdInfo in type.Methods)
             {
                 if (mtdInfo.Definition is MethodReference mtdRef)
-                    if (mtdRef.FullName == methodReference.FullName)
+                    if (mtdRef.Name == methodReference.Name)
                         return mtdInfo;
             }
             return null;

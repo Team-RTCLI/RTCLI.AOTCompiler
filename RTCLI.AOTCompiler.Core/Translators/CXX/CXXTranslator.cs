@@ -80,6 +80,8 @@ namespace RTCLI.AOTCompiler.Translators
         private string EnvIncludes => "#include <RTCLI/RTCLI.hpp>";
         public void WriteTypeRecursively(CodeTextWriter codeWriter, Metadata.TypeInformation type)
         {
+            if(type.HasGenericParameters)
+                codeWriter.WriteLine($"template<{type.CXXTemplateParam}>");
             using (var classScope = new CXXScopeDisposer(codeWriter,
                                type.IsStruct ?
                                  $"struct {type.CXXTypeNameShort}"
@@ -129,8 +131,14 @@ namespace RTCLI.AOTCompiler.Translators
 
                 // [2-2-1] Method Code
                 codeWriter.WriteLine("//[2-2] Here Begins Method Body");
+                if(type.HasGenericParameters)
+                    codeWriter.WriteLine($"template<{type.CXXTemplateParam}>");
+                if (method.HasGenericParameters)
+                    codeWriter.WriteLine($"template<{method.CXXTemplateParam}>");
+
                 codeWriter.WriteLine(
                     method.CXXRetType + " " + method.CXXMethodName + method.CXXParamSequence);
+
                 codeWriter.WriteLine("{");
                 // [2-2-2] Code Body
                 codeWriter.indent();
