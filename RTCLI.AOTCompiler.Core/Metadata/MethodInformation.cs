@@ -4,6 +4,7 @@ using System.Globalization;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace RTCLI.AOTCompiler.Metadata
 {
@@ -34,6 +35,8 @@ namespace RTCLI.AOTCompiler.Metadata
                         Parameters.Add(new ParameterInformation(param, metadataContext));
                     }
                 }
+                if(def.HasGenericParameters)
+                    genericParameterTypes = def.GenericParameters.Select(a => MetadataContext.GetTypeInformation(a)).ToArray();
             }
         }
 
@@ -46,10 +49,12 @@ namespace RTCLI.AOTCompiler.Metadata
         public bool IsStatic => definition.IsStatic;
         public bool IsPublic => definition.IsPublic;
         public bool IsFamily => definition.IsFamily;
+        public bool HasGenericParameters => definition.HasGenericParameters;
 
         public readonly List<InstructionInformation> Instructions = new List<InstructionInformation>();
         public readonly List<VariableInformation> LocalVariables = new List<VariableInformation>();
         public readonly List<ParameterInformation> Parameters = new List<ParameterInformation>();
+        public readonly TypeInformation[] genericParameterTypes = null;
         public IMetadataTokenProvider Definition => definition;
         public MetadataContext MetadataContext { get; }
     }
