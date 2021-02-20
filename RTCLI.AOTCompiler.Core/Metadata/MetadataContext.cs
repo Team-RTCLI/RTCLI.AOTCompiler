@@ -12,22 +12,58 @@ namespace RTCLI.AOTCompiler.Metadata
 {
     public sealed class MetadataContext
     {
-        public readonly Dictionary<string, AssemblyInformation> Assemblies = new Dictionary<string, AssemblyInformation>(); 
-        public readonly Dictionary<string, TypeInformation> Types = new Dictionary<string, TypeInformation>();
-
+        public static MetadataContext NetStandardMetadataContext = null;
+        public Dictionary<string, AssemblyInformation> Assemblies = new Dictionary<string, AssemblyInformation>();
+        public Dictionary<string, TypeInformation> Types = new Dictionary<string, TypeInformation>();
         private List<string> assemblyFindDir = new List<string>();
+
+        static MetadataContext()
+        {
+            // Initialize NetStandard.
+            NetStandardMetadataContext = new MetadataContext("netstandard.dll", false);
+        }
+
+        public MetadataContext(string assemblyPath, bool readSymbols)
+        {
+            // Initialize Assembly Resolver.
+            var resolver = new BasePathAssemblyResolver(Path.GetDirectoryName(assemblyPath));
+            var parameter = new ReaderParameters
+            {
+                AssemblyResolver = resolver,
+                ReadSymbols = readSymbols
+            };
+            // Read Assembly
+            string AssemblyBase = Path.GetDirectoryName(assemblyPath);
+            assemblyFindDir.Add(Path.GetDirectoryName(assemblyPath));
+            assemblyFindDir.Add("");
+            assemblyFindDir.Add(Directory.GetCurrentDirectory());
+
+            var FocusedAssemblyLoaded = ReadAssemblyRecursively(assemblyPath, parameter);
+
+            foreach (var assembly in Assemblies.Values)
+                foreach (var module in assembly.Modules.Values)
+                    foreach (var type in module.Types.Values)
+                        BuildTypeMapRecursively(type);
+            FocusedAssembly = FocusedAssemblyLoaded.Name.Name;
+        }
+
         private AssemblyDefinition ReadAssemblyFromEnv(string assemblyName, ReaderParameters parameter)
         {
             AssemblyDefinition loaded = null;
             if (File.Exists(assemblyName))
             {
+                System.Console.WriteLine($"Reading {assemblyName}...");
                 loaded = AssemblyDefinition.ReadAssembly(assemblyName, parameter);
             }
-            foreach (var dir in assemblyFindDir)
+            else
             {
-                if (File.Exists(Path.Combine(dir, assemblyName)))
+                foreach (var dir in assemblyFindDir)
                 {
-                    loaded = AssemblyDefinition.ReadAssembly(Path.Combine(dir, assemblyName), parameter);
+                    if (File.Exists(Path.Combine(dir, assemblyName)))
+                    {
+                        System.Console.WriteLine($"Reading {assemblyName}...");
+                        loaded = AssemblyDefinition.ReadAssembly(Path.Combine(dir, assemblyName), parameter);
+                    }
                 }
             }
 
@@ -61,13 +97,18 @@ namespace RTCLI.AOTCompiler.Metadata
                     var references = module.AssemblyReferences;
                     foreach (var reference in references)
                     {
-                        if (reference.Name != "netstandard" && reference.Name != "mscorlib")
+                        if(NetStandardMetadataContext is null)
+                        {
+                            ReadAssemblyRecursively(reference.Name + ".dll", sys_parameter);
+                        }
+                        else if (reference.Name != "netstandard" && reference.Name != "mscorlib")
                         {
                             ReadAssemblyRecursively(reference.Name + ".dll", parameter);
                         }
                         else
                         {
-                            ReadAssemblyRecursively(reference.Name + ".dll", sys_parameter);
+                            Assemblies = Assemblies.Concat(NetStandardMetadataContext.Assemblies).ToDictionary(k => k.Key, v => v.Value);
+                            //ReadAssemblyRecursively(reference.Name + ".dll", sys_parameter);
                         }
                     }
                 }
@@ -80,30 +121,6 @@ namespace RTCLI.AOTCompiler.Metadata
             Types.Add(type.FullName, type);
             foreach (var nested in type.Nested)
                 BuildTypeMapRecursively(nested);
-        }
-
-        public MetadataContext(string assemblyPath, bool readSymbols)
-        {
-            // Initialize Assembly Resolver.
-            var resolver = new BasePathAssemblyResolver(Path.GetDirectoryName(assemblyPath));
-            var parameter = new ReaderParameters
-            {
-                AssemblyResolver = resolver,
-                ReadSymbols = readSymbols
-            };
-            // Read Assembly
-            string AssemblyBase = Path.GetDirectoryName(assemblyPath);
-            assemblyFindDir.Add(Path.GetDirectoryName(assemblyPath));
-            assemblyFindDir.Add("");
-            assemblyFindDir.Add(Directory.GetCurrentDirectory());
-
-            var FocusedAssemblyLoaded = ReadAssemblyRecursively(assemblyPath, parameter);
-
-            foreach (var assembly in Assemblies.Values)
-                foreach (var module in assembly.Modules.Values)
-                    foreach (var type in module.Types.Values)
-                        BuildTypeMapRecursively(type);
-            FocusedAssembly = FocusedAssemblyLoaded.Name.Name;
         }
 
         public TypeInformation GetTypeInformation(string inType)

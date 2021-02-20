@@ -8,16 +8,15 @@ namespace RTCLI.AOTCompiler
     public sealed class TranslateContext
     {
 #region Constructors
-        public TranslateContext(Assembly assembly, bool readSymbols)
-            : this(assembly.Location, readSymbols)
+        public TranslateContext(Assembly assembly, bool readSymbols, MetadataContext metadataContext)
+            : this(assembly.Location, readSymbols, metadataContext)
         {
         }
 
-        public TranslateContext(string assemblyPath, bool readSymbols)
+        public TranslateContext(string assemblyPath, bool readSymbols, MetadataContext metadataContext)
         {
-            var context = new MetadataContext(assemblyPath, readSymbols);
-            this.FocusedAssembly = context.FocusedAssembly;
-            this.MetadataContext = context;
+            this.FocusedAssembly = metadataContext.FocusedAssembly;
+            this.MetadataContext = metadataContext;
         }
 #endregion
         public MetadataContext MetadataContext { get; }
