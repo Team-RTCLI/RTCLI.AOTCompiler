@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RTCLITestCase
+namespace RTCLI.TestCase
 {
     //[TestExecute($"Test({12})")]
     public class TestSystem

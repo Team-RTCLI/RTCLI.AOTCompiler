@@ -108,7 +108,6 @@ namespace RTCLI.AOTCompiler.Metadata
                         else
                         {
                             Assemblies = Assemblies.Concat(NetStandardMetadataContext.Assemblies).ToDictionary(k => k.Key, v => v.Value);
-                            //ReadAssemblyRecursively(reference.Name + ".dll", sys_parameter);
                         }
                     }
                 }

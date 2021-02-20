@@ -8,6 +8,14 @@ namespace RTCLI.TestCase
     {
         public class Inner
         {
+            public class InnerInner
+            {
+                public InnerInner(int id)
+                {
+
+                }
+                public int ID;
+            }
             public Inner(int id)
             {
                 this.ID = id;
@@ -23,6 +31,7 @@ namespace RTCLI.TestCase
                 return;
             }
             public int ID { get; }
+            public int ID2 { get; }
         };
 
         public void Test(TestInnerClass argClass)

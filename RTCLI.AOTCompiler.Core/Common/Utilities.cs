@@ -20,5 +20,15 @@ namespace RTCLI.AOTCompiler
         {
             return instruction.ToString().Split(":")[0];
         }
+
+        public static string HoldEscape(this string source)
+        {
+            return source.Replace("\\", "\\\\").Replace("\n", "\\n")
+                    .Replace("\'", "\\'").Replace("\"", "\\\"")
+                    .Replace("\0", "\\0").Replace("\a", "\\a")
+                    .Replace("\b", "\\b").Replace("\f", "\\f")
+                    .Replace("\r", "\\r").Replace("\t", "\\t")
+                    .Replace("\v", "\\v");
+        }
     }
 }

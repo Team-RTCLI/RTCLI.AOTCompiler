@@ -59,7 +59,7 @@ namespace RTCLI.AOTCompiler.Translators
         {
             if (convertersCXX.TryGetValue(inst.OpCode, out ICXXILConverter targetConverter))
                 return targetConverter.Note(inst, methodContext);
-            return $"//{inst.ToString()}";
+            return $"//{inst.ToString().HoldEscape()}";
         }
 
         private string TranslateILInstruction(Instruction inst, MethodTranslateContext methodContext)
