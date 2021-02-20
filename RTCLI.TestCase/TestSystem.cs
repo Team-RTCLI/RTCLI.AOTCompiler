@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RTCLITestCase
+namespace RTCLI.TestCase
 {
     public class TestSystem
     {
