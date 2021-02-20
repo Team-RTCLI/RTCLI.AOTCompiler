@@ -1,12 +1,17 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\RTCLI.AOTCompiler.Core\RTCLI.AOTCompiler.Core.csproj" />
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="copy &quot;$(SolutionDir)RTCLI.Standard\mscorlib.dll&quot; &quot;$(TargetDir)mscorlib.dll&quot;;&#xD;&#xA;copy &quot;$(SolutionDir)RTCLI.Standard\netstandard.dll&quot; &quot;$(TargetDir)netstandard.dll&quot;;" />
+  </Target>
+
 
 </Project>

@@ -15,7 +15,7 @@ namespace RTCLI.AOTCompiler.Translators
         public IEnumerable<string> assemblyPaths;
     }
 
-    public class CXXTranslator
+    public class CXXConvertersCenter
     {
         private static bool TypeNameFilter(Type typeObj, Object criteriaObj)
         {
@@ -25,10 +25,9 @@ namespace RTCLI.AOTCompiler.Translators
                 return false;
         }
 
-        public CXXTranslator(TranslateContext translateContext, CXXTranslateOptions options)
+        static CXXConvertersCenter()
         {
-            this.options = options;
-            this.translateContext = translateContext;
+            System.Console.WriteLine("Preparing ConvertersCXX...");
 
             Assembly assembly = Assembly.GetAssembly(typeof(ILConverters.IILConverter));
             TypeFilter typeNameFilter = new TypeFilter(TypeNameFilter);
@@ -38,18 +37,29 @@ namespace RTCLI.AOTCompiler.Translators
                 if (typeInterfaces.Length > 0)
                 {
                     var newConv = System.Activator.CreateInstance(type) as ILConverters.ICXXILConverter;
-                    convertersCXX.Add(newConv.TargetOpCode(), newConv);
+                    ConvertersCXX.Add(newConv.TargetOpCode(), newConv);
                     System.Console.WriteLine($"Registered: {newConv.TargetOpCode()}");
                 }
             }
-            System.Console.WriteLine($"Total Converters: {convertersCXX.Count}/{Enum.GetValues(typeof(Code)).Length}");
+            System.Console.WriteLine($"Total Converters: {ConvertersCXX.Count}/{Enum.GetValues(typeof(Code)).Length}");
+        }
+
+        public static readonly Dictionary<OpCode, ICXXILConverter> ConvertersCXX = new Dictionary<OpCode, ICXXILConverter>();
+    }
+
+    public class CXXTranslator
+    { 
+        public CXXTranslator(TranslateContext translateContext, CXXTranslateOptions options)
+        {
+            this.options = options;
+            this.translateContext = translateContext;
         }
 
         private string NoteILInstruction(Instruction inst, MethodTranslateContext methodContext)
         {
             if (convertersCXX.TryGetValue(inst.OpCode, out ICXXILConverter targetConverter))
                 return targetConverter.Note(inst, methodContext);
-            return $"//{inst.ToString()}";
+            return $"//{inst.ToString().HoldEscape()}";
         }
 
         private string TranslateILInstruction(Instruction inst, MethodTranslateContext methodContext)
@@ -165,7 +175,16 @@ namespace RTCLI.AOTCompiler.Translators
                         typeSourceWriters[type.FullName] = codeWriter;
                         codeWriter.WriteLine(EnvIncludes);
                         codeWriter.WriteLine($"#include <{type.TypeName}.h>");
+                        codeWriter.WriteLine($"#ifdef RTCLI_COMPILER_MSVC");
+                        codeWriter.WriteLine($"#pragma warning(push)");
+                        codeWriter.WriteLine($"#pragma warning(disable: 4102)");
+                        codeWriter.WriteLine($"#elif defined(RTCLI_COMPILER_CLANG)");
+                        codeWriter.WriteLine($"#pragma clang diagnostic ignored \"-Wunused-label\"");
+                        codeWriter.WriteLine($"#endif");
                         WriteMethodRecursive(codeWriter, type);
+                        codeWriter.WriteLine($"#ifdef RTCLI_COMPILER_MSVC");
+                        codeWriter.WriteLine($"#pragma warning(pop)");
+                        codeWriter.WriteLine($"#endif");
                         typeSourceWriters[type.FullName].Flush();
                     }
                 }
@@ -199,6 +218,6 @@ namespace RTCLI.AOTCompiler.Translators
         private readonly TranslateContext translateContext = null;
         private readonly Dictionary<string, CodeTextWriter> typeSourceWriters = new Dictionary<string, CodeTextWriter>();
         private readonly Dictionary<string, CodeTextWriter> typeHeaderWriters = new Dictionary<string, CodeTextWriter>();
-        private readonly Dictionary<OpCode, ICXXILConverter> convertersCXX = new Dictionary<OpCode, ICXXILConverter>(); 
+        private Dictionary<OpCode, ICXXILConverter> convertersCXX => CXXConvertersCenter.ConvertersCXX;
     }
 }

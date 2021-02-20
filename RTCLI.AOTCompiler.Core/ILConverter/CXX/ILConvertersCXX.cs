@@ -6,6 +6,7 @@ using System.Text;
 using RTCLI.AOTCompiler.Translators;
 using Mono.Cecil;
 using RTCLI.AOTCompiler.Metadata;
+using System.Text.RegularExpressions;
 
 namespace RTCLI.AOTCompiler.ILConverters
 {
@@ -131,7 +132,8 @@ namespace RTCLI.AOTCompiler.ILConverters
     {
         public OpCode TargetOpCode() => OpCodes.Ldstr;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext) 
-            => $"const char* {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = \"{instruction.Operand}\";";
+            => $"const char* {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = " +
+            $"\"{instruction.Operand.ToString().HoldEscape()}\";";
     }
 
     public class RetConverterCXX : ICXXILConverter

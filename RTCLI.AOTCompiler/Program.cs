@@ -45,6 +45,7 @@ namespace RTCLI.AOTCompiler
                 {
                     var outputPath = extra[0];
                     var assemblyPaths = extra.Skip(1);
+                    dispatchArgs.readSymbols = false;
 
                     Dispatcher.TranslateAll(
                         Console.Out,

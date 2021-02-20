@@ -1,6 +1,8 @@
 using RTCLI.AOTCompiler.Translators;
 using System.Collections.Generic;
 using System.IO;
+using RTCLI.AOTCompiler.Metadata;
+using System.Threading.Tasks;
 
 namespace RTCLI.AOTCompiler
 {
@@ -13,12 +15,12 @@ namespace RTCLI.AOTCompiler
         {
             System.Console.WriteLine("AOTCompiler: Preparing assembly: \"{0}\" ...", Path.GetFullPath(assemblyPath));
 
-            var translateContext = new TranslateContext(assemblyPath, dispatchArgs.readSymbols);
+            var metaContext = new MetadataContext(assemblyPath, dispatchArgs.readSymbols);
+            var translateContext = new TranslateContext(assemblyPath, dispatchArgs.readSymbols, metaContext);
             CXXTranslateOptions cxxOptions = new CXXTranslateOptions();
             cxxOptions.StaticAssertOnUnimplementatedILs = dispatchArgs.cxxStaticAssertOnUnimplementatedILs;
             var cxxTranslator = new CXXTranslator(translateContext, cxxOptions);
 
-            System.Console.WriteLine(" done.");
             using (var _ = storage.EnterScope("meta"))
             {
                 MetadataSerializer metaSerializer = new MetadataSerializer(translateContext);
@@ -34,6 +36,8 @@ namespace RTCLI.AOTCompiler
             {
                 cxxTranslator.WriteSource(storage);
             }
+
+            System.Console.WriteLine(" done.");
         }
 
         public static void TranslateAll(
@@ -41,13 +45,12 @@ namespace RTCLI.AOTCompiler
             DispatchArgs dispatchArgs,
             IEnumerable<string> assemblyPaths)
         {
-            foreach (var aseemblyPath in assemblyPaths)
-            {
+            Parallel.ForEach(assemblyPaths, aseemblyPath => {
                 Translate(
                     storage,
                     dispatchArgs,
                     aseemblyPath);
-            }
+            });
         }
 
         public static void TranslateAll(
@@ -67,18 +70,17 @@ namespace RTCLI.AOTCompiler
             DispatchArgs dispatchArgs,
             IEnumerable<string> assemblyPaths)
         {
-            var storage = new CodeTextStorage(
+            Parallel.ForEach(assemblyPaths, aseemblyPath => {
+                var storage = new CodeTextStorage(
                 logw,
                 outputPath,
                 "    ");
 
-            foreach (var aseemblyPath in assemblyPaths)
-            {
                 Translate(
                     storage,
                     dispatchArgs,
                     aseemblyPath);
-            }
+            });
         }
 
         public static void TranslateAll(

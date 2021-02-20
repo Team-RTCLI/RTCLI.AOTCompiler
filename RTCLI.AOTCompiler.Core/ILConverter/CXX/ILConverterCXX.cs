@@ -6,6 +6,6 @@ namespace RTCLI.AOTCompiler.ILConverters
 {
     public interface ICXXILConverter : IILConverter
     {
-        string Note(Instruction instruction, MethodTranslateContext methodContext) => "// " + instruction.ToString();
+        string Note(Instruction instruction, MethodTranslateContext methodContext) => "// " + instruction.ToString().HoldEscape();
     }
 }
