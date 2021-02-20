@@ -6,6 +6,7 @@ namespace TestCase
 {
     class TestGeneric
     {
+        /*
         public class GenericClass<T> where T : new()
         {
             T fieldInGenericClass;
@@ -34,5 +35,6 @@ namespace TestCase
         }
 
         public delegate TResult GenericDelegate<TArg, out TResult>(TArg arg);
+        */
     }
 }

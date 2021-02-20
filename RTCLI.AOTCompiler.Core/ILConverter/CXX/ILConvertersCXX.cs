@@ -132,8 +132,8 @@ namespace RTCLI.AOTCompiler.ILConverters
     {
         public OpCode TargetOpCode() => OpCodes.Ldstr;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext) 
-            => $"const char* {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = " +
-            $"\"{instruction.Operand.ToString().HoldEscape()}\";";
+            => $"const RTCLI::System::String {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = " +
+            $"RTCLI_NATIVE_STRING(\"{instruction.Operand.ToString().HoldEscape()}\");";
     }
 
     public class RetConverterCXX : ICXXILConverter
