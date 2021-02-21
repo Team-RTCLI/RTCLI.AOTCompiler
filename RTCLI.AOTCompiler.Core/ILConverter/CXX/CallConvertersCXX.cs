@@ -29,7 +29,7 @@ namespace RTCLI.AOTCompiler.ILConverters
             {
                 var garg = (mtd as GenericInstanceMethod).GenericArguments[0];
                 var type = methodContext.MetadataContext.GetTypeInformation(garg);
-                return $"{type.CXXTypeName}& {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = \n\t\t*RTCLI::newobj<{type.CXXTypeName}>({args});";
+                return $"{type.CXXTypeName}& {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = \n\t\t*RTCLI::new_object<{type.CXXTypeName}>({args});";
             }
                 
             var methodInformation = mtd.GetMetaInformation(methodContext.MetadataContext);

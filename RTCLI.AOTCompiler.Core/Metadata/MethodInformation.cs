@@ -28,16 +28,16 @@ namespace RTCLI.AOTCompiler.Metadata
                         LocalVariables.Add(new VariableInformation(localVar, metadataContext));
                     }
                 }
-                if(def.HasParameters)
-                {
-                    foreach (ParameterDefinition param in def.Parameters)
-                    {
-                        Parameters.Add(new ParameterInformation(param, metadataContext));
-                    }
-                }
-                if(def.HasGenericParameters)
-                    genericParameterTypes = def.GenericParameters.Select(a => MetadataContext.GetTypeInformation(a)).ToArray();
             }
+            if (def.HasParameters)
+            {
+                foreach (ParameterDefinition param in def.Parameters)
+                {
+                    Parameters.Add(new ParameterInformation(param, metadataContext));
+                }
+            }
+            if (def.HasGenericParameters)
+                genericParameterTypes = def.GenericParameters.Select(a => MetadataContext.GetTypeInformation(a)).ToArray();
         }
 
         [JsonIgnore] public MethodBody Body => definition.Body;

@@ -88,7 +88,7 @@ namespace RTCLI.AOTCompiler.Translators
                                : $"class {type.CXXTypeNameShort} : public RTCLI::System::Object",
 
                                true))
-            {
+             {
                 codeWriter.unindent().WriteLine("public:").indent();
                 foreach (var nested in type.Nested)
                 {
@@ -120,6 +120,15 @@ namespace RTCLI.AOTCompiler.Translators
                 CXXMethodTranslateContext methodContext = new CXXMethodTranslateContext(translateContext, method);
                 // [2-1] Stack Code
                 codeWriter.WriteLine($"\n//{method.CXXMethodName}\n//[2-1] Here Begins Stack Declaration");
+                if(type.HasGenericParameters || method.HasGenericParameters)
+                {
+                    List<string> paramList = new List<string>();
+                    if(type.HasGenericParameters)
+                        paramList.Add(type.CXXTemplateParam);
+                    if (method.HasGenericParameters)
+                        paramList.Add(method.CXXTemplateParam);
+                    codeWriter.WriteLine($"template<{string.Join(',', paramList)}>");
+                }
                 codeWriter.WriteLine($"struct {method.CXXStackName}");
                 codeWriter.WriteLine("{");
                 codeWriter.indent();
@@ -144,7 +153,17 @@ namespace RTCLI.AOTCompiler.Translators
                 codeWriter.WriteLine("{");
                 // [2-2-2] Code Body
                 codeWriter.indent();
-                codeWriter.WriteLine($"{method.CXXStackName} stack;");
+                if (type.HasGenericParameters || method.HasGenericParameters)
+                {
+                    List<string> argList = new List<string>();
+                    if (type.HasGenericParameters)
+                        argList.Add(type.CXXTemplateArg);
+                    if (method.HasGenericParameters)
+                        argList.Add(method.CXXTemplateArg);
+                    codeWriter.WriteLine($"{method.CXXStackName}<{string.Join(',', argList)}> stack;");
+                }
+                else
+                    codeWriter.WriteLine($"{method.CXXStackName} stack;");
                 codeWriter.WriteLine($"stack.Init<{method.InitLocals.ToString().ToLower()}>();");
                 foreach (var instruction in method.Body.Instructions)
                 {
