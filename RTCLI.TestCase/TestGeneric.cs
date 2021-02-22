@@ -22,11 +22,11 @@ namespace TestCase
                 arg = new Y();
             }
         }
-        public static void GenericMethod<T>() where T : new()
+        public static void GenericMethod<Y>() where Y : new()
         {
-            var a = new GenericClass<T>();
-            a.MethodInGenericClass(new T());
-            GenericClass<T>.StaticMethodInGenericClass(new T());
+            var a = new GenericClass<Y>();
+            a.MethodInGenericClass(new Y());
+            GenericClass<Y>.StaticMethodInGenericClass(new Y());
         }
         public void MethodUseGenericClass()
         {

@@ -119,7 +119,7 @@ namespace RTCLI.AOTCompiler.Translators
                     continue;
                 CXXMethodTranslateContext methodContext = new CXXMethodTranslateContext(translateContext, method);
                 // [2-1] Stack Code
-                codeWriter.WriteLine($"\n//{method.CXXMethodName}\n//[2-1] Here Begins Stack Declaration");
+                codeWriter.WriteLine($"\n//{method.CXXMethodDeclareName}\n//[2-1] Here Begins Stack Declaration");
                 if(type.HasGenericParameters || method.HasGenericParameters)
                 {
                     List<string> paramList = new List<string>();
@@ -148,11 +148,18 @@ namespace RTCLI.AOTCompiler.Translators
                     codeWriter.WriteLine($"template<{method.CXXTemplateParam}>");
 
                 codeWriter.WriteLine(
-                    method.CXXRetType + " " + method.CXXMethodName + method.CXXParamSequence);
+                    method.CXXRetType + " " + method.CXXMethodDeclareName + method.CXXParamSequence);
 
                 codeWriter.WriteLine("{");
                 // [2-2-2] Code Body
                 codeWriter.indent();
+                if (method.IsConstructor && method.IsStatic)
+                {
+                    codeWriter.WriteLine("static std::once_flag flag;");
+                    codeWriter.WriteLine("std::call_once(flag,[&]()");
+                    codeWriter.WriteLine("{");
+                    codeWriter.indent();
+                }
                 if (type.HasGenericParameters || method.HasGenericParameters)
                 {
                     List<string> argList = new List<string>();
@@ -171,6 +178,11 @@ namespace RTCLI.AOTCompiler.Translators
                     codeWriter.WriteLine(
                         instruction.GetLabel() + ": " +
                         TranslateILInstruction(instruction, methodContext));
+                }
+                if (method.IsConstructor && method.IsStatic)
+                {
+                    codeWriter.unindent();
+                    codeWriter.WriteLine("});");
                 }
                 codeWriter.unindent();
                 codeWriter.WriteLine("}");

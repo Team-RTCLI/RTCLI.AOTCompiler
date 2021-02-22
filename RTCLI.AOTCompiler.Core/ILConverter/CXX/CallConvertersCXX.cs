@@ -34,8 +34,8 @@ namespace RTCLI.AOTCompiler.ILConverters
                 
             var methodInformation = mtd.GetMetaInformation(methodContext.MetadataContext);
             string genericArgs = "";
-            if(mtd is GenericInstanceMethod gmtd)
-                genericArgs = $"<{string.Join(',', gmtd.GenericArguments.Select(a => methodContext.MetadataContext.GetTypeInformation(a).CXXTypeName))}>";
+            if (methodInformation.HasGenericParameters)
+                genericArgs = $"<{methodInformation.CXXTemplateArg}>";
             if (!methodInformation.IsStatic)
             {
                 string caller = $"(({GetMethodOwner(mtd, methodContext)}&)" // Caster: ((DeclaringType&)
@@ -49,8 +49,10 @@ namespace RTCLI.AOTCompiler.ILConverters
             }
             if(methodInformation.IsStatic)
             {
-                string callBody = $"{methodInformation.CXXMethodName + genericArgs}({args});"; // Method Call body.
-                return (mtd.ReturnType.FullName != "System.Void" ? $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = " : "")
+                var type = methodContext.MetadataContext.GetTypeInformation(mtd.DeclaringType);
+                string callBody = $"{methodInformation.CXXMethodCallName(type)}::{methodInformation.CXXMethodNameShort + genericArgs}({args});"; // Method Call body.
+                return type.CallStaticConstructor(methodContext) +
+                (mtd.ReturnType.FullName != "System.Void" ? $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = " : "")
                     + callBody;
             }
             return "ERROR_METHOD_NAME";

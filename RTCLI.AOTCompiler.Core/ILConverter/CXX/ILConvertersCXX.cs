@@ -459,7 +459,8 @@ namespace RTCLI.AOTCompiler.ILConverters
         {
             var fld = instruction.Operand as FieldReference;
             TypeInformation typeInformation = methodContext.TranslateContext.MetadataContext.GetTypeInformation(fld.DeclaringType);
-            return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = {typeInformation.CXXTypeName}::{Utilities.GetCXXValidTokenString(fld.Name)};";
+            return typeInformation.CallStaticConstructor(methodContext) +
+                $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = {typeInformation.CXXTypeName}::{Utilities.GetCXXValidTokenString(fld.Name)};";
         }
     }
 
@@ -470,7 +471,8 @@ namespace RTCLI.AOTCompiler.ILConverters
         {
             var fld = instruction.Operand as FieldReference;
             TypeInformation typeInformation = methodContext.TranslateContext.MetadataContext.GetTypeInformation(fld.DeclaringType);
-            return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = RTCLI_ADDRESSOF({typeInformation.CXXTypeName}::{Utilities.GetCXXValidTokenString(fld.Name)});";
+            return typeInformation.CallStaticConstructor(methodContext) + 
+                $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = RTCLI_ADDRESSOF({typeInformation.CXXTypeName}::{Utilities.GetCXXValidTokenString(fld.Name)});";
         }
     }
 
@@ -481,7 +483,8 @@ namespace RTCLI.AOTCompiler.ILConverters
         {
             var fld = instruction.Operand as FieldReference;
             TypeInformation typeInformation = methodContext.TranslateContext.MetadataContext.GetTypeInformation(fld.DeclaringType);
-            return $"{typeInformation.CXXTypeName}::{Utilities.GetCXXValidTokenString(fld.Name)} = {(methodContext as CXXMethodTranslateContext).CmptStackPopObject};";
+            return typeInformation.CallStaticConstructor(methodContext) +
+                $"{typeInformation.CXXTypeName}::{Utilities.GetCXXValidTokenString(fld.Name)} = {(methodContext as CXXMethodTranslateContext).CmptStackPopObject};";
         }
     }
 
@@ -538,7 +541,7 @@ namespace RTCLI.AOTCompiler.ILConverters
             var method = instruction.Operand as MethodReference;
             TypeInformation typeInformation = methodContext.TranslateContext.MetadataContext.GetTypeInformation(method.DeclaringType);
             var methodInformation = typeInformation.Methods.Find(m => m.Definition == method);
-            return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = &{methodInformation.CXXMethodName};";
+            return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = &{methodInformation.CXXMethodCallName(typeInformation)};";
         }
     }
 }

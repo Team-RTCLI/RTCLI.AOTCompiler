@@ -47,8 +47,10 @@ namespace RTCLI.AOTCompiler.Metadata
         
         public bool IsPrivate => definition.IsPrivate;
         public bool IsStatic => definition.IsStatic;
+        public bool IsConstructor => definition.IsConstructor;
         public bool IsPublic => definition.IsPublic;
         public bool IsFamily => definition.IsFamily;
+        public bool IsStaticConstructor => definition.IsStatic && definition.IsConstructor;
         public bool HasGenericParameters => definition.HasGenericParameters;
 
         public readonly List<InstructionInformation> Instructions = new List<InstructionInformation>();

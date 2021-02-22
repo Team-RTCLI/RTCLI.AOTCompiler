@@ -18,5 +18,6 @@ namespace RTCLI.AOTCompiler.Translators
         public MethodInformation MethodInfo { get; }
         public TranslateContext TranslateContext { get; }
         public MetadataContext MetadataContext { get; }
+        public List<TypeInformation> StaticReference = new List<TypeInformation>();
     }
 }

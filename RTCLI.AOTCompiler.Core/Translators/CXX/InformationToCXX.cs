@@ -18,7 +18,7 @@ namespace RTCLI.AOTCompiler.Metadata
                 if (IsArray)
                     return $"RTCLI::System::ElementArray<{elementType.CXXTypeName}>";
                 if (IsGenericInstance)
-                    return $"{genericDeclaringType.CXXTypeName}<{string.Join(',', genericArgumentTypes.Select(a => a.CXXTypeName))}>";
+                    return $"{genericElementType.CXXTypeName}<{string.Join(',', genericArgumentTypes.Select(a => a.CXXTypeName))}>";
                 if (IsGenericParameter)
                     return definitionGP.FullName;
                 else return "RTCLI::" + string.Join("::", FullName.Split('.', '/')).Replace("<>", "__").Replace('`', '_'); ;
@@ -35,11 +35,26 @@ namespace RTCLI.AOTCompiler.Metadata
                 if (IsArray)
                     return $"RTCLI::System::ElementArray<{elementType.CXXTypeName}>";
                 if (IsGenericInstance)
-                    return $"{genericDeclaringType.CXXTypeName}<{string.Join(',', genericArgumentTypes.Select(a => a.CXXTypeName))}>";
+                    return $"{genericElementType.CXXTypeName}<{string.Join(',', genericArgumentTypes.Select(a => a.CXXTypeName))}>";
                 if (IsGenericParameter)
                     return definitionGP.FullName;
                 else return definition.Name.Replace("<>", "__").Replace('`', '_');
             }
+        }
+
+
+
+        public string CallStaticConstructor(Translators.MethodTranslateContext methodContext)
+        {
+            if (methodContext.MethodInfo == StaticConstructor)
+                return "";
+            if (!methodContext.StaticReference.Contains(this))
+            {
+                methodContext.StaticReference.Add(this);
+                if (StaticConstructor != null)
+                    return $"{StaticConstructor.CXXMethodCallName(this)}();";
+            }
+            return "";
         }
     }
 
@@ -59,13 +74,17 @@ namespace RTCLI.AOTCompiler.Metadata
             return sequence;
         }
          
-        public string CXXMethodName
+        public string CXXMethodDeclareName
         {
             get
             {
                 var type = MetadataContext.GetTypeInformation(definition.DeclaringType);
                 return type.CXXTypeName + (type.HasGenericParameters ? $"<{type.CXXTemplateArg}>" : "") + "::" + CXXMethodNameShort;
             }
+        }
+        public string CXXMethodCallName(TypeInformation type)
+        {
+            return $"{type.CXXTypeName}::{CXXMethodNameShort}";
         }
         public string CXXMethodNameShort
             => (definition.IsConstructor ? (definition.IsStatic ? "StaticConstructor" : "Constructor") : definition?.Name.Replace('<', '_').Replace('>', '_'));
@@ -78,7 +97,7 @@ namespace RTCLI.AOTCompiler.Metadata
         public string CXXTemplateArg =>
             genericParameterTypes != null ? string.Join(',', genericParameterTypes.Select(a => a.CXXTypeName)) : "";
         public string CXXRetType => MetadataContext.GetTypeInformation(definition.ReturnType)?.CXXTypeName;
-        public string CXXStackName => $"{string.Join("_", CXXMethodName.Split(new string[] { "::", "<", ">" }, StringSplitOptions.None))}__Stack";
+        public string CXXStackName => $"{string.Join("_", CXXMethodDeclareName.Split(new string[] { "::", "<", ">" }, StringSplitOptions.None))}__Stack";
     }
 
     public partial class FieldInformation : IMemberInformation

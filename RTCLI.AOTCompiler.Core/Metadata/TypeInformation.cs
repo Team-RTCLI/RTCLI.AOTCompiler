@@ -26,6 +26,7 @@ namespace RTCLI.AOTCompiler.Metadata
         public readonly List<FieldInformation> Fields = new List<FieldInformation>();
         public readonly List<PropertyInformation> Properties = new List<PropertyInformation>();
         public readonly List<TypeInformation> Nested = new List<TypeInformation>();
+        public readonly MethodInformation StaticConstructor = null;
         public TypeInformation GetElementType() => elementType;
 
         public TypeInformation(TypeDefinition def, MetadataContext metadataContext)
@@ -36,7 +37,12 @@ namespace RTCLI.AOTCompiler.Metadata
             NamespaceChain = def.Namespace.Split('.');
 
             foreach (var method in def.Methods)
-                Methods.Add(new MethodInformation(method, metadataContext));
+            {
+                var mtd = new MethodInformation(method, metadataContext);
+                if (mtd.IsStaticConstructor)
+                    StaticConstructor = mtd;
+                Methods.Add(mtd);
+            }
             foreach(var prop in def.Properties)
                 Properties.Add(new PropertyInformation(prop, metadataContext));
             foreach(var field in def.Fields)
@@ -68,23 +74,18 @@ namespace RTCLI.AOTCompiler.Metadata
         public TypeInformation(GenericInstanceType def, MetadataContext metadataContext)
         {
             this.definitionGI = def;
-            this.definition = metadataContext.GetTypeInformation(def.ElementType).definition;
             this.MetadataContext = metadataContext;
-            var dd = def.ElementType;
-            this.genericDeclaringType = IsGenericInstance ? MetadataContext.GetTypeInformation(dd) : null;
+            var ElementType = metadataContext.GetTypeInformation(def.ElementType);
+            this.genericElementType = ElementType;
             this.genericArgumentTypes = def.GenericArguments.Select(a => MetadataContext.GetTypeInformation(a)).ToArray();
 
-
-            foreach (var method in definition.Methods)
-                Methods.Add(new MethodInformation(method, metadataContext));
-            foreach (var prop in definition.Properties)
-                Properties.Add(new PropertyInformation(prop, metadataContext));
-            foreach (var field in definition.Fields)
-                Fields.Add(new FieldInformation(field, metadataContext));
-            foreach (var nested in definition.NestedTypes)
-                Nested.Add(new TypeInformation(nested, metadataContext));
-
-            TypeAttributes = definition.Attributes.ToString().Split(sep, StringSplitOptions.RemoveEmptyEntries);
+            this.definition = ElementType.definition;
+            Methods = ElementType.Methods;
+            StaticConstructor = ElementType.StaticConstructor;
+            Properties = ElementType.Properties;
+            Fields = ElementType.Fields;
+            Nested = ElementType.Nested;
+            TypeAttributes = ElementType.TypeAttributes;
         }
 
         private char[] sep = {',', ' '};
@@ -94,7 +95,7 @@ namespace RTCLI.AOTCompiler.Metadata
         [JsonIgnore] private readonly GenericInstanceType definitionGI = null;
         [JsonIgnore] private readonly GenericParameter definitionGP = null;
         
-        [JsonIgnore] private readonly TypeInformation genericDeclaringType = null;
+        [JsonIgnore] private readonly TypeInformation genericElementType = null;
         [JsonIgnore] private readonly TypeInformation[] genericArgumentTypes = null;
         [JsonIgnore] private readonly TypeInformation[] genericParameterTypes = null;
 
