@@ -1,6 +1,7 @@
 using RTCLI.AOTCompiler;
 using RTCLI.AOTCompiler.ILConverters;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Reflection;
@@ -82,10 +83,14 @@ namespace RTCLI.AOTCompiler.Translators
         {
             if(type.HasGenericParameters)
                 codeWriter.WriteLine($"template<{type.CXXTemplateParam}>");
+            string Interfaces = string.Join(',', type.Interfaces.Select(a => $"public {a.CXXTypeName}"));
+            if (type.Interfaces.Count > 0)
+                Interfaces = "," + Interfaces;
+            string BaseType = type.BaseType != null ? type.BaseType.CXXTypeName : "RTCLI::System::Object";
             using (var classScope = new CXXScopeDisposer(codeWriter,
                                type.IsStruct ?
                                  $"struct {type.CXXTypeNameShort}"
-                               : $"class {type.CXXTypeNameShort} : public RTCLI::System::Object",
+                               : $"class {type.CXXTypeNameShort} : public {BaseType}{Interfaces}",
 
                                true))
              {
@@ -104,6 +109,25 @@ namespace RTCLI.AOTCompiler.Translators
                 {
                     codeWriter.WriteLine(field.CXXFieldDeclaration);
                 }
+            }
+
+            if (!type.IsStruct)
+                return;
+
+            using (var classScope = new CXXScopeDisposer(codeWriter, 
+                $"class {type.CXXTypeNameShort}_v : public RTCLI::System::ValueType{Interfaces}", true))
+            {
+                codeWriter.unindent().WriteLine("public:").indent();
+                codeWriter.WriteLine($"{type.CXXTypeNameShort} value;");
+
+                foreach (var method in type.Methods)
+                {
+                    if (method.HasGenericParameters)
+                        codeWriter.WriteLine($"template<{method.CXXTemplateParam}>");
+                    codeWriter.WriteLine($"{method.CXXMethodSignature};");
+                }
+
+                codeWriter.WriteLine($"static {type.CXXTypeNameShort}_v& Box(const {type.CXXTypeNameShort}& value);");
             }
         }
 

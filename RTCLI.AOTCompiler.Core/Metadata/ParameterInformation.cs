@@ -16,7 +16,7 @@ namespace RTCLI.AOTCompiler.Metadata
         public string CXXParamDecorated 
             => CXXTypeName + (IsValueType ? "" : "&"); 
         public string CXXTypeName
-            => MetadataContext.GetTypeInformation(Definition.ParameterType.GetElementType()).CXXTypeName;
+            => MetadataContext.GetTypeInformation(Definition.ParameterType).CXXTypeName;
 
         public bool IsByReference => Definition.ParameterType.IsByReference;
 

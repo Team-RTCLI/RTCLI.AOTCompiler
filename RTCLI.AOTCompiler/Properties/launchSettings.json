@@ -2,7 +2,7 @@
   "profiles": {
     "RTCLI.AOTCompiler": {
       "commandName": "Project",
-      "commandLineArgs": "-g1 \"$(SolutionDir)RTCLI.CXXTest/RTCLI.Generated\" \"$(SolutionDir)RTCLI.TestCase/bin/Debug/net5.0/TestCase.dll\" \"$(SolutionDir)RTCLI.TestCase.Reference/bin/Debug/netstandard2.1/TestCase.Reference.dll\""
+      "commandLineArgs": "-g1 \"$(SolutionDir)RTCLI.CXXTest/RTCLI.Generated\" \"$(SolutionDir)RTCLI.TestCase/bin/Debug/netstandard2.1/TestCase.dll\" \"$(SolutionDir)RTCLI.TestCase.Reference/bin/Debug/netstandard2.1/TestCase.Reference.dll\""
     }
   }
 }

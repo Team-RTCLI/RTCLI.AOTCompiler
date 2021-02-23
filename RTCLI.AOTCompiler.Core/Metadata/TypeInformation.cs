@@ -26,14 +26,25 @@ namespace RTCLI.AOTCompiler.Metadata
         public readonly List<FieldInformation> Fields = new List<FieldInformation>();
         public readonly List<PropertyInformation> Properties = new List<PropertyInformation>();
         public readonly List<TypeInformation> Nested = new List<TypeInformation>();
+        public readonly List<TypeInformation> Interfaces = new List<TypeInformation>();
+        public TypeInformation BaseType = null;
         public readonly MethodInformation StaticConstructor = null;
         public TypeInformation GetElementType() => elementType;
+
+        public void SetupBaseAndInterface(MetadataContext metadataContext)
+        {
+            if (definition == null || IsGenericInstance)
+                return;
+            foreach (var Interface in definition.Interfaces)
+                Interfaces.Add(MetadataContext.GetTypeInformation(Interface.InterfaceType));
+            if(definition.BaseType!=null)
+                BaseType = MetadataContext.GetTypeInformation(definition.BaseType);
+        }
 
         public TypeInformation(TypeDefinition def, MetadataContext metadataContext)
         {
             this.definition = def;
             this.MetadataContext = metadataContext;
-
             NamespaceChain = def.Namespace.Split('.');
 
             foreach (var method in def.Methods)
@@ -49,7 +60,8 @@ namespace RTCLI.AOTCompiler.Metadata
                 Fields.Add(new FieldInformation(field, metadataContext));
             foreach(var nested in def.NestedTypes)
                 Nested.Add(new TypeInformation(nested, metadataContext));
-
+          
+            
             this.genericParameterTypes = def.GenericParameters.Select(a => MetadataContext.GetTypeInformation(a)).ToArray();
             TypeAttributes = def.Attributes.ToString().Split(sep, StringSplitOptions.RemoveEmptyEntries);
         }

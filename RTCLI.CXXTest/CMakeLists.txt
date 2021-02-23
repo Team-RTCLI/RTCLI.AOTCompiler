@@ -26,6 +26,9 @@ FOREACH(module ${modules})
     FOREACH(src ${srcs})
         get_filename_component(TARGET_NAME ${src} NAME_WLE)
         message(STATUS "TestCase: ${TARGET_NAME}")
-        add_executable(${TARGET_NAME}  ${CMAKE_CURRENT_SOURCE_DIR}/RTCLI.Generated/src/${module}/${src})
+        FILE(GLOB incs
+            ${CMAKE_CURRENT_SOURCE_DIR}/RTCLI.Generated/include/${module}/*
+        )
+        add_executable(${TARGET_NAME} ${incs} ${CMAKE_CURRENT_SOURCE_DIR}/RTCLI.Generated/src/${module}/${src})
     ENDFOREACH()
 ENDFOREACH()

@@ -44,6 +44,8 @@ namespace RTCLI.AOTCompiler.Metadata
                 foreach (var module in assembly.Modules.Values)
                     foreach (var type in module.Types.Values)
                         BuildTypeMapRecursively(type);
+            foreach (var type in Types.Values)
+                type.SetupBaseAndInterface(this);
             FocusedAssembly = FocusedAssemblyLoaded.Name.Name;
         }
 
