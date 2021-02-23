@@ -23,7 +23,8 @@ namespace TestCase
         public static int Main(string[] args)
         {
             TestCase.TestSystem.Test();
-            
+            Object o = null;
+            bool res = o.Equals(o);
             Value v = new Value();
             var t = v.Test(v);
 
