@@ -36,7 +36,7 @@ namespace RTCLI.AOTCompiler.ILConverters
         {
             var typeReference = instruction.Operand as TypeReference;
             TypeInformation typeInformation = methodContext.TranslateContext.MetadataContext.GetTypeInformation(typeReference);
-            return $"RTCLI::initobj<{typeInformation.CXXTypeName}>({(methodContext as CXXMethodTranslateContext).CmptStackPopObject});";
+            return $"RTCLI::initialize_object<{typeInformation.CXXTypeName}>({(methodContext as CXXMethodTranslateContext).CmptStackPopObject});";
         }
     }
     public class CpobjConverterCXX : ICXXILConverter

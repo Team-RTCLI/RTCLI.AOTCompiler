@@ -20,11 +20,11 @@ namespace RTCLI.AOTCompiler.ILConverters
         {
             var mtd = (instruction.Operand as MethodReference);
             string args = "";
+            List<string> argList = new List<string>();
             for (int i = 1; i <= mtd.Parameters.Count; i++)
-            {
-                args += $"{(methodContext as CXXMethodTranslateContext).CmptStackPopObject}"
-                     + (i == mtd.Parameters.Count ? "" : ", ");
-            }
+                argList.Add((methodContext as CXXMethodTranslateContext).CmptStackPopObject);
+            argList.Reverse();
+            args = string.Join(',', argList);
             if(mtd.FullName.StartsWith("!!0"))
             {
                 var garg = (mtd as GenericInstanceMethod).GenericArguments[0];
@@ -34,8 +34,8 @@ namespace RTCLI.AOTCompiler.ILConverters
                 
             var methodInformation = mtd.GetMetaInformation(methodContext.MetadataContext);
             string genericArgs = "";
-            if (methodInformation.HasGenericParameters)
-                genericArgs = $"<{methodInformation.CXXTemplateArg}>";
+            if (mtd is GenericInstanceMethod gmtd)
+                genericArgs = $"<{string.Join(',', gmtd.GenericArguments.Select(a => methodContext.MetadataContext.GetTypeInformation(a).CXXTypeName))}>";
             if (!methodInformation.IsStatic)
             {
                 string caller = $"(({GetMethodOwner(mtd, methodContext)}&)" // Caster: ((DeclaringType&)
@@ -50,7 +50,7 @@ namespace RTCLI.AOTCompiler.ILConverters
             if(methodInformation.IsStatic)
             {
                 var type = methodContext.MetadataContext.GetTypeInformation(mtd.DeclaringType);
-                string callBody = $"{methodInformation.CXXMethodCallName(type)}{genericArgs}({args});"; // Method Call body.
+                string callBody = $"{methodInformation.CXXMethodCallName(type)}::{methodInformation.CXXMethodNameShort + genericArgs}({args});"; // Method Call body.
                 return type.CallStaticConstructor(methodContext) +
                 (mtd.ReturnType.FullName != "System.Void" ? $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = " : "")
                     + callBody;

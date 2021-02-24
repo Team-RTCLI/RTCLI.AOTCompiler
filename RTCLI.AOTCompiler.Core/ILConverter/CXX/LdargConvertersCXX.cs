@@ -54,12 +54,12 @@ namespace RTCLI.AOTCompiler.ILConverters
     {
         public OpCode TargetOpCode() => OpCodes.Ldarga;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
-            => $"auto& {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = RTCLI_ADDRESSOF({(instruction.Operand as ParameterDefinition).Name});";
+            => $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = RTCLI_ADDRESSOF({(instruction.Operand as ParameterDefinition).Name});";
     }
     public class Ldarga_SConverterCXX : ICXXILConverter
     {
         public OpCode TargetOpCode() => OpCodes.Ldarga_S;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
-            => $"auto& {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = RTCLI_ADDRESSOF({(instruction.Operand as ParameterDefinition).Name});";
+            => $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = RTCLI_ADDRESSOF({(instruction.Operand as ParameterDefinition).Name});";
     }
 }

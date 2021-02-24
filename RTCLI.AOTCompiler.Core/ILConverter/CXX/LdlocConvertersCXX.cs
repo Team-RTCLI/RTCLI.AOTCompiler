@@ -58,12 +58,12 @@ namespace RTCLI.AOTCompiler.ILConverters
     {
         public OpCode TargetOpCode() => OpCodes.Ldloca;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
-            => $"auto& {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = RTCLI_ADDRESSOF(stack.v{(instruction.Operand as VariableDefinition).Index});";
+            => $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = RTCLI_ADDRESSOF(stack.v{(instruction.Operand as VariableDefinition).Index});";
     }
     public class Ldloca_SConverterCXX : ICXXILConverter
     {
         public OpCode TargetOpCode() => OpCodes.Ldloca_S;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
-            => $"auto& {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = RTCLI_ADDRESSOF(stack.v{(instruction.Operand as VariableDefinition).Index});";
+            => $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = RTCLI_ADDRESSOF(stack.v{(instruction.Operand as VariableDefinition).Index});";
     }
 }
