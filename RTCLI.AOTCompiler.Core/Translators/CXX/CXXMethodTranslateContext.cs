@@ -47,7 +47,9 @@ namespace RTCLI.AOTCompiler.Translators
         {
             get
             {
-                return $"s{CmptStack.Peek()}";
+                if (CmptStackValidate())
+                    return $"s{CmptStack.Peek()}";
+                return "ERROR_CMPT_STACK_EMPTY";
             }
         }
         private bool CmptStackValidate()

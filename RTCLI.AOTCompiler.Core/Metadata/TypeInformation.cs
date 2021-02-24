@@ -19,6 +19,7 @@ namespace RTCLI.AOTCompiler.Metadata
         public bool IsValueType => definition == null ? false : definition.IsValueType;
         public bool IsReference => reference != null;
         public bool IsGenericParameter => reference == null ? false : reference.IsGenericParameter;
+        public bool IsPointer => reference == null ? false : reference.IsPointer;
         public bool IsArray => reference == null ? false : reference.IsArray;
         public bool IsStruct => definition!=null ? definition.IsValueType : false;
         public bool IsByReference => reference == null ? false : reference.IsByReference;
@@ -85,6 +86,16 @@ namespace RTCLI.AOTCompiler.Metadata
             this.elementType = IsArray ? MetadataContext.GetTypeInformation(dd) : null;
             
         }
+        
+        public TypeInformation(PointerType def, MetadataContext metadataContext)
+        {
+            reference = def;
+            this.definitionPointer = def;
+            this.MetadataContext = metadataContext;
+            
+            //var dd = definitionArray.ElementType;
+            //this.elementType = IsArray ? MetadataContext.GetTypeInformation(dd) : null;
+        }
 
         public TypeInformation(GenericParameter def, MetadataContext metadataContext)
         {
@@ -115,6 +126,7 @@ namespace RTCLI.AOTCompiler.Metadata
         [JsonIgnore] private readonly TypeReference reference = null;
         
         [JsonIgnore] private readonly ArrayType definitionArray = null;
+        [JsonIgnore] private readonly PointerType definitionPointer = null;
         [JsonIgnore] private readonly TypeInformation elementType = null;
         [JsonIgnore] private readonly GenericInstanceType definitionGI = null;
         [JsonIgnore] private readonly GenericParameter definitionGP = null;

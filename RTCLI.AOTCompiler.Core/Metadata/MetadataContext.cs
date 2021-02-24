@@ -141,6 +141,14 @@ namespace RTCLI.AOTCompiler.Metadata
                 return new TypeInformation(inType as GenericParameter, this);
             if(inType.IsByReference)
                 return new TypeInformation(inType, this);
+
+            if(inType.IsPinned)
+                return new TypeInformation(inType, this);
+            if(inType.IsPointer)
+                return new TypeInformation(inType as PointerType, this);
+            if(inType.IsRequiredModifier)
+                return new TypeInformation(inType, this);
+
             return GetTypeInformation(inType.FullName);
         }
 

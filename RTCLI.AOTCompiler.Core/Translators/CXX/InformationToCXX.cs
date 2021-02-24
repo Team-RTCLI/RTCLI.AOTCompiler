@@ -21,7 +21,7 @@ namespace RTCLI.AOTCompiler.Metadata
                     return $"{genericElementType.CXXTypeName}<{string.Join(',', genericArgumentTypes.Select(a => a.CXXTypeName))}>";
                 if (IsGenericParameter)
                     return definitionGP.FullName;
-                else return "RTCLI::" + string.Join("::", FullName.Split('.', '/')).Replace("<>", "__").Replace('`', '_'); ;
+                else return "RTCLI::" + string.Join("::", FullName.Split('.', '/')).Replace("<>", "__").Replace('`', '_').Replace("<", "_").Replace(">", "_");
             }
         }
         public string CXXTemplateParam =>
@@ -38,7 +38,9 @@ namespace RTCLI.AOTCompiler.Metadata
                     return $"{genericElementType.CXXTypeName}<{string.Join(',', genericArgumentTypes.Select(a => a.CXXTypeName))}>";
                 if (IsGenericParameter)
                     return definitionGP.FullName;
-                else return definition.Name.Replace("<>", "__").Replace('`', '_');
+                if (IsPointer)
+                    return definitionPointer.FullName;
+                else return definition.Name.Replace("<>", "__").Replace('`', '_').Replace("<", "_").Replace(">", "_");
             }
         }
 

@@ -3,7 +3,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using Mono.Options;
 
-namespace RTCLI.AOTCompiler
+namespace RTCLI.AOTCompiler3
 {
     public class DispatchArgs
     {
@@ -14,7 +14,7 @@ namespace RTCLI.AOTCompiler
         public bool cxxStaticAssertOnUnimplementatedILs = false;
     }
 
-    public class Program
+    class Program
     {
         public static int Main(string[] args)
         {
@@ -37,7 +37,7 @@ namespace RTCLI.AOTCompiler
                 var extra = options.Parse(args);
                 if (help || (extra.Count < 2))
                 {
-                    Console.Out.WriteLine("usage: RTCLI.AOTCompiler.exe <output_path> <assembly_path> [options]");  
+                    Console.Out.WriteLine("usage: RTCLI.AOTCompiler.exe <output_path> <assembly_path> [options]");
                     options.WriteOptionDescriptions(Console.Out);
                 }
                 else
@@ -67,7 +67,5 @@ namespace RTCLI.AOTCompiler
                 return Marshal.GetHRForException(ex);
             }
         }
-
-        public TranslateContext translateContext = null;
     }
 }

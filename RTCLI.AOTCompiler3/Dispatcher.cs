@@ -1,10 +1,8 @@
-using RTCLI.AOTCompiler.Translators;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using RTCLI.AOTCompiler.Metadata;
 using System.Threading.Tasks;
 
-namespace RTCLI.AOTCompiler
+namespace RTCLI.AOTCompiler3
 {
     public static class Dispatcher
     {
@@ -15,12 +13,6 @@ namespace RTCLI.AOTCompiler
         {
             System.Console.WriteLine("AOTCompiler: Preparing assembly: \"{0}\" ...", Path.GetFullPath(assemblyPath));
 
-            var metaContext = new MetadataContext(assemblyPath, dispatchArgs.readSymbols);
-            var translateContext = new TranslateContext(assemblyPath, dispatchArgs.readSymbols, metaContext);
-            CXXTranslateOptions cxxOptions = new CXXTranslateOptions();
-            cxxOptions.StaticAssertOnUnimplementatedILs = dispatchArgs.cxxStaticAssertOnUnimplementatedILs;
-            var cxxTranslator = new CXXTranslator(translateContext, cxxOptions);
-
             //using (var _ = storage.EnterScope("meta"))
             //{
             //    MetadataSerializer metaSerializer = new MetadataSerializer(translateContext);
@@ -29,11 +21,11 @@ namespace RTCLI.AOTCompiler
 
             using (var _ = storage.EnterScope("include"))
             {
-                cxxTranslator.WriteHeader(storage);
+                
             }
             using (var _ = storage.EnterScope("src"))
             {
-                cxxTranslator.WriteSource(storage);
+                
             }
 
             System.Console.WriteLine(" done.");
