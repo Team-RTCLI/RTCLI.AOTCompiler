@@ -52,6 +52,8 @@ namespace RTCLI.AOTCompiler.Metadata
         public bool IsFamily => definition.IsFamily;
         public bool IsStaticConstructor => definition.IsStatic && definition.IsConstructor;
         public bool HasGenericParameters => definition.HasGenericParameters;
+        public bool IsNewSlot => definition.IsNewSlot;
+
 
         public readonly List<InstructionInformation> Instructions = new List<InstructionInformation>();
         public readonly List<VariableInformation> LocalVariables = new List<VariableInformation>();

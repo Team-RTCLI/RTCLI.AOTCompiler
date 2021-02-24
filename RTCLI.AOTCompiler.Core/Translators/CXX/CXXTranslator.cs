@@ -103,7 +103,8 @@ namespace RTCLI.AOTCompiler.Translators
                 {
                     if(method.HasGenericParameters)
                         codeWriter.WriteLine($"template<{method.CXXTemplateParam}>");
-                    codeWriter.WriteLine($"{method.CXXMethodSignature(true)};");
+                    
+                    codeWriter.WriteLine($"{(method.IsNewSlot?"virtual ":"")}{method.CXXMethodSignature(true)};");
                 }
                 foreach (var field in type.Fields)
                 {

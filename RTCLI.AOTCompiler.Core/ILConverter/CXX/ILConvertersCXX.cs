@@ -59,7 +59,7 @@ namespace RTCLI.AOTCompiler.ILConverters
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPeek;
-            return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = RTCLI::dup({op1});";
+            return $"auto& {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = RTCLI::Dup({op1});";
         }
     }
     public class InitblkConverterCXX : ICXXILConverter
@@ -445,7 +445,8 @@ namespace RTCLI.AOTCompiler.ILConverters
             }
             else if (op is FieldReference fld)
             {
-                return $"auto& {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = {obj}.{Utilities.GetCXXValidTokenString(fld.Name)}{(fld.FieldType.IsValueType?"":".Get()")};";
+                var name = (methodContext as CXXMethodTranslateContext).CmptStackPushObject;
+                return $"auto& {name} = {obj}.{Utilities.GetCXXValidTokenString(fld.Name)}{(fld.FieldType.IsValueType?"":".Get()")};";
             }
             return "";
         }

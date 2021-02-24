@@ -68,7 +68,7 @@ namespace RTCLI.AOTCompiler.Metadata
             foreach (var param in Parameters)
             {
                 sequence += param.CXXParamDecorated + " " + param.Name;
-                if(param.Definition.HasConstant && WithConstant)
+                if (param.Definition.HasConstant && WithConstant)
                 {
                     if (param.Definition.Constant != null)
                         sequence += " = " + param.Definition.Constant;
@@ -111,8 +111,11 @@ namespace RTCLI.AOTCompiler.Metadata
                 var type = MetadataContext.GetTypeInformation(definition.ReturnType);
                 //if (type == null)
                 //    return "RTCLI::System::Void";
-                
-                if (type.IsValueType && !definition.ReturnType.IsByReference)
+                if(definition.ReturnType.IsByReference)
+                    return type.CXXTypeName + "&";
+                if (definition.ReturnType.IsGenericParameter)
+                    return $"RTCLI::TRet<{type.CXXTypeName}>";
+                if (type.IsValueType)
                     return type.CXXTypeName;
                 else
                     return type.CXXTypeName + "&";
@@ -126,7 +129,7 @@ namespace RTCLI.AOTCompiler.Metadata
         public string CXXTypeName => MetadataContext.GetTypeInformation(definition.FieldType).CXXTypeName;
         public string CXXTypeNameShort => MetadataContext.GetTypeInformation(definition.FieldType).CXXTypeNameShort;
         public string CXXFieldDeclaration => (IsStatic ? "static " : "") +
-            (this.definition.FieldType.IsValueType ? $"{CXXTypeName} " : $"RTCLI::Managed<{CXXTypeName}> ") +
+            (definition.FieldType.IsGenericParameter ? $"RTCLI::TField<{CXXTypeName}> " : definition.FieldType.IsValueType ? $"{CXXTypeName} " : $"RTCLI::Managed<{CXXTypeName}> ") +
             $"{Utilities.GetCXXValidTokenString(Name)};";
     }
 
@@ -134,7 +137,7 @@ namespace RTCLI.AOTCompiler.Metadata
     {
         public string CXXTypeName => MetadataContext.GetTypeInformation(Definition.VariableType).CXXTypeName;
 
-        public string CXXVarDeclaration => Type.IsValueType ? CXXTypeName : $"RTCLI::TRef<{CXXTypeName}>";
+        public string CXXVarDeclaration => Type.IsGenericParameter ? $"RTCLI::TVar<{CXXTypeName}>" : Type.IsValueType ? CXXTypeName : $"RTCLI::TRef<{CXXTypeName}>";
         public string CXXVarInitVal => this.Definition.VariableType.IsValueType ? $"{CXXVarDeclaration}()" : $"RTCLI::null";
     }
 }
