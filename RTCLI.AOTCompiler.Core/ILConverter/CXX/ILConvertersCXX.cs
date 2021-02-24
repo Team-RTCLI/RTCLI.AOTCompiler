@@ -544,4 +544,43 @@ namespace RTCLI.AOTCompiler.ILConverters
             return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = &{methodInformation.CXXMethodCallName(typeInformation)};";
         }
     }
+
+    public class BoxConverterCXX : ICXXILConverter
+    {
+        public OpCode TargetOpCode() => OpCodes.Box;
+        public string Convert(Instruction instruction, MethodTranslateContext methodContext)
+        {
+            var type = instruction.Operand as TypeReference;
+            TypeInformation typeInformation = methodContext.TranslateContext.MetadataContext.GetTypeInformation(type);
+            var arg = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            return $"auto& {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = RTCLI::Box<{typeInformation.CXXTypeName}>({arg});";
+        }
+    }
+
+    public class UnboxConverterCXX : ICXXILConverter
+    {
+        public OpCode TargetOpCode() => OpCodes.Unbox;
+        public string Convert(Instruction instruction, MethodTranslateContext methodContext)
+        {
+            var type = instruction.Operand as TypeReference;
+            TypeInformation typeInformation = methodContext.TranslateContext.MetadataContext.GetTypeInformation(type);
+            var arg = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = RTCLI::UnBox<{typeInformation.CXXTypeName}>({arg});";
+        }
+    }
+
+    public class Unbox_AnyConverterCXX : ICXXILConverter
+    {
+        public OpCode TargetOpCode() => OpCodes.Unbox_Any;
+        public string Convert(Instruction instruction, MethodTranslateContext methodContext)
+        {
+            var type = instruction.Operand as TypeReference;
+            TypeInformation typeInformation = methodContext.TranslateContext.MetadataContext.GetTypeInformation(type);
+            var arg = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
+            if(typeInformation.IsStruct)
+                return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = RTCLI::UnBox<{typeInformation.CXXTypeName}>({arg});";
+            else
+                return $"auto& {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = RTCLI::Castclass<{typeInformation.CXXTypeName}>({arg});";
+        }
+    }
 }

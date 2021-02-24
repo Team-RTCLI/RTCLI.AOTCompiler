@@ -89,7 +89,7 @@ namespace RTCLI.AOTCompiler.Translators
             string BaseType = type.BaseType != null ? type.BaseType.CXXTypeName : "RTCLI::System::Object";
             using (var classScope = new CXXScopeDisposer(codeWriter,
                                type.IsStruct ?
-                                 $"struct {type.CXXTypeNameShort}"
+                                 $"struct {type.CXXTypeNameShort}_v"
                                : $"class {type.CXXTypeNameShort} : public {BaseType}{Interfaces}",
 
                                true))
@@ -114,21 +114,23 @@ namespace RTCLI.AOTCompiler.Translators
             if (!type.IsStruct)
                 return;
 
-            using (var classScope = new CXXScopeDisposer(codeWriter, 
-                $"class {type.CXXTypeNameShort}_v : public RTCLI::System::ValueType{Interfaces}", true))
+            if (type.HasGenericParameters)
+                codeWriter.WriteLine($"template<{type.CXXTemplateParam}>");
+            string classDef = $"class {type.CXXTypeNameShort} : public RTCLI::System::ValueType{Interfaces}";
+            using (var classScope = new CXXScopeDisposer(codeWriter, classDef, true))
             {
                 codeWriter.unindent().WriteLine("public:").indent();
-                codeWriter.WriteLine($"{type.CXXTypeNameShort} value;");
-
+                codeWriter.WriteLine($"using ValueType = {type.CXXTypeNameShort}_v;");
+                //codeWriter.WriteLine($"using ValueType = struct {type.CXXTypeNameShort};");
+                codeWriter.WriteLine($"{type.CXXTypeNameShort}_v value;");
                 foreach (var method in type.Methods)
                 {
                     if (method.HasGenericParameters)
                         codeWriter.WriteLine($"template<{method.CXXTemplateParam}>");
-                    codeWriter.WriteLine($"{method.CXXMethodSignature};");
+                    codeWriter.WriteLine($"RTCLI_FORCEINLINE {method.CXXMethodSignature} {{ value.{method.CXXMethodNameShort}{method.CXXArgSequence}; }}");
                 }
-
-                codeWriter.WriteLine($"static {type.CXXTypeNameShort}_v& Box(const {type.CXXTypeNameShort}& value);");
             }
+
         }
 
         public void WriteMethodRecursive(CodeTextWriter codeWriter, Metadata.TypeInformation type)

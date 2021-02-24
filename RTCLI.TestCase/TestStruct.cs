@@ -5,14 +5,14 @@ using Reference;
 
 namespace TestCase
 {
-    public struct PureStruct
-    {
-        public String name;
-        public float val;
-    }
-
     class TestStruct
     {
+        public struct PureStruct
+        {
+            public String name;
+            public float val;
+        }
+
         public static void Test()
         {
             PureStruct local = new PureStruct();

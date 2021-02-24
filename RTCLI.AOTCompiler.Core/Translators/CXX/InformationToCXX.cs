@@ -90,7 +90,8 @@ namespace RTCLI.AOTCompiler.Metadata
             => (definition.IsConstructor ? (definition.IsStatic ? "StaticConstructor" : "Constructor") : definition?.Name.Replace('<', '_').Replace('>', '_'));
 
         public string CXXMethodSignature => (IsStatic ? "static " : "")+  CXXRetType + " " + CXXMethodNameShort + CXXParamSequence;
-        public string CXXParamSequence => "(" + CXXParamsSequence() + ")"; //Param Sequence
+        public string CXXParamSequence => $"({CXXParamsSequence()})"; //Param Sequence
+        public string CXXArgSequence => $"({string.Join(',',Parameters.Select(a=>a.Name))})";
 
         public string CXXTemplateParam =>
             genericParameterTypes != null ? string.Join(',', genericParameterTypes.Select(a => $"class {a.CXXTypeName}")) : "";
