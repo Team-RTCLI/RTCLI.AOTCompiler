@@ -132,7 +132,7 @@ namespace RTCLI.AOTCompiler.ILConverters
     {
         public OpCode TargetOpCode() => OpCodes.Ldstr;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext) 
-            => $"const RTCLI::System::String {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = " +
+            => $"RTCLI::System::String {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = " +
             $"RTCLI_NATIVE_STRING(\"{instruction.Operand.ToString().HoldEscape()}\");";
     }
 
