@@ -60,7 +60,7 @@ namespace RTCLI.AOTCompiler.Metadata
 
     public partial class MethodInformation : IMemberInformation
     {
-        private string CXXParamsSequence()
+        private string CXXParamsSequence(bool WithConstant)
         {
             string sequence = "";
             //Since LdArg.0 -> this, start argument index from 1
@@ -68,6 +68,13 @@ namespace RTCLI.AOTCompiler.Metadata
             foreach (var param in Parameters)
             {
                 sequence += param.CXXParamDecorated + " " + param.Name;
+                if(param.Definition.HasConstant && WithConstant)
+                {
+                    if (param.Definition.Constant != null)
+                        sequence += " = " + param.Definition.Constant;
+                    else
+                        sequence += " = " + (param.IsValueType ? $"{param.CXXTypeName}()" : $"RTCLI::null");
+                }
                 if (i++ != Parameters.Count)
                     sequence = sequence + ", " + ((i % 3 == 1) ? "\n\t" : "");
             }
@@ -89,8 +96,8 @@ namespace RTCLI.AOTCompiler.Metadata
         public string CXXMethodNameShort
             => (definition.IsConstructor ? (definition.IsStatic ? "StaticConstructor" : "Constructor") : definition?.Name.Replace('<', '_').Replace('>', '_'));
 
-        public string CXXMethodSignature => (IsStatic ? "static " : "") + CXXRetType + " " + CXXMethodNameShort + CXXParamSequence;
-        public string CXXParamSequence => $"({CXXParamsSequence()})"; //Param Sequence
+        public string CXXMethodSignature(bool WithConstant) => (IsStatic ? "static " : "") + CXXRetType + " " + CXXMethodNameShort + CXXParamSequence(WithConstant);
+        public string CXXParamSequence(bool WithConstant) => $"({CXXParamsSequence(WithConstant)})"; //Param Sequence
         public string CXXArgSequence => $"({string.Join(',', Parameters.Select(a => a.Name))})";
 
         public string CXXTemplateParam =>
@@ -104,7 +111,8 @@ namespace RTCLI.AOTCompiler.Metadata
                 var type = MetadataContext.GetTypeInformation(definition.ReturnType);
                 //if (type == null)
                 //    return "RTCLI::System::Void";
-                if (type.IsValueType)
+                
+                if (type.IsValueType && !definition.ReturnType.IsByReference)
                     return type.CXXTypeName;
                 else
                     return type.CXXTypeName + "&";

@@ -139,6 +139,8 @@ namespace RTCLI.AOTCompiler.Metadata
                 return new TypeInformation(inType as GenericInstanceType, this);
             if(inType.IsGenericParameter)
                 return new TypeInformation(inType as GenericParameter, this);
+            if(inType.IsByReference)
+                return new TypeInformation(inType, this);
             return GetTypeInformation(inType.FullName);
         }
 
