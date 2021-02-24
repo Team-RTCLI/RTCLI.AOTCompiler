@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Mono.Cecil;
+using RTCLI.AOTCompiler3.Meta;
 
 namespace RTCLI.AOTCompiler3
 {
@@ -9,16 +11,10 @@ namespace RTCLI.AOTCompiler3
         public static void Translate(
             CodeTextStorage storage,
             DispatchArgs dispatchArgs,
-            string assemblyPath)
+            string assemblyPath,
+            AssemblyDefinition assembly)
         {
-            System.Console.WriteLine("AOTCompiler: Preparing assembly: \"{0}\" ...", Path.GetFullPath(assemblyPath));
-
-            //using (var _ = storage.EnterScope("meta"))
-            //{
-            //    MetadataSerializer metaSerializer = new MetadataSerializer(translateContext);
-            //    metaSerializer.WriteResult(storage);
-            //}
-
+            //System.Console.WriteLine("AOTCompiler: Preparing assembly: \"{0}\" ...", Path.GetFullPath(assemblyPath));
             using (var _ = storage.EnterScope("include"))
             {
                 
@@ -28,7 +24,7 @@ namespace RTCLI.AOTCompiler3
                 
             }
 
-            System.Console.WriteLine(" done.");
+            System.Console.WriteLine($"Processing {assembly.RTCLIShortName()} done.");
         }
 
         public static void TranslateAll(
@@ -37,16 +33,42 @@ namespace RTCLI.AOTCompiler3
             DispatchArgs dispatchArgs,
             IEnumerable<string> assemblyPaths)
         {
-            Parallel.ForEach(assemblyPaths, aseemblyPath => {
-                var storage = new CodeTextStorage(
-                logw,
-                outputPath,
-                "    ");
+            Dictionary<string, AssemblyDefinition> assemblyPathMapping 
+                = new Dictionary<string, AssemblyDefinition>();
+            // Collect all assemblies
+            foreach (var path in assemblyPaths)
+            {
+                var resolver = new BasePathAssemblyResolver(Path.GetDirectoryName(path));
+                var parameter = new ReaderParameters
+                {
+                    AssemblyResolver = resolver,
+                    ReadSymbols = dispatchArgs.readSymbols
+                };
+                if(!assemblyPathMapping.ContainsKey(path))
+                {
+                    assemblyPathMapping[path] = AssemblyRepo.Store(path, parameter);
+                }
+            }
 
-                Translate(
-                    storage,
-                    dispatchArgs,
-                    aseemblyPath);
+            // Translate
+            Parallel.ForEach(assemblyPaths, aseemblyPath => {
+                if (!assemblyPathMapping.ContainsKey(aseemblyPath))
+                {
+                    
+                }
+                else
+                {
+                    var assembly = assemblyPathMapping[aseemblyPath];
+                    var storage = new CodeTextStorage(
+                        logw,
+                        outputPath,
+                        "    ");
+                    Translate(
+                        storage,
+                        dispatchArgs,
+                        aseemblyPath,
+                        assembly);
+                }
             });
         }
 
@@ -60,7 +82,8 @@ namespace RTCLI.AOTCompiler3
                 logw,
                 outputPath,
                 dispatchArgs,
-                (IEnumerable<string>)assemblyPaths);
+                (IEnumerable<string>)assemblyPaths
+            );
         }
     }
 }
