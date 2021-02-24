@@ -89,7 +89,7 @@ namespace RTCLI.AOTCompiler.Translators
             string BaseType = type.BaseType != null ? type.BaseType.CXXTypeName : "RTCLI::System::Object";
             using (var classScope = new CXXScopeDisposer(codeWriter,
                                type.IsStruct ?
-                                 $"struct {type.CXXTypeNameShort}_v"
+                                 $"struct {type.CXXTypeNameShort}"
                                : $"class {type.CXXTypeNameShort} : public {BaseType}{Interfaces}",
 
                                true))
@@ -116,13 +116,13 @@ namespace RTCLI.AOTCompiler.Translators
 
             if (type.HasGenericParameters)
                 codeWriter.WriteLine($"template<{type.CXXTemplateParam}>");
-            string classDef = $"class {type.CXXTypeNameShort} : public RTCLI::System::ValueType{Interfaces}";
+            string classDef = $"class {type.CXXTypeNameShort}_V : public RTCLI::System::ValueType{Interfaces}";
             using (var classScope = new CXXScopeDisposer(codeWriter, classDef, true))
             {
                 codeWriter.unindent().WriteLine("public:").indent();
-                codeWriter.WriteLine($"using ValueType = {type.CXXTypeNameShort}_v;");
+                codeWriter.WriteLine($"using ValueType = {type.CXXTypeNameShort};");
                 //codeWriter.WriteLine($"using ValueType = struct {type.CXXTypeNameShort};");
-                codeWriter.WriteLine($"{type.CXXTypeNameShort}_v value;");
+                codeWriter.WriteLine($"{type.CXXTypeNameShort} value;");
                 foreach (var method in type.Methods)
                 {
                     if (method.HasGenericParameters)
