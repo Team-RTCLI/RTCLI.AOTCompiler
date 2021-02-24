@@ -471,7 +471,7 @@ namespace RTCLI.AOTCompiler.ILConverters
             var fld = instruction.Operand as FieldReference;
             TypeInformation typeInformation = methodContext.TranslateContext.MetadataContext.GetTypeInformation(fld.DeclaringType);
             return typeInformation.CallStaticConstructor(methodContext) + 
-                $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = RTCLI_ADDRESSOF({typeInformation.CXXTypeName}::{Utilities.GetCXXValidTokenString(fld.Name)});";
+                $"auto& {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = RTCLI_ADDRESSOF({typeInformation.CXXTypeName}::{Utilities.GetCXXValidTokenString(fld.Name)});";
         }
     }
 

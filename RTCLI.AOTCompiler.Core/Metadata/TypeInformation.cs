@@ -21,6 +21,7 @@ namespace RTCLI.AOTCompiler.Metadata
         public bool IsGenericParameter => reference == null ? false : reference.IsGenericParameter;
         public bool IsArray => reference == null ? false : reference.IsArray;
         public bool IsStruct => definition!=null ? definition.IsValueType : false;
+        public bool IsByReference => reference == null ? false : reference.IsByReference;
         public bool IsGenericInstance => reference == null ? false : reference.IsGenericInstance;
         public bool HasGenericParameters => definition == null ? false : definition.HasGenericParameters;
 
@@ -41,6 +42,12 @@ namespace RTCLI.AOTCompiler.Metadata
                 Interfaces.Add(MetadataContext.GetTypeInformation(Interface.InterfaceType));
             if(definition.BaseType!=null)
                 BaseType = MetadataContext.GetTypeInformation(definition.BaseType);
+        }
+
+        public TypeInformation(TypeReference def, MetadataContext metadataContext)
+        {
+            this.reference = def;
+            this.MetadataContext = metadataContext;
         }
 
         public TypeInformation(TypeDefinition def, MetadataContext metadataContext)

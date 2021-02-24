@@ -103,7 +103,7 @@ namespace RTCLI.AOTCompiler.Translators
                 {
                     if(method.HasGenericParameters)
                         codeWriter.WriteLine($"template<{method.CXXTemplateParam}>");
-                    codeWriter.WriteLine($"{method.CXXMethodSignature};");
+                    codeWriter.WriteLine($"{method.CXXMethodSignature(true)};");
                 }
                 foreach (var field in type.Fields)
                 {
@@ -127,7 +127,7 @@ namespace RTCLI.AOTCompiler.Translators
                 {
                     if (method.HasGenericParameters)
                         codeWriter.WriteLine($"template<{method.CXXTemplateParam}>");
-                    codeWriter.WriteLine($"RTCLI_FORCEINLINE {method.CXXMethodSignature} {{ value.{method.CXXMethodNameShort}{method.CXXArgSequence}; }}");
+                    codeWriter.WriteLine($"RTCLI_FORCEINLINE {method.CXXMethodSignature(true)} {{ value.{method.CXXMethodNameShort}{method.CXXArgSequence}; }}");
                 }
             }
 
@@ -152,7 +152,7 @@ namespace RTCLI.AOTCompiler.Translators
                     codeWriter.WriteLine($"template<{method.CXXTemplateParam}>");
 
                 codeWriter.WriteLine(
-                    method.CXXRetType + " " + method.CXXMethodDeclareName + method.CXXParamSequence);
+                    method.CXXRetType + " " + method.CXXMethodDeclareName + method.CXXParamSequence(false));
 
                 codeWriter.WriteLine("{");
                 // [2-2-2] Code Body

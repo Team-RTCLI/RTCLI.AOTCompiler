@@ -14,7 +14,7 @@ namespace RTCLI.AOTCompiler.Metadata
             this.Definition = defination;
         }
         public string CXXParamDecorated 
-            => CXXTypeName + (IsValueType ? "" : "&"); 
+            => CXXTypeName + ((IsValueType && !Definition.IsOut || !Definition.IsIn) ? "" : "&"); 
         public string CXXTypeName
             => MetadataContext.GetTypeInformation(Definition.ParameterType).CXXTypeName;
 
