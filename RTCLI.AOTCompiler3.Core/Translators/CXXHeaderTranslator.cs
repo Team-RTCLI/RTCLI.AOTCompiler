@@ -32,8 +32,10 @@ namespace RTCLI.AOTCompiler3.Translators
                 {
                     var codeWriter = Storage.Wirter(Path.Combine(Type.CXXNamespaceToPath(), Type.CXXShortTypeName() + ".h").Replace("\\", "/"));
                     codeWriter.WriteLine(Utilities.CopyRight);
-
-                   
+                    codeWriter.WriteLine("//[H0000] Include Protect");
+                    codeWriter.WriteLine("#pragma once");
+                    codeWriter.WriteLine(EnvIncludes);
+                    codeWriter.WriteLine("//[H0001] Forward Declaration");
 
                     codeWriter.Flush();
                 }
@@ -43,5 +45,6 @@ namespace RTCLI.AOTCompiler3.Translators
         // ${OutputPath}/${Assembly}/include
         CodeTextStorage Storage = null;
         AssemblyDefinition FocusedAssembly = null;
+        private string EnvIncludes => "#include <RTCLI/RTCLI.hpp>";
     }
 }
