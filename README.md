@@ -1,61 +1,93 @@
 # RTCLI.AOTCompiler
 用于将MSIL编译到C++/MacroCode的AOT编译器。
 
-如何编译与测试：
+## 如何编译与测试：
+
+### 生成代码：
 - 打开sln，以RTCLI.AOTCompiler为启动项目;
-- usage: RTCLI.AOTCompiler.exe <output_path> <assembly_path>;
+- usage: RTCLI.AOTCompiler.exe <output_path> <assembly_paths>;
 - 内置了一个TestCase项目进行开发前期代码生成测试，在调试选项中为RTCLI.AOTCompiler附加调试参数$(SolutionDir)RTCLI.Generated $(SolutionDir)RTCLI.TestCase/bin/Debug/netstandardX.X/RTCLI.TestCase.dll;
-- 对于netstandard和mscorlib的分析，需要手动提供期望的目标版本dll。请Everything定位到netstandard.dll，将其路径下的全部dll拷贝到RTCLI.AOTCompiler的运行目录下。
+- 代码会被生成在./RTCLI.CXXTest文件夹下.
+
+### 安装运行时：
+- 确保您的环境具有CMake(Version >= 3.19.0);
+- 运行时仓库：[RTCLI.Runtime](https://github.com/Team-RTCLI/RTCLI.Runtime);
+- 打开运行时仓库，运行./gen_${YourIDE}.bat，此时Solution会在/build下被生成;
+- 运行./install.bat进行安装，需要管理员权限.
+
+### 运行生成代码
+- 打开RTCLI.CXXTest文件夹，运行./gen_${YourIDE}.bat，此时Solution会在/build下被生成;
+- 打开Solution，选择对应的Test项目运行即可。
+
+### 注意：
+- 默认使用netstandard2.1的标准meta文件
 
 source：
 ``` c#
-public void MethodWithArgsFieldAccess(int argInt, string argStr, RefClass argClass, RefStruct argStruct)
+public static void Test()
 {
-    //var arg6Name = arg666.Name;
-    Single.Parse("1.22");
-    argClass.CallTest(9);
-    argClass.CallTestF(9);
-    argStruct.Name = " Accessed";
+    String nullStr = null;
+    String str = "Static String";
+
+    System.Console.WriteLine(str);
+    System.Console.WriteLine(str.Length);
+    String lowerStr = str.ToLower();
+    System.Console.Write("ToLower: ");
+    System.Console.WriteLine(lowerStr);
 }
 ```
 
 generated：
 ``` c++
-RTCLI::System::Void RTCLI::RTCLITestCase::TestCaseClass::MethodWithArgsFieldAccess(RTCLI::System::Int32 argInt, RTCLI::System::String& argStr, RTCLI::RTCLITestCase::Reference::RefClass& argClass, 
-    RTCLI::RTCLITestCase::Reference::RefStruct argStruct)
+RTCLI::System::Void RTCLI::TestCase::TestString::Test()
 {
-    // IL_0000: nop
-    RTCLI::nop();
-    // IL_0001: ldstr "1.22"
-    const char* s0 = "1.22";
-    // IL_0006: call System.Single System.Single::Parse(System.String)
-    auto s1 = RTCLI::System::Single::Parse(s0);
-    // IL_000b: pop
-    RTCLI::Pop(s1);//pop operation
-    // IL_000c: ldarg.3
-    auto& s2 = argClass;
-    // IL_000d: ldc.i4.s 9
-    s3 = RTCLI::StaticCast<RTCLI::System::Int32>(9);
-    // IL_000f: callvirt System.Void RTCLITestCase.Reference.RefClass::CallTest(System.Int32)
-    ((RTCLI::RTCLITestCase::Reference::RefClass&)s2).CallTest(s3);
-    // IL_0014: nop
-    RTCLI::nop();
-    // IL_0015: ldarg.3
-    auto& s4 = argClass;
-    // IL_0016: ldc.r4 9
-    s5 = RTCLI::StaticCast<RTCLI::System::Single>(9);
-    // IL_001b: callvirt System.Void RTCLITestCase.Reference.RefClass::CallTestF(System.Single)
-    ((RTCLI::RTCLITestCase::Reference::RefClass&)s4).CallTestF(s5);
-    // IL_0020: nop
-    RTCLI::nop();
-    // IL_0021: ldarga.s argStruct
-    auto&& s6 = argStruct;
-    // IL_0023: ldstr " Accessed"
-    const char* s7 = " Accessed";
-    // IL_0028: stfld System.String RTCLITestCase.Reference.RefStruct::Name
-    s6.Name = s7;
-    // IL_002d: ret
-    return ;
+	RTCLI::TRef<RTCLI::System::String> v0 = RTCLI::null;
+	RTCLI::TRef<RTCLI::System::String> v1 = RTCLI::null;
+	RTCLI::TRef<RTCLI::System::String> v2 = RTCLI::null;
+	// IL_0000: nop
+	IL_0000: RTCLI::nop();
+	// IL_0001: ldnull
+	IL_0001: auto& s0 = RTCLI::null;
+	// IL_0002: stloc.0
+	IL_0002: v0 = s0;
+	// IL_0003: ldstr \"Static String\"
+	IL_0003: RTCLI::System::String s1 = RTCLI_NATIVE_STRING("Static String");
+	// IL_0008: stloc.1
+	IL_0008: v1 = s1;
+	// IL_0009: ldloc.1
+	IL_0009: auto& s2 = v1.Get();
+	// IL_000a: call System.Void System.Console::WriteLine(System.String)
+	IL_000a: RTCLI::System::Console::WriteLine(s2);
+	// IL_000f: nop
+	IL_000f: RTCLI::nop();
+	// IL_0010: ldloc.1
+	IL_0010: auto& s3 = v1.Get();
+	// IL_0011: callvirt System.Int32 System.String::get_Length()
+	IL_0011: auto s4 = ((RTCLI::System::String&)s3).get_Length();
+	// IL_0016: call System.Void System.Console::WriteLine(System.Int32)
+	IL_0016: RTCLI::System::Console::WriteLine(s4);
+	// IL_001b: nop
+	IL_001b: RTCLI::nop();
+	// IL_001c: ldloc.1
+	IL_001c: auto& s5 = v1.Get();
+	// IL_001d: callvirt System.String System.String::ToLower()
+	IL_001d: auto s6 = ((RTCLI::System::String&)s5).ToLower();
+	// IL_0022: stloc.2
+	IL_0022: v2 = s6;
+	// IL_0023: ldstr \"ToLower: \"
+	IL_0023: RTCLI::System::String s7 = RTCLI_NATIVE_STRING("ToLower: ");
+	// IL_0028: call System.Void System.Console::Write(System.String)
+	IL_0028: RTCLI::System::Console::Write(s7);
+	// IL_002d: nop
+	IL_002d: RTCLI::nop();
+	// IL_002e: ldloc.2
+	IL_002e: auto& s8 = v2.Get();
+	// IL_002f: call System.Void System.Console::WriteLine(System.String)
+	IL_002f: RTCLI::System::Console::WriteLine(s8);
+	// IL_0034: nop
+	IL_0034: RTCLI::nop();
+	// IL_0035: ret
+	IL_0035: return ;
 }
 ```
 
