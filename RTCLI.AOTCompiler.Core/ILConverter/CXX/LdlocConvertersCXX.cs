@@ -13,8 +13,8 @@ namespace RTCLI.AOTCompiler.ILConverters
     {
         public static string Convert(Instruction instruction, MethodTranslateContext methodContext, int index)
         {
-            bool VT = methodContext.MethodInfo.LocalVariables[index].Type.IsValueType;
-            return $"auto& {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = v{index}{(VT?"" : ".Get()")};";
+            var type = methodContext.MethodInfo.LocalVariables[index].Type;
+            return $"auto& {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = v{index}{(type.IsValueType ? "" : ".Get()")};";
         }
     }
 

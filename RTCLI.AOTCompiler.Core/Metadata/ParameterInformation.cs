@@ -13,8 +13,18 @@ namespace RTCLI.AOTCompiler.Metadata
             this.MetadataContext = context;
             this.Definition = defination;
         }
-        public string CXXParamDecorated 
-            => CXXTypeName + ((IsValueType && !Definition.IsOut || !Definition.IsIn) ? "" : "&"); 
+        public string CXXParamDecorated
+        {
+            get
+            {
+                if (Definition.ParameterType.IsGenericParameter)
+                    return $"RTCLI::TVar<{CXXTypeName}>";
+                if (!IsValueType || (Definition.IsOut || Definition.IsIn))
+                    return CXXTypeName + "&";
+
+                return CXXTypeName;
+            }
+        }
         public string CXXTypeName
             => MetadataContext.GetTypeInformation(Definition.ParameterType).CXXTypeName;
 
