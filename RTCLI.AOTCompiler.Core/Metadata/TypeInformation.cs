@@ -10,17 +10,19 @@ namespace RTCLI.AOTCompiler.Metadata
 {
     public partial class TypeInformation : IMemberInformation
     {
-        public string FullName => IsArray ? definitionArray.FullName : IsGenericInstance ? definitionGI.FullName : IsGenericParameter ? definitionGP.FullName : definition.FullName;
-        public string Namespace => IsArray ? definitionArray.Namespace : IsGenericInstance ? definitionGI.Namespace : IsGenericParameter ? definitionGP.Namespace : definition.Namespace;
-        public string TypeName => IsArray ? definitionArray.Name : IsGenericInstance ? definitionGI.Name : IsGenericParameter ? definitionGP.Name : definition.Name;
+        public string FullName => IsReference ? reference.FullName : definition.FullName;
+        public string Namespace => IsReference ? reference.FullName : definition.Namespace;
+        public string TypeName => IsReference ? reference.FullName : definition.Name;
         public readonly string[] NamespaceChain = null;
         public readonly string[] TypeAttributes = null;
 
-        public bool IsGenericParameter => definitionGP != null;
-        public bool IsArray => definitionArray != null;
+        public bool IsValueType => definition == null ? false : definition.IsValueType;
+        public bool IsReference => reference != null;
+        public bool IsGenericParameter => reference == null ? false : reference.IsGenericParameter;
+        public bool IsArray => reference == null ? false : reference.IsArray;
         public bool IsStruct => definition!=null ? definition.IsValueType : false;
-        public bool IsGenericInstance => definitionGI != null;
-        public bool HasGenericParameters => genericParameterTypes != null ? genericParameterTypes.Length > 0 : false;
+        public bool IsGenericInstance => reference == null ? false : reference.IsGenericInstance;
+        public bool HasGenericParameters => definition == null ? false : definition.HasGenericParameters;
 
         public readonly List<MethodInformation> Methods = new List<MethodInformation>();
         public readonly List<FieldInformation> Fields = new List<FieldInformation>();
@@ -68,6 +70,7 @@ namespace RTCLI.AOTCompiler.Metadata
 
         public TypeInformation(ArrayType def, MetadataContext metadataContext)
         {
+            reference = def;
             this.definitionArray = def;
             this.MetadataContext = metadataContext;
             var dd = definitionArray.ElementType;
@@ -76,21 +79,21 @@ namespace RTCLI.AOTCompiler.Metadata
             
         }
 
-
         public TypeInformation(GenericParameter def, MetadataContext metadataContext)
         {
+            reference = def;
             this.definitionGP = def;
             this.MetadataContext = metadataContext;
         }
 
         public TypeInformation(GenericInstanceType def, MetadataContext metadataContext)
         {
+            reference = def;
             this.definitionGI = def;
             this.MetadataContext = metadataContext;
             var ElementType = metadataContext.GetTypeInformation(def.ElementType);
             this.genericElementType = ElementType;
             this.genericArgumentTypes = def.GenericArguments.Select(a => MetadataContext.GetTypeInformation(a)).ToArray();
-
             this.definition = ElementType.definition;
             Methods = ElementType.Methods;
             StaticConstructor = ElementType.StaticConstructor;
@@ -102,6 +105,8 @@ namespace RTCLI.AOTCompiler.Metadata
 
         private char[] sep = {',', ' '};
 
+        [JsonIgnore] private readonly TypeReference reference = null;
+        
         [JsonIgnore] private readonly ArrayType definitionArray = null;
         [JsonIgnore] private readonly TypeInformation elementType = null;
         [JsonIgnore] private readonly GenericInstanceType definitionGI = null;
