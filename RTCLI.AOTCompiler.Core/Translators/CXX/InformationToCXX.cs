@@ -73,7 +73,7 @@ namespace RTCLI.AOTCompiler.Metadata
             }
             return sequence;
         }
-         
+
         public string CXXMethodDeclareName
         {
             get
@@ -89,15 +89,27 @@ namespace RTCLI.AOTCompiler.Metadata
         public string CXXMethodNameShort
             => (definition.IsConstructor ? (definition.IsStatic ? "StaticConstructor" : "Constructor") : definition?.Name.Replace('<', '_').Replace('>', '_'));
 
-        public string CXXMethodSignature => (IsStatic ? "static " : "")+  CXXRetType + " " + CXXMethodNameShort + CXXParamSequence;
+        public string CXXMethodSignature => (IsStatic ? "static " : "") + CXXRetType + " " + CXXMethodNameShort + CXXParamSequence;
         public string CXXParamSequence => $"({CXXParamsSequence()})"; //Param Sequence
-        public string CXXArgSequence => $"({string.Join(',',Parameters.Select(a=>a.Name))})";
+        public string CXXArgSequence => $"({string.Join(',', Parameters.Select(a => a.Name))})";
 
         public string CXXTemplateParam =>
             genericParameterTypes != null ? string.Join(',', genericParameterTypes.Select(a => $"class {a.CXXTypeName}")) : "";
         public string CXXTemplateArg =>
             genericParameterTypes != null ? string.Join(',', genericParameterTypes.Select(a => a.CXXTypeName)) : "";
-        public string CXXRetType => MetadataContext.GetTypeInformation(definition.ReturnType)?.CXXTypeName;
+        public string CXXRetType
+        {
+            get
+            {
+                var type = MetadataContext.GetTypeInformation(definition.ReturnType);
+                //if (type == null)
+                //    return "RTCLI::System::Void";
+                if (type.IsValueType)
+                    return type.CXXTypeName;
+                else
+                    return type.CXXTypeName + "&";
+            }
+        } 
         public string CXXStackName => $"{string.Join("_", CXXMethodDeclareName.Split(new string[] { "::", "<", ">" }, StringSplitOptions.None))}__Stack";
     }
 
@@ -106,7 +118,7 @@ namespace RTCLI.AOTCompiler.Metadata
         public string CXXTypeName => MetadataContext.GetTypeInformation(definition.FieldType).CXXTypeName;
         public string CXXTypeNameShort => MetadataContext.GetTypeInformation(definition.FieldType).CXXTypeNameShort;
         public string CXXFieldDeclaration => (IsStatic ? "static " : "") +
-            (this.definition.FieldType.IsValueType ? $"{CXXTypeName} " : $"RTCLI::ref<{CXXTypeName}> ") +
+            (this.definition.FieldType.IsValueType ? $"{CXXTypeName} " : $"RTCLI::Managed<{CXXTypeName}> ") +
             $"{Utilities.GetCXXValidTokenString(Name)};";
     }
 
@@ -114,7 +126,7 @@ namespace RTCLI.AOTCompiler.Metadata
     {
         public string CXXTypeName => MetadataContext.GetTypeInformation(Definition.VariableType).CXXTypeName;
 
-        public string CXXVarDeclaration => $"RTCLI::StackVal<{CXXTypeName}>";
+        public string CXXVarDeclaration => Type.IsValueType ? CXXTypeName : $"RTCLI::TRef<{CXXTypeName}>";
         public string CXXVarInitVal => this.Definition.VariableType.IsValueType ? $"{CXXVarDeclaration}()" : $"RTCLI::null";
     }
 }

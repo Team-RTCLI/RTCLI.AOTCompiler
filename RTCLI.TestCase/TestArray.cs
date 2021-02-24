@@ -11,7 +11,7 @@ namespace TestCase
             int[] list = new int[12];
             list[0] = 1111111;
             list[11] = 111111;
-            list[0] = 12;
+            list[0] = list[11];
         }
     }
 }

@@ -15,8 +15,7 @@ namespace RTCLI.AOTCompiler.ILConverters
             var op3 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op2 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             var op1 = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
-            return $"auto " +
-                $" = RTCLI::ArraySet<{type}>({op1}, {op2}, {op3});";
+            return $"RTCLI::ArraySet<{type}>({op1}, {op2}, {op3});";
         }
     }
 
@@ -47,37 +46,37 @@ namespace RTCLI.AOTCompiler.ILConverters
     {
         public OpCode TargetOpCode() => OpCodes.Stelem_I1;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
-            => StelemConvert.Convert(instruction, methodContext, "RTCLI::i8");
+            => StelemConvert.Convert(instruction, methodContext, "RTCLI::System::Int8");
     }
     public class Stelem_I2ConverterCXX : ICXXILConverter
     {
         public OpCode TargetOpCode() => OpCodes.Stelem_I2;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
-            => StelemConvert.Convert(instruction, methodContext, "RTCLI::i16");
+            => StelemConvert.Convert(instruction, methodContext, "RTCLI::System::Int16");
     }
     public class Stelem_I4ConverterCXX : ICXXILConverter
     {
         public OpCode TargetOpCode() => OpCodes.Stelem_I4;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
-            => StelemConvert.Convert(instruction, methodContext, "RTCLI::i32");
+            => StelemConvert.Convert(instruction, methodContext, "RTCLI::System::Int32");
     }
     public class Stelem_I8ConverterCXX : ICXXILConverter
     {
         public OpCode TargetOpCode() => OpCodes.Stelem_I8;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
-            => StelemConvert.Convert(instruction, methodContext, "RTCLI::i64");
+            => StelemConvert.Convert(instruction, methodContext, "RTCLI::System::Int64");
     }
 
     public class Stelem_R4ConverterCXX : ICXXILConverter
     {
         public OpCode TargetOpCode() => OpCodes.Stelem_R4;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
-            => StelemConvert.Convert(instruction, methodContext, "RTCLI::f32");
+            => StelemConvert.Convert(instruction, methodContext, "RTCLI::System::Single");
     }
     public class Stelem_R8ConverterCXX : ICXXILConverter
     {
         public OpCode TargetOpCode() => OpCodes.Stelem_R8;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
-            => StelemConvert.Convert(instruction, methodContext, "RTCLI::f64");
+            => StelemConvert.Convert(instruction, methodContext, "RTCLI::System::Double");
     }
 }

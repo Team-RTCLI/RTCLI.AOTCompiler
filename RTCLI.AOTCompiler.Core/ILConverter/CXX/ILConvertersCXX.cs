@@ -25,7 +25,7 @@ namespace RTCLI.AOTCompiler.ILConverters
             var typeReference = calledMethod.DeclaringType;
             TypeInformation typeInformation = methodContext.TranslateContext.MetadataContext.GetTypeInformation(typeReference);
             string paramSequenceCXX = string.Join(',', calledMethod.Parameters.Select(_ => (methodContext as CXXMethodTranslateContext).CmptStackPopObject).Reverse()); 
-            return $"{typeInformation.CXXTypeName}& {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = \n\t\t*RTCLI::new_object<{typeInformation.CXXTypeName}>({paramSequenceCXX});";
+            return $"{typeInformation.CXXTypeName}& {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = \n\t\tRTCLI::new_object<{typeInformation.CXXTypeName}>({paramSequenceCXX});";
         }
         public string Convert(Instruction instruction, MethodTranslateContext methodContext) => ParseParams(instruction, methodContext);
     }
@@ -92,8 +92,8 @@ namespace RTCLI.AOTCompiler.ILConverters
             var typeReference = instruction.Operand as TypeReference;
             var len = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             TypeInformation typeInformation = methodContext.TranslateContext.MetadataContext.GetTypeInformation(typeReference);
-            return $"RTCLI::ElementArray<{typeInformation.CXXTypeName}>& {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = \n" +
-                $"\t\t*RTCLI::newarr<{typeInformation.CXXTypeName}>({len});";
+            return $"RTCLI::System::ElementArray<{typeInformation.CXXTypeName}>& {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = \n" +
+                $"\t\tRTCLI::new_array<{typeInformation.CXXTypeName}>({len});";
         }
     }
     public class LdlenConverterCXX : ICXXILConverter
@@ -445,8 +445,7 @@ namespace RTCLI.AOTCompiler.ILConverters
             }
             else if (op is FieldReference fld)
             {
-
-                return $"auto& {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = {obj}.{Utilities.GetCXXValidTokenString(fld.Name)};";
+                return $"auto& {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = {obj}.{Utilities.GetCXXValidTokenString(fld.Name)}{(fld.FieldType.IsValueType?"":".Get()")};";
             }
             return "";
         }

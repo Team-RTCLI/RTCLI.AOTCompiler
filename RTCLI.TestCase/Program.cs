@@ -4,22 +4,22 @@ using System.Text;
 
 namespace TestCase
 {
-    public partial struct Value
-    {
-        int v;
-    }
-
-    public partial struct Value
-    {
-        int vv;
-        public int Test(Value o)
-        {
-            return o.vv;
-        }
-    }
-
     public class Program
     {
+        public partial struct Value
+        {
+            int v;
+        }
+
+        public partial struct Value
+        {
+            int vv;
+            public int Test(Value o)
+            {
+                return o.vv;
+            }
+        }
+
         public static int Main(string[] args)
         {
             TestCase.TestSystem.Test();

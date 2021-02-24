@@ -144,30 +144,8 @@ namespace RTCLI.AOTCompiler.Translators
                 if (method.Body == null)
                     continue;
                 CXXMethodTranslateContext methodContext = new CXXMethodTranslateContext(translateContext, method);
-                // [2-1] Stack Code
-                codeWriter.WriteLine($"\n//{method.CXXMethodDeclareName}\n//[2-1] Here Begins Stack Declaration");
-                if(type.HasGenericParameters || method.HasGenericParameters)
-                {
-                    List<string> paramList = new List<string>();
-                    if(type.HasGenericParameters)
-                        paramList.Add(type.CXXTemplateParam);
-                    if (method.HasGenericParameters)
-                        paramList.Add(method.CXXTemplateParam);
-                    codeWriter.WriteLine($"template<{string.Join(',', paramList)}>");
-                }
-                codeWriter.WriteLine($"struct {method.CXXStackName}");
-                codeWriter.WriteLine("{");
-                codeWriter.indent();
-                foreach (var localVar in method.LocalVariables)
-                {
-                    codeWriter.WriteLine($"{localVar.CXXVarDeclaration} v{localVar.Index} = {localVar.CXXVarInitVal};");
-                }
-                codeWriter.WriteLine("template<bool InitLocals> static void Init(){};//Active with MethodBody.InitLocals Property.");
-                codeWriter.unindent();
-                codeWriter.WriteLine("};\n");
 
                 // [2-2-1] Method Code
-                codeWriter.WriteLine("//[2-2] Here Begins Method Body");
                 if(type.HasGenericParameters)
                     codeWriter.WriteLine($"template<{type.CXXTemplateParam}>");
                 if (method.HasGenericParameters)
@@ -186,18 +164,13 @@ namespace RTCLI.AOTCompiler.Translators
                     codeWriter.WriteLine("{");
                     codeWriter.indent();
                 }
-                if (type.HasGenericParameters || method.HasGenericParameters)
+                foreach (var localVar in method.LocalVariables)
                 {
-                    List<string> argList = new List<string>();
-                    if (type.HasGenericParameters)
-                        argList.Add(type.CXXTemplateArg);
-                    if (method.HasGenericParameters)
-                        argList.Add(method.CXXTemplateArg);
-                    codeWriter.WriteLine($"{method.CXXStackName}<{string.Join(',', argList)}> stack;");
+                    if (method.InitLocals)
+                        codeWriter.WriteLine($"{localVar.CXXVarDeclaration} v{localVar.Index} = {localVar.CXXVarInitVal};");
+                    else
+                        codeWriter.WriteLine($"{localVar.CXXVarDeclaration} v{localVar.Index};");
                 }
-                else
-                    codeWriter.WriteLine($"{method.CXXStackName} stack;");
-                codeWriter.WriteLine($"stack.Init<{method.InitLocals.ToString().ToLower()}>();");
                 foreach (var instruction in method.Body.Instructions)
                 {
                     codeWriter.WriteLine(NoteILInstruction(instruction, methodContext));

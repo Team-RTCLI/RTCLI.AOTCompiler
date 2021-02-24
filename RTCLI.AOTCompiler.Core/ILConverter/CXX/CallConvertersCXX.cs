@@ -29,7 +29,7 @@ namespace RTCLI.AOTCompiler.ILConverters
             {
                 var garg = (mtd as GenericInstanceMethod).GenericArguments[0];
                 var type = methodContext.MetadataContext.GetTypeInformation(garg);
-                return $"{type.CXXTypeName}& {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = \n\t\t*RTCLI::new_object<{type.CXXTypeName}>({args});";
+                return $"{type.CXXTypeName}& {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = \n\t\tRTCLI::new_object<{type.CXXTypeName}>({args});";
             }
                 
             var methodInformation = mtd.GetMetaInformation(methodContext.MetadataContext);
@@ -50,7 +50,7 @@ namespace RTCLI.AOTCompiler.ILConverters
             if(methodInformation.IsStatic)
             {
                 var type = methodContext.MetadataContext.GetTypeInformation(mtd.DeclaringType);
-                string callBody = $"{methodInformation.CXXMethodCallName(type)}::{methodInformation.CXXMethodNameShort + genericArgs}({args});"; // Method Call body.
+                string callBody = $"{methodInformation.CXXMethodCallName(type) + genericArgs}({args});"; // Method Call body.
                 return type.CallStaticConstructor(methodContext) +
                 (mtd.ReturnType.FullName != "System.Void" ? $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = " : "")
                     + callBody;

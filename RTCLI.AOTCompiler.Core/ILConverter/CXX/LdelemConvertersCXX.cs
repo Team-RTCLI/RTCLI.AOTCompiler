@@ -40,63 +40,63 @@ namespace RTCLI.AOTCompiler.ILConverters
     {
         public OpCode TargetOpCode() => OpCodes.Ldelem_I;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext) 
-            => LdelemConvert.Convert(instruction, methodContext, "int");
+            => LdelemConvert.Convert(instruction, methodContext, "RTCLI::NativeInt");
     }
     public class Ldelem_I1ConverterCXX : ICXXILConverter
     {
         public OpCode TargetOpCode() => OpCodes.Ldelem_I1;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext) 
-            => LdelemConvert.Convert(instruction, methodContext, "RTCLI::i8");
+            => LdelemConvert.Convert(instruction, methodContext, "RTCLI::System::Int8");
     }
     public class Ldelem_I2ConverterCXX : ICXXILConverter
     {
         public OpCode TargetOpCode() => OpCodes.Ldelem_I2;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
-            => LdelemConvert.Convert(instruction, methodContext, "RTCLI::i16");
+            => LdelemConvert.Convert(instruction, methodContext, "RTCLI::System::Int16");
     }
     public class Ldelem_I4ConverterCXX : ICXXILConverter
     {
         public OpCode TargetOpCode() => OpCodes.Ldelem_I4;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
-            => LdelemConvert.Convert(instruction, methodContext, "RTCLI::i32");
+            => LdelemConvert.Convert(instruction, methodContext, "RTCLI::System::Int32");
     }
     public class Ldelem_I8ConverterCXX : ICXXILConverter
     {
         public OpCode TargetOpCode() => OpCodes.Ldelem_I8;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
-            => LdelemConvert.Convert(instruction, methodContext, "RTCLI::i64");
+            => LdelemConvert.Convert(instruction, methodContext, "RTCLI::System::Int64");
     }
 
     public class Ldelem_R4ConverterCXX : ICXXILConverter
     {
         public OpCode TargetOpCode() => OpCodes.Ldelem_R4;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
-            => LdelemConvert.Convert(instruction, methodContext, "RTCLI::f32");
+            => LdelemConvert.Convert(instruction, methodContext, "RTCLI::System::Single");
     }
     public class Ldelem_R8ConverterCXX : ICXXILConverter
     {
         public OpCode TargetOpCode() => OpCodes.Ldelem_R8;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
-            => LdelemConvert.Convert(instruction, methodContext, "RTCLI::f64");
+            => LdelemConvert.Convert(instruction, methodContext, "RTCLI::System::Double");
     }
 
     public class Ldelem_U1ConverterCXX : ICXXILConverter
     {
         public OpCode TargetOpCode() => OpCodes.Ldelem_U1;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
-            => LdelemConvert.Convert(instruction, methodContext, "RTCLI::u8");
+            => LdelemConvert.Convert(instruction, methodContext, "RTCLI::System::UInt8");
     }
     public class Ldelem_U2ConverterCXX : ICXXILConverter
     {
         public OpCode TargetOpCode() => OpCodes.Ldelem_U2;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
-            => LdelemConvert.Convert(instruction, methodContext, "RTCLI::u16");
+            => LdelemConvert.Convert(instruction, methodContext, "RTCLI::System::UInt16");
     }
     public class Ldelem_U4ConverterCXX : ICXXILConverter
     {
         public OpCode TargetOpCode() => OpCodes.Ldelem_U4;
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
-            => LdelemConvert.Convert(instruction, methodContext, "RTCLI::u32");
+            => LdelemConvert.Convert(instruction, methodContext, "RTCLI::System::UInt32");
     }
 
 
