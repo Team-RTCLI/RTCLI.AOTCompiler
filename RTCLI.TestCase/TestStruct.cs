@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Reference;
+using TestCase.Reference;
 
 namespace TestCase
 {

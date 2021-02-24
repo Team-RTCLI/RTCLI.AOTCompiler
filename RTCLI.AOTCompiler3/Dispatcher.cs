@@ -3,9 +3,11 @@ using System.IO;
 using System.Threading.Tasks;
 using Mono.Cecil;
 using RTCLI.AOTCompiler3.Meta;
+using RTCLI.AOTCompiler3.Translators;
 
 namespace RTCLI.AOTCompiler3
 {
+    // ${OutputPath}/${Assembly}/[include/src]/${namespaces}.../${classname}.h/cpp
     public static class Dispatcher
     {
         public static void Translate(
@@ -14,16 +16,25 @@ namespace RTCLI.AOTCompiler3
             string assemblyPath,
             AssemblyDefinition assembly)
         {
-            //System.Console.WriteLine("AOTCompiler: Preparing assembly: \"{0}\" ...", Path.GetFullPath(assemblyPath));
-            using (var _ = storage.EnterScope("include"))
+            // ${OutputPath}/${Assembly}
+            using (var _ = storage.EnterScope(assembly.RTCLIShortName()))
             {
-                
+                // ${OutputPath}/${Assembly}/include
+                using (var _h = storage.EnterScope("include"))
+                {
+                    CXXHeaderTranslator translator = new CXXHeaderTranslator(storage, assembly);
+                    translator.Run();
+                }
             }
-            using (var _ = storage.EnterScope("src"))
+            using (var _ = storage.EnterScope(assembly.RTCLIShortName()))
             {
-                
+                // ${OutputPath}/${Assembly}/src
+                using (var _cpp = storage.EnterScope("src"))
+                {
+                    CXXSourceTranslator translator = new CXXSourceTranslator(storage, assembly);
+                    translator.Run();
+                }
             }
-
             System.Console.WriteLine($"Processing {assembly.RTCLIShortName()} done.");
         }
 
@@ -63,11 +74,13 @@ namespace RTCLI.AOTCompiler3
                         logw,
                         outputPath,
                         "    ");
-                    Translate(
-                        storage,
-                        dispatchArgs,
-                        aseemblyPath,
-                        assembly);
+                    {
+                        Translate(
+                            storage,
+                            dispatchArgs,
+                            aseemblyPath,
+                            assembly);
+                    }
                 }
             });
         }

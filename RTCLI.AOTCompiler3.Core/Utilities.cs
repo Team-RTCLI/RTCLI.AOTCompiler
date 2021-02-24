@@ -30,5 +30,7 @@ namespace RTCLI.AOTCompiler3
                     .Replace("\r", "\\r").Replace("\t", "\\t")
                     .Replace("\v", "\\v");
         }
+
+        public static string CopyRight => "// COPYRIGHT STRING";
     }
 }

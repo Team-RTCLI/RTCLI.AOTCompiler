@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Reference
+namespace TestCase.Reference
 {
     public interface IGetName
     {

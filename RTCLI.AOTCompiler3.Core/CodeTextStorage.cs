@@ -40,6 +40,11 @@ namespace RTCLI.AOTCompiler3
 
         public CodeTextWriter Wirter(string FileName)
         {
+            var fullDirName = Path.GetDirectoryName(Path.Combine(getScopePath(), FileName));
+            if (!Directory.Exists(fullDirName))
+            {
+                Directory.CreateDirectory(fullDirName);
+            }
             return new CodeTextWriter(Path.Combine(getScopePath(), FileName));
         }
 
