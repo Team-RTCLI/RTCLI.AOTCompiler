@@ -21,10 +21,44 @@ namespace RTCLI.AOTCompiler3.Translators
             {
                 foreach (var Type in Module.Types)
                 {
-                    var typeWriter = Storage.Wirter(Path.Combine(Type.CXXNamespaceToPath(), Type.CXXShortTypeName() + ".cpp"));
-                    typeWriter.WriteLine(Utilities.CopyRight);
+                    var codeWriter = Storage.Wirter(Path.Combine(Type.CXXNamespaceToPath(), Type.CXXShortTypeName() + ".cpp"));
+                    codeWriter.WriteLine(Utilities.CopyRight);
 
-                    typeWriter.Flush();
+                    codeWriter.WriteLine(EnvIncludes);
+                    codeWriter.WriteLine($"#include <{Type.CXXHeaderPath()}.h>");
+
+                    codeWriter.WriteLine("");
+                    codeWriter.WriteLine("// [S0001] Close Unused-Label Warnings.");
+                    codeWriter.WriteLine($"#if defined(RTCLI_COMPILER_CLANG)");
+                    codeWriter.WriteLine($"#pragma clang diagnostic push");
+                    codeWriter.WriteLine($"#pragma clang diagnostic ignored \"-Wunused-label\"");
+                    codeWriter.WriteLine($"#elif defined(RTCLI_COMPILER_MSVC)");
+                    codeWriter.WriteLine($"#pragma warning(push)");
+                    codeWriter.WriteLine($"#pragma warning(disable: 4102)");
+                    codeWriter.WriteLine($"#endif");
+                    
+                    codeWriter.WriteLine("");
+                    //WriteMethodRecursive(codeWriter, type);
+                    codeWriter.WriteLine("");
+
+                    codeWriter.WriteLine("");
+                    codeWriter.WriteLine("// [S0001] Pop Unused-Label Warnings.");
+                    codeWriter.WriteLine($"#if defined(RTCLI_COMPILER_CLANG)");
+                    codeWriter.WriteLine($"#pragma clang diagnostic pop");
+                    codeWriter.WriteLine($"#elif defined(RTCLI_COMPILER_MSVC)");
+                    codeWriter.WriteLine($"#pragma warning(pop)");
+                    codeWriter.WriteLine($"#endif");
+
+                    codeWriter.WriteLine("");
+                    codeWriter.WriteLine("// [S0000] Generate Test Point.");
+                    codeWriter.WriteLine($"#ifdef RTCLI_TEST_POINT");
+                    codeWriter.WriteLine("int main(void){");
+                    codeWriter.WriteLine($"\t{Type.CXXTypeName()}::Test();");
+                    codeWriter.WriteLine("\treturn 0;");
+                    codeWriter.WriteLine("}");
+                    codeWriter.WriteLine($"#endif");
+
+                    codeWriter.Flush();
                 }
             }
         }
@@ -32,5 +66,6 @@ namespace RTCLI.AOTCompiler3.Translators
         // ${OutputPath}/${Assembly}/src
         CodeTextStorage Storage = null;
         AssemblyDefinition FocusedAssembly = null;
+        private string EnvIncludes => "#include <RTCLI/RTCLI.hpp>";
     }
 }

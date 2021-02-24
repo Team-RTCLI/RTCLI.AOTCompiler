@@ -12,7 +12,7 @@ namespace RTCLI.AOTCompiler3.Translators
     {
         public static string CXXHeaderPath(this TypeReference typeReference)
         {
-            return Path.Combine(typeReference.CXXNamespaceToPath(), typeReference.CXXShortTypeName() + ".h");
+            return Path.Combine(typeReference.CXXNamespaceToPath(), typeReference.CXXShortTypeName() + ".h").Replace("\\", "/");
         }
     }
 
@@ -30,10 +30,12 @@ namespace RTCLI.AOTCompiler3.Translators
             {
                 foreach(var Type in Module.Types)
                 {
-                    var typeWriter = Storage.Wirter(Path.Combine(Type.CXXNamespaceToPath(), Type.CXXShortTypeName() + ".h"));
-                    typeWriter.WriteLine(Utilities.CopyRight);
+                    var codeWriter = Storage.Wirter(Path.Combine(Type.CXXNamespaceToPath(), Type.CXXShortTypeName() + ".h").Replace("\\", "/"));
+                    codeWriter.WriteLine(Utilities.CopyRight);
 
-                    typeWriter.Flush();
+                   
+
+                    codeWriter.Flush();
                 }
             }
         }
