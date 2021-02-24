@@ -114,7 +114,7 @@ namespace RTCLI.AOTCompiler.Metadata
     {
         public string CXXTypeName => MetadataContext.GetTypeInformation(Definition.VariableType).CXXTypeName;
 
-        public string CXXVarDeclaration => this.Definition.VariableType.IsValueType ? $"{CXXTypeName}" : $"{CXXTypeName}&";
-        public string CXXVarInitVal => this.Definition.VariableType.IsValueType ? $"{CXXVarDeclaration}()" : $"({CXXVarDeclaration})RTCLI::null";
+        public string CXXVarDeclaration => $"RTCLI::StackVal<{CXXTypeName}>";
+        public string CXXVarInitVal => this.Definition.VariableType.IsValueType ? $"{CXXVarDeclaration}()" : $"RTCLI::null";
     }
 }
