@@ -1,14 +1,31 @@
 ﻿using System;
 
+public class RawC
+{
+
+}
+
 namespace TestCase.Reference
 {
-    public interface IGetName
+    public interface BaseInterface
     {
+        string Note() => "aa";
         string Name { get; }
+    }
+
+    public interface IGetName : BaseInterface
+    {
+        new string Note() => "aaa";
+
+        public class InAnInterface
+        {
+            int val;
+        }
     }
 
     public class RefClass : IGetName
     {
+        string Note() => "aaaa";
         public RefClass(string name)
         {
             this.Name = name;
@@ -30,5 +47,13 @@ namespace TestCase.Reference
     {
         public string Name;
         private string InternalName;
+    }
+}
+
+namespace TestCase.Reference2
+{
+    public class RefClass2
+    {
+        public int value;   
     }
 }

@@ -8,27 +8,28 @@ endif()
 
 find_package(RTCLIDefault 0.0.1 REQUIRED)
 link_libraries(RTCLI::RTCLIDefault)
-include_directories(RTCLI.Generated/include)
+include_directories(RTCLI.Generated)
 
 FILE(GLOB modules
-    RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/RTCLI.Generated/src ${CMAKE_CURRENT_SOURCE_DIR}/RTCLI.Generated/src/*
+    RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/RTCLI.Generated ${CMAKE_CURRENT_SOURCE_DIR}/RTCLI.Generated/*
 )
 
-add_definitions("-DRTCLI_TEST_POINT")
-
+# build all assemblies
 FOREACH(module ${modules})
     message(STATUS ${module})
     project(${module})
-    FILE(GLOB srcs
-        RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/RTCLI.Generated/src/${module}
-        ${CMAKE_CURRENT_SOURCE_DIR}/RTCLI.Generated/src/${module}/*
+    file(GLOB_RECURSE 
+        source_list 
+        ${CMAKE_CURRENT_SOURCE_DIR}/RTCLI.Generated/${module}/*.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/RTCLI.Generated/${module}/*.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/RTCLI.Generated/${module}/*.hxx
+
+        ${CMAKE_CURRENT_SOURCE_DIR}/RTCLI.Generated/${module}/*.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/RTCLI.Generated/${module}/*.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/RTCLI.Generated/${module}/*.cxx
+        ${CMAKE_CURRENT_SOURCE_DIR}/RTCLI.Generated/${module}/*.inl
     )
-    FOREACH(src ${srcs})
-        get_filename_component(TARGET_NAME ${src} NAME_WLE)
-        message(STATUS "TestCase: ${TARGET_NAME}")
-        FILE(GLOB incs
-            ${CMAKE_CURRENT_SOURCE_DIR}/RTCLI.Generated/include/${module}/*
-        )
-        add_executable(${TARGET_NAME} ${incs} ${CMAKE_CURRENT_SOURCE_DIR}/RTCLI.Generated/src/${module}/${src})
-    ENDFOREACH()
+    add_library(${module} ${incs} ${source_list})
 ENDFOREACH()
+
+#add_definitions("-DRTCLI_TEST_POINT")

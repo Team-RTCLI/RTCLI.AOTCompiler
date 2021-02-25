@@ -11,6 +11,11 @@ namespace RTCLI.AOTCompiler3.Meta
         {
             return assembly.Name.Name.Replace('.', '_');
         }
+        
+        public static string RTCLIShortName(this AssemblyNameReference assembly)
+        {
+            return assembly.Name.Replace('.', '_');
+        }
 
         public static string RTCLIFullName(this AssemblyDefinition assembly)
         {
