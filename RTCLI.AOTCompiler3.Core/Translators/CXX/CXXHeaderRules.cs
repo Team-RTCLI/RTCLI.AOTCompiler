@@ -48,7 +48,9 @@ namespace RTCLI.AOTCompiler3.Translators
                 {
                     if (method.HasGenericParameters)
                         Writer.WriteLine($"template<{method.CXXTemplateParam()}>");
-                    Writer.WriteLine($"{(method.IsNewSlot ? "virtual " : "")}{method.CXXMethodSignature(true)};");
+                    string H2001_0 = $"{(method.IsNewSlot ? "virtual " : "")}{method.CXXMethodSignature(true)};";
+                    string H2001_1 = Type.IsValueType ? H2001_0.Replace("virtual ", "") : H2001_0;
+                    Writer.WriteLine(H2001_1);
                 }
                 Writer.WriteLine();
             }
