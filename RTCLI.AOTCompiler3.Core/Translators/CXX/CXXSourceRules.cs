@@ -22,7 +22,7 @@ namespace RTCLI.AOTCompiler3.Translators
         }
 
         [S2000()]
-        public static void WriteMethodBody(CodeTextWriter Writer, MethodDefinition Method)
+        public static void WriteMethodBody(CodeTextWriter Writer, MethodDefinition Method, bool ValueType)
         {
             MethodTranslateContextCXX methodContext = new MethodTranslateContextCXX(Method);
             var Type = Method.DeclaringType;
@@ -33,8 +33,7 @@ namespace RTCLI.AOTCompiler3.Translators
             if (Method.HasGenericParameters)
                 Writer.WriteLine($"template<{Method.CXXTemplateParam()}>");
 
-            Writer.WriteLine(
-                Method.CXXRetType() + " " + Method.CXXMethodDeclareName() + Method.CXXParamSequence(false));
+            Writer.WriteLine(Method.CXXMethodSignature(false));
 
             Writer.WriteLine("{");
             Writer.indent();

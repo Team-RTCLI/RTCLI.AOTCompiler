@@ -14,6 +14,10 @@ namespace RTCLI.AOTCompiler3.Meta
             return gTs != null ? string.Join(',', gTs.Select(a => $"class {a.CXXTypeName()}")) : "";
         }
 
+        public static string CondStr(bool Cond, string Str)
+        {
+            return Cond ? Str : "";
+        }
         [H2001()]
         public static string CXXMethodSignature(this MethodDefinition method, bool WithConstant)
         {
@@ -32,17 +36,11 @@ namespace RTCLI.AOTCompiler3.Meta
             return H2001_2;
         }
 
-        public static string CXXMethodDeclareName(this MethodDefinition Method)
+        public static string CXXMethodImplSignature(this MethodDefinition method, bool WithConstant)
         {
-            var Type = Method.DeclaringType;
-            return Type.CXXTypeName() + (Type.HasGenericParameters ? $"<{Type.CXXTemplateArg()}>" : "") 
-                + "::" + Method.CXXShortMethodName();
-        }
-        public static string CXXMethodSignatureFull(this MethodDefinition method, bool WithConstant)
-        {
-            return (method.IsStatic ? "static " : "") +
-                method.CXXRetType() + " " + method.DeclaringType.CXXTypeName().Replace("::", "_") + "_" +
-                method.CXXShortMethodName() + method.CXXParamSequence(WithConstant);
+            return method.CXXRetType() + " " +
+                method?.Name.Replace('<', '_').Replace('>', '_') + "_Impl" +
+                method.CXXParamSequence(WithConstant);
         }
         public static string CXXArgSequence(this MethodDefinition method)
         {
@@ -103,6 +101,8 @@ namespace RTCLI.AOTCompiler3.Meta
                 }
                 return Constants.CXXCtorName;
             }
+            if(method.IsVirtual)
+                return method?.DeclaringType.CXXTypeName().Replace("::", "_") + "_" + method?.Name.Replace('<', '_').Replace('>', '_'); ;
             return method?.Name.Replace('<', '_').Replace('>', '_');
         }
     }

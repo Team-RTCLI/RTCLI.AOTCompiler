@@ -42,13 +42,15 @@ namespace RTCLI.AOTCompiler3.ILConverters
                 string callBody;
                 if (Virt)
                 {
+                    var type = mtd.DeclaringType.Resolve();
                     callBody =
-                       $"RTCLI_CALLVIRT({caller},{GetMethodOwner(mtd, methodContext)},{mtdDef.CXXShortMethodName() + genericArgs},{args});"; // Method Call body.
+                        $"{caller}.{mtdDef.CXXShortMethodName() + genericArgs}({args});"; // Method Call body.
                 }
                 else
                 {
+                    var type = mtd.DeclaringType.Resolve();
                     callBody =
-                        $"{caller}.{GetMethodOwner(mtd, methodContext)}::{mtdDef.CXXShortMethodName() + genericArgs}({args});"; // Method Call body.
+                        $"{caller}.{mtdDef.CXXMethodCallName(type) + genericArgs}({args});"; // Method Call body.
                 }
                 return (mtd.ReturnType.FullName != "System.Void" ? $"auto {methodContext.CmptStackPushObject} = " : "")
                     + callBody;

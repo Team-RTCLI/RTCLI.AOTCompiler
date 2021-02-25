@@ -47,27 +47,45 @@ namespace RTCLI.AOTCompiler3.Translators
             if (Type.Methods != null & Type.Methods.Count != 0)
             {
                 Writer.WriteLine("// [H2001] Method Signatures");
+                List<MethodDefinition> overrided = new List<MethodDefinition>();
                 foreach (var method in Type.Methods)
                 {
                     if(!ValueType && method.HasOverrides && method.IsVirtual)
                     {
                         foreach(var od in method.Overrides)
                         {
-                            Writer.WriteLine($"{od.Resolve().CXXMethodSignatureFull(true)} override{CondStr(method.IsAbstract, "= 0")}{CondStr(method.IsFinal, " final")};");
+                            var odd = od.Resolve();
+                            overrided.Add(odd);
+                            Writer.WriteLine($"{odd.CXXMethodSignature(true)} override{CondStr(method.IsAbstract, "= 0")}{CondStr(method.IsFinal, " final")};");
                         }
                     }
-                    else if (!ValueType && method.IsNewSlot)
+                    else if (!ValueType && method.IsVirtual)
                     {
-                        Writer.WriteLine($"virtual {method.CXXMethodSignature(true)}{CondStr(method.IsAbstract, " = 0")}{CondStr(method.IsFinal, " final")};");
-                        Writer.WriteLine($"virtual {method.CXXMethodSignatureFull(true)}{CondStr(method.IsAbstract, " = 0")}{CondStr(method.IsFinal, " final")};");
+                        if(method.IsNewSlot)
+                            Writer.WriteLine($"virtual {method.CXXMethodSignature(true)}{CondStr(method.IsAbstract, " = 0")}{CondStr(method.IsFinal, " final")};");
+                        if(!Type.IsInterface && !method.IsAbstract)
+                        {
+                            Writer.WriteLine($"{method.CXXMethodImplSignature(true)};");
+                            foreach (var i in Type.Interfaces)
+                            {
+                                var itype = i.InterfaceType.Resolve();
+                                foreach (var mtdd in itype.Methods)
+                                {
+                                    if (mtdd.Name == method.Name && !overrided.Contains(mtdd))
+                                    {
+                                        Writer.WriteLine($"virtual {mtdd.CXXMethodSignature(true)}{CondStr(method.IsAbstract, " = 0")}{CondStr(method.IsFinal, " final")};");
+                                    }
+                                }
+                            }
+                        }
                     }
-                    else if(!(method.HasOverrides && method.IsVirtual))
+                    else
                     {
                         if (method.HasGenericParameters)
                             Writer.WriteLine($"template<{method.CXXTemplateParam()}>");
 
                         Writer.WriteLine($"{method.CXXMethodSignature(true)}{CondStr(method.IsVirtual, " override")};");
-                    }    
+                    }
                 }
                 Writer.WriteLine();
             }

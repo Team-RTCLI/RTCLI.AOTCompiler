@@ -23,7 +23,7 @@ namespace TestCase
 
         public interface Interface2 : Interface1
         {
-            public float a() => 2;
+            public float a();
         }
 
         public interface Interface3 : Interface2
@@ -33,14 +33,13 @@ namespace TestCase
 
         public interface Interface4 : Interface3
         {
-            public abstract float a();
-            float Interface3.a() => 4;
+            public float a() => 4;
         }
 
         public class A : Interface4
         {
-            float Interface3.a() => 5;
-            public float a() => 4;
+            float Interface1.a() => 1;
+            float Interface2.a() => 2;
         }
 
         bool TestFunc<T>(IEquatable<T> arg1, T arg2)
@@ -68,7 +67,6 @@ namespace TestCase
             var I2 = (TestInterface.Interface2)Test;
             var I3 = (TestInterface.Interface3)Test;
             var I4 = (TestInterface.Interface4)Test;
-            Console.WriteLine(Test.a());
             Console.WriteLine(I1.a());
             Console.WriteLine(I2.a());
             Console.WriteLine(I3.a());
