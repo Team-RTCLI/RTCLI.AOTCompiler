@@ -39,24 +39,52 @@ namespace RTCLI.AOTCompiler3.Meta
             if (typeReference.IsPointer)
             {
                 var elemT = typeReference.GetElementType();
-                return $"{elemT}*";
+                return $"{elemT.CXXTypeName()}*";
             }
             else return "RTCLI::" + string.Join("::", typeReference.FullName.Split('.', '/')).Replace("<>", "__").Replace('`', '_').Replace("<", "_").Replace(">", "_");
         }
         public static string CXXShortTypeName(this TypeReference typeReference)
         {
-            var elemT = typeReference.GetElementType();
             if (typeReference.IsArray)
-                return $"RTCLI::System::ElementArray<{typeReference.GetElementType().CXXTypeName()}>";
+            {
+                var elemT = typeReference.GetElementType();
+                return $"RTCLI::System::ElementArray<{elemT.CXXTypeName()}>";
+            }
             if (typeReference.IsGenericInstance)
                 return typeReference.GenericInstanceString();
             if (typeReference.IsGenericParameter)
                 return typeReference.FullName;
 
             if (typeReference.IsPointer)
-                return "UNIMPLEMENTED_CXX_SHORT_TYPE_NAME";
+            {
+                var elemT = typeReference.GetElementType();
+                return $"{elemT.CXXShortTypeName()}*";
+            }
             else return typeReference.Name.Replace("<>", "__").Replace('`', '_').Replace("<", "_").Replace(">", "_");
         }
+
+        public static string CallStaticConstructor(this TypeDefinition typeDefinition,
+            MethodTranslateContextCXX methodContext)
+        {
+            MethodDefinition StaticConstructor = null;
+            foreach (var method in typeDefinition.Methods)
+            {
+                if (method.IsStatic && method.IsConstructor)
+                    StaticConstructor = method;
+            }
+
+            if (methodContext.Method == StaticConstructor)
+                return "";
+
+            if (!methodContext.StaticReference.Contains(typeDefinition))
+            {
+                methodContext.StaticReference.Add(typeDefinition);
+                if (StaticConstructor != null)
+                    return $"{StaticConstructor.CXXMethodCallName(typeDefinition)}();";
+            }
+            return "";
+        }
+
         public static string CXXTemplateParam(this TypeReference typeReference)
         {
             var gTs  = typeReference.GenericParameters;

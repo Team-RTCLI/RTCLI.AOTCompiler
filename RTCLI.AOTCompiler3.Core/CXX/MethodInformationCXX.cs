@@ -79,7 +79,12 @@ namespace RTCLI.AOTCompiler3.Meta
             else
                 return type.CXXTypeName() + "&";
         }
-        
+
+        public static string CXXMethodCallName(this MethodDefinition method, TypeReference type)
+        {
+            return $"{type.CXXTypeName()}::{method.CXXShortMethodName()}";
+        }
+
         public static string CXXShortMethodName(this MethodDefinition method)
         {
             if(method.IsConstructor)

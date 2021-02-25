@@ -59,6 +59,8 @@ namespace RTCLI.AOTCompiler3
         public int ArgumentsCount => ArgumentsStack.Count;
         Stack<int> CmptStack = new Stack<int>();
         List<string> ArgumentsStack = new List<string>();
+        public List<TypeDefinition> StaticReference = new List<TypeDefinition>();
+
         public MethodDefinition Method { get; }
     }
 }
