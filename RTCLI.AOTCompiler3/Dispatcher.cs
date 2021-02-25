@@ -22,8 +22,8 @@ namespace RTCLI.AOTCompiler3
                 // ${OutputPath}/${Assembly}/include
                 using (var _h = storage.EnterScope("include"))
                 {
-                    CXXHeaderTranslator translator = new CXXHeaderTranslator(storage, assembly);
-                    translator.Run();
+                    CXXHeaderTranslator translator = new CXXHeaderTranslator();
+                    translator.Run(storage, assembly);
                 }
             }
             using (var _ = storage.EnterScope(assembly.RTCLIShortName()))
@@ -31,8 +31,8 @@ namespace RTCLI.AOTCompiler3
                 // ${OutputPath}/${Assembly}/src
                 using (var _cpp = storage.EnterScope("src"))
                 {
-                    CXXSourceTranslator translator = new CXXSourceTranslator(storage, assembly);
-                    translator.Run();
+                    CXXSourceTranslator translator = new CXXSourceTranslator();
+                    translator.Run(storage, assembly);
                 }
             }
             System.Console.WriteLine($"Processing {assembly.RTCLIShortName()} done.");

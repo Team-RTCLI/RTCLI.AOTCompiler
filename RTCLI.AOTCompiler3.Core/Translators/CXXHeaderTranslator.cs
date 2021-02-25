@@ -34,15 +34,10 @@ namespace RTCLI.AOTCompiler3.Translators
         }
     }
 
-    public class CXXHeaderTranslator
+    public class CXXHeaderTranslator : IRTCLITranslator
     {
-        public CXXHeaderTranslator(CodeTextStorage storage, AssemblyDefinition assembly)
-        {
-            Storage = storage;
-            FocusedAssembly = assembly;
-        }
-
-        public void Run()
+        // ${OutputPath}/${Assembly}/include
+        public void Run(CodeTextStorage Storage, AssemblyDefinition FocusedAssembly)
         {
             var uberHeaderWriter = Storage.Wirter("_UberHeader_.h");
             uberHeaderWriter.WriteLine("// [H1000] UberHeader"); 
@@ -69,9 +64,6 @@ namespace RTCLI.AOTCompiler3.Translators
             uberHeaderWriter.Flush();
         }
 
-        // ${OutputPath}/${Assembly}/include
-        CodeTextStorage Storage = null;
-        AssemblyDefinition FocusedAssembly = null;
         private string EnvIncludes => "#include <RTCLI/RTCLI.hpp>";
     }
 }

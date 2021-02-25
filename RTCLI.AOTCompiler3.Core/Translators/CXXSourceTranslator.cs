@@ -7,15 +7,10 @@ using RTCLI.AOTCompiler3.Meta;
 
 namespace RTCLI.AOTCompiler3.Translators
 {
-    public class CXXSourceTranslator
+    public class CXXSourceTranslator : IRTCLITranslator
     {
-        public CXXSourceTranslator(CodeTextStorage storage, AssemblyDefinition assembly)
-        {
-            Storage = storage;
-            FocusedAssembly = assembly;
-        }
-
-        public void Run()
+        // ${OutputPath}/${Assembly}/src
+        public void Run(CodeTextStorage Storage, AssemblyDefinition FocusedAssembly)
         {
             foreach (var Module in FocusedAssembly.Modules)
             {
@@ -70,9 +65,6 @@ namespace RTCLI.AOTCompiler3.Translators
             }
         }
 
-        // ${OutputPath}/${Assembly}/src
-        CodeTextStorage Storage = null;
-        AssemblyDefinition FocusedAssembly = null;
         private string EnvIncludes => "#include <RTCLI/RTCLI.hpp>";
     }
 }
