@@ -38,37 +38,28 @@ namespace RTCLI.AOTCompiler3.Translators
             }
         }
 
+        [H2002()]
         private void WriteTypeRecursively(CodeTextWriter codeWriter, TypeDefinition type)
         {
+            // [C0004] generic
             if (type.HasGenericParameters)
                 codeWriter.WriteLine(CXXHeaderRules.GenericDeclaration(type));
 
-            string TypeDecl = type.IsValueType ? CXXHeaderRules.StructDeclaration(type) :
-                                 type.IsInterface ? CXXHeaderRules.InterfaceDeclaration(type) :
-                                 CXXHeaderRules.ClassDeclaration(type);
-
-            using (var classScope = new CXXScopeDisposer(codeWriter, TypeDecl, true,
-                $"// [H2000] TypeScope {type.CXXTypeName()} ",
-                $"// [H2000] Exit TypeScope {type.CXXTypeName()}"))
+            // [H2000] Type Scope
+            using (var typeScope = new CXXTypeScope(codeWriter, type))
             {
                 codeWriter.unindent().WriteLine("public:").indent();
                 foreach (var nested in type.NestedTypes)
                 {
-                    codeWriter.WriteLine($"// [H2002] Inner Classes {nested.CXXShortTypeName()}");
+                    // [H2002] Inner Types
+                    codeWriter.WriteLine($"// [H2002] Inner Types {nested.CXXShortTypeName()}");
                     WriteTypeRecursively(codeWriter, nested);
                 }
                 // [H2001] Method Signatures
                 CXXHeaderRules.WriteMethodSignatures(codeWriter, type);
 
-                if (type.Fields != null & type.Fields.Count != 0)
-                {
-                    codeWriter.WriteLine("// [H2005] Field Declarations");
-                    foreach (var field in type.Fields)
-                    {
-                        codeWriter.WriteLine(field.CXXFieldDeclaration());
-                    }
-                    codeWriter.WriteLine();
-                }
+                // [H2005] Field Declaration
+                CXXHeaderRules.WriteFieldDeclaration(codeWriter, type);
             }
 
             // [H2004] Boxed ValueType

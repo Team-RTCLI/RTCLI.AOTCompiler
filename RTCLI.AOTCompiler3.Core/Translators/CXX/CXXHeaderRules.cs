@@ -84,6 +84,20 @@ namespace RTCLI.AOTCompiler3.Translators
             }
         }
 
+        [H2005()]
+        public static void WriteFieldDeclaration(CodeTextWriter codeWriter, TypeDefinition type)
+        {
+            if (type.Fields != null & type.Fields.Count != 0)
+            {
+                codeWriter.WriteLine("// [H2005] Field Declarations");
+                foreach (var field in type.Fields)
+                {
+                    codeWriter.WriteLine(field.CXXFieldDeclaration());
+                }
+                codeWriter.WriteLine();
+            }
+        }
+
 
         [C0001()]
         public static string StructDeclaration(TypeDefinition type)
@@ -113,19 +127,32 @@ namespace RTCLI.AOTCompiler3.Translators
             return $"/*[C0003]*/class {type.CXXShortTypeName()} : public {BaseType}{(type.Interfaces.Count > 0 ? "," + Interfaces : "")}";
         }
 
-        [C0003()]
+        [C0004()]
         public static string GenericDeclaration(TypeDefinition type)
         {
             return $"/*[C0004]*/template<{type.CXXTemplateParam()}>";
         }
     }
 
+    [H2000]
+    public class CXXTypeScope : CXXScopeDisposer
+    {
+        public CXXTypeScope(CodeTextWriter parent, TypeDefinition type)
+            : base(parent, 
+                  type.IsValueType ? CXXHeaderRules.StructDeclaration(type) : // [C0001]
+                  type.IsInterface ? CXXHeaderRules.InterfaceDeclaration(type) : // [C0002]
+                  CXXHeaderRules.ClassDeclaration(type), //[C0003]
+                  true,
+                  $"// [H2000] TypeScope {type.CXXTypeName()} ",
+                  $"// [H2000] Exit TypeScope {type.CXXTypeName()}")
+        {
+
+        }
+    }
+    
     [H2003()]
     public class CXXNamespaceScope : CXXScopeDisposer
     {
-        private CodeTextWriter parent;
-        private bool EndWithSemicolon = false;
-        private string onExit = null;
         public CXXNamespaceScope(CodeTextWriter parent, string CXXNamespace)
             :base(parent, "namespace " + CXXNamespace,
                  false, "// [H2003] namespace", "// [H2003] Exit namespace")
