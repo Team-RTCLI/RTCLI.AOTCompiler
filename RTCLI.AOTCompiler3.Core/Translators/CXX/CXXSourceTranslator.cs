@@ -27,7 +27,7 @@ namespace RTCLI.AOTCompiler3.Translators
                     using (var no_unused_lables = new ScopeNoUnusedWarning(Writer))
                     {
                         Writer.WriteLine("");
-                        //WriteMethodRecursive(codeWriter, type);
+                        WriteMethodRecursive(Writer, Type);
                         Writer.WriteLine("");
 
 
@@ -43,6 +43,21 @@ namespace RTCLI.AOTCompiler3.Translators
 
                     Writer.Flush();
                 }
+            }
+        }
+
+        public void WriteMethodRecursive(CodeTextWriter Writer, TypeDefinition Type)
+        {
+            foreach (var Nested in Type.NestedTypes)
+            {
+                WriteMethodRecursive(Writer, Nested);
+            }
+            foreach (var Method in Type.Methods)
+            {
+                if (Method.Body == null)
+                    continue;
+                // [S2000] Method Body
+                CXXSourceRules.WriteMethodBody(Writer, Method);
             }
         }
 

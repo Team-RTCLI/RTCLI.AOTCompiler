@@ -62,6 +62,12 @@ namespace RTCLI.AOTCompiler3.Meta
             var gTs  = typeReference.GenericParameters;
             return gTs != null ? string.Join(',', gTs.Select(a => $"class {a.CXXTypeName()}")) : "";
         }
+        public static string CXXTemplateArg(this TypeReference typeReference)
+        {
+            var gTs  = typeReference.GenericParameters;
+            return gTs != null ? string.Join(',', gTs.Select(a => a.CXXTypeName())) : "";
+        }
+
         public static List<InterfaceImplementation> InterfacesSolved(this TypeDefinition type)
         {
             Mono.Collections.Generic.Collection<InterfaceImplementation> toRemove = new Mono.Collections.Generic.Collection<InterfaceImplementation>();

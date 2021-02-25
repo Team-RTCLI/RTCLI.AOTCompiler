@@ -28,7 +28,14 @@ namespace RTCLI.AOTCompiler3.Meta
 
             return H2001_2;
         }
-        
+
+        public static string CXXMethodDeclareName(this MethodDefinition Method)
+        {
+            var Type = Method.DeclaringType;
+            return Type.CXXTypeName() + (Type.HasGenericParameters ? $"<{Type.CXXTemplateArg()}>" : "") 
+                + "::" + Method.CXXShortMethodName();
+        }
+
         public static string CXXArgSequence(this MethodDefinition method)
         {
             return $"({string.Join(',', method.Parameters.Select(a => a.Name))})";
