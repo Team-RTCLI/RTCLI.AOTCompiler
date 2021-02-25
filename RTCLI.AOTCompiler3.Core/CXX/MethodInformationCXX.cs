@@ -42,7 +42,7 @@ namespace RTCLI.AOTCompiler3.Meta
                 if (i++ != method.Parameters.Count)
                     sequence = sequence + ", " + ((i % 3 == 1) ? "\n\t" : "");
             }
-            return sequence;
+            return $"({sequence})";
         }
         
         public static string CXXRetType(this MethodDefinition method)
