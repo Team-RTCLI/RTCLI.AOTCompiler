@@ -14,17 +14,22 @@ FILE(GLOB modules
     RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/RTCLI.Generated ${CMAKE_CURRENT_SOURCE_DIR}/RTCLI.Generated/*
 )
 
-add_definitions("-DRTCLI_TEST_POINT")
-
+# build all assemblies
 FOREACH(module ${modules})
     message(STATUS ${module})
     project(${module})
     file(GLOB_RECURSE 
         source_list 
+        ${CMAKE_CURRENT_SOURCE_DIR}/RTCLI.Generated/${module}/*.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/RTCLI.Generated/${module}/*.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/RTCLI.Generated/${module}/*.hxx
+
+        ${CMAKE_CURRENT_SOURCE_DIR}/RTCLI.Generated/${module}/*.c
         ${CMAKE_CURRENT_SOURCE_DIR}/RTCLI.Generated/${module}/*.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/RTCLI.Generated/${module}/*.cxx
+        ${CMAKE_CURRENT_SOURCE_DIR}/RTCLI.Generated/${module}/*.inl
     )
-    foreach(test ${source_list})
-        get_filename_component(TARGET_NAME ${test} NAME_WLE)
-        add_executable(${TARGET_NAME} ${test})
-    endforeach()
+    add_library(${module} ${incs} ${source_list})
 ENDFOREACH()
+
+#add_definitions("-DRTCLI_TEST_POINT")
