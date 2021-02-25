@@ -20,7 +20,10 @@ namespace RTCLI.AOTCompiler3.Meta
                 method.CXXRetType() + " " +
                 method.CXXShortMethodName() + method.CXXParamSequence(WithConstant);
         }
-        
+        public static string CXXArgSequence(this MethodDefinition method)
+        {
+            return $"({string.Join(',', method.Parameters.Select(a => a.Name))})";
+        }
         public static string CXXParamSequence(this MethodDefinition method, bool WithConstant)
         {
             string sequence = "";

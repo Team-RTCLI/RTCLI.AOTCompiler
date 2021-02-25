@@ -130,9 +130,9 @@ namespace RTCLI.AOTCompiler3.Translators
                 codeWriter.WriteLine($"{type.CXXShortTypeName()} value;");
                 foreach (var method in type.Methods)
                 {
-                    //if (method.HasGenericParameters)
-                    //    codeWriter.WriteLine($"template<{method.CXXTemplateParam()}>");
-                    //codeWriter.WriteLine($"RTCLI_FORCEINLINE {method.CXXMethodSignature(true)} {{ value.{method.CXXMethodNameShort}{method.CXXArgSequence}; }}");
+                    if (method.HasGenericParameters)
+                        codeWriter.WriteLine($"template<{method.CXXTemplateParam()}>");
+                    codeWriter.WriteLine($"RTCLI_FORCEINLINE {method.CXXMethodSignature(true)} {{ value.{method.CXXShortMethodName()}{method.CXXArgSequence()}; }}");
                 }
             }
 
