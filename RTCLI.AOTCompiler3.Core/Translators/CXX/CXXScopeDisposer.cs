@@ -4,7 +4,7 @@ using System.Text;
 
 namespace RTCLI.AOTCompiler3.Translators
 {
-    internal sealed class CXXScopeDisposer : IDisposable
+    public class CXXScopeDisposer : IDisposable
     {
         private CodeTextWriter parent;
         private bool EndWithSemicolon = false;

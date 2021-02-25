@@ -11,38 +11,34 @@ namespace RTCLI.AOTCompiler3.Translators
         // ${OutputPath}/${Assembly}/include
         public void Run(CodeTextStorage Storage, AssemblyDefinition FocusedAssembly)
         {
-            var uberHeaderWriter = Storage.Wirter("_UberHeader_.h");
-            uberHeaderWriter.WriteLine("// [H1000] UberHeader"); 
+            // [H1000] UberHeader
+            CXXHeaderRules.GenerateUberHeader(Storage, FocusedAssembly);
             foreach (var Module in FocusedAssembly.Modules)
             {
                 foreach(var Type in Module.Types)
                 {
                     var codeWriter = Storage.Wirter(Type.CXXHeaderPath());
                     codeWriter.WriteLine(Constants.CopyRight);
-                    codeWriter.WriteLine("// [H0000] Include Protect");
-                    codeWriter.WriteLine("#pragma once");
+                    // [H0000] Include Protect
+                    CXXHeaderRules.WriteIncludeProtect(codeWriter, Type);
                     codeWriter.WriteLine(EnvIncludes);
-
                     codeWriter.WriteLine();
-                    codeWriter.WriteLine("// [H0001] Forward Declaration");
 
+                    // [H0001] Forward Declaration
+                    CXXHeaderRules.WriteForwardDeclaration(codeWriter, Type);
                     codeWriter.WriteLine();
-                    using (var ___ = new CXXScopeDisposer(codeWriter,
-                        "namespace " + Type.CXXNamespace(), false,
-                        "// [H2003] namespace",
-                        "// [H2003] Exit namespace"))
+
+                    // [H2003] namespace
+                    using (var ___ = new CXXNamespaceScope(codeWriter, Type.CXXNamespace()))
                     {
                         WriteTypeRecursively(codeWriter, Type);
                     }
-
                     codeWriter.Flush();
-                    uberHeaderWriter.WriteLine($"#include \"{Type.CXXHeaderPath()}\"");
                 }
             }
-            uberHeaderWriter.Flush();
         }
 
-        public void WriteTypeRecursively(CodeTextWriter codeWriter, TypeDefinition type)
+        private void WriteTypeRecursively(CodeTextWriter codeWriter, TypeDefinition type)
         {
             if (type.HasGenericParameters)
                 codeWriter.WriteLine($"template<{type.CXXTemplateParam()}>");
@@ -64,17 +60,9 @@ namespace RTCLI.AOTCompiler3.Translators
                     codeWriter.WriteLine($"// [H2002] Inner Classes {nested.CXXShortTypeName()}");
                     WriteTypeRecursively(codeWriter, nested);
                 }
-                if(type.Methods != null & type.Methods.Count != 0)
-                {
-                    codeWriter.WriteLine("// [H2001] Method Signatures");
-                    foreach (var method in type.Methods)
-                    {
-                        if (method.HasGenericParameters)
-                            codeWriter.WriteLine($"template<{method.CXXTemplateParam()}>");
-                        codeWriter.WriteLine($"{(method.IsNewSlot ? "virtual " : "")}{method.CXXMethodSignature(true)};");
-                    }
-                    codeWriter.WriteLine();
-                }
+                // [H2001]
+                CXXHeaderRules.WriteMethodSignatures(codeWriter, type);
+
                 if (type.Fields != null & type.Fields.Count != 0)
                 {
                     codeWriter.WriteLine("// [H2005] Field Declarations");
