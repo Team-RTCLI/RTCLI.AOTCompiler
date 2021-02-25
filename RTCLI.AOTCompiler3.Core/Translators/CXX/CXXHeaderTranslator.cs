@@ -8,32 +8,6 @@ using System.Linq;
 
 namespace RTCLI.AOTCompiler3.Translators
 {
-    public static class TypeCXXPathHelper
-    {
-        public static string CXXHeaderPath(this TypeReference typeReference)
-        {
-            return Path.Combine(typeReference.CXXNamespaceToPath(), typeReference.CXXShortTypeName() + ".h").Replace("\\", "/");
-        }
-
-        public static string CXXUberHeaderPath(this TypeReference typeReference)
-        {
-            return typeReference.Module.Assembly.CXXUberHeaderPath();
-        }
-    }
-
-    public static class AssemblyCXXPathHelper
-    {
-        public static string CXXUberHeaderPath(this AssemblyDefinition assembly)
-        {
-            return Path.Combine(assembly.RTCLIShortName(), "include/_UberHeader_.h").Replace("\\", "/");
-        }
-
-        public static string CXXUberHeaderPath(this AssemblyNameReference assembly)
-        {
-            return Path.Combine(assembly.RTCLIShortName(), "include/_UberHeader_.h").Replace("\\", "/");
-        }
-    }
-
     public class CXXHeaderTranslator : IRTCLITranslator
     {
         // ${OutputPath}/${Assembly}/include
@@ -126,7 +100,7 @@ namespace RTCLI.AOTCompiler3.Translators
             {
                 codeWriter.unindent().WriteLine("public:").indent();
                 codeWriter.WriteLine($"using ValueType = {type.CXXShortTypeName()};");
-                //codeWriter.WriteLine($"using ValueType = struct {type.CXXTypeNameShort};");
+                //codeWriter.WriteLine($"using ValueType = struct {type.CXXShortTypeName()};");
                 codeWriter.WriteLine($"{type.CXXShortTypeName()} value;");
                 foreach (var method in type.Methods)
                 {
