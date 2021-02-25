@@ -108,10 +108,13 @@ namespace RTCLI.AOTCompiler3.Translators
             if (!type.IsValueType)
                 return;
 
-            //if (type.HasGenericParameters)
-            //    codeWriter.WriteLine($"template<{type.CXXTemplateParam()}>");
+            // [H2004] Boxed ValueType
+            if (type.HasGenericParameters)
+                codeWriter.WriteLine($"template<{type.CXXTemplateParam()}>");
             string classDef = $"class {type.CXXShortTypeName()}_V : public RTCLI::System::ValueType{Interfaces}";
-            using (var classScope = new CXXScopeDisposer(codeWriter, classDef, true, $"// [H2000] TypeScope {type.CXXTypeName()}_V ", $"// [H2000] Exit TypeScope {type.CXXTypeName()}_V"))
+            using (var classScope = new CXXScopeDisposer(codeWriter, classDef, true,
+                $"// [H2004] Boxed ValueType {type.CXXTypeName()}_V ",
+                $"// [H2004] Exit Boxed ValueType {type.CXXTypeName()}_V"))
             {
                 codeWriter.unindent().WriteLine("public:").indent();
                 codeWriter.WriteLine($"using ValueType = {type.CXXShortTypeName()};");
