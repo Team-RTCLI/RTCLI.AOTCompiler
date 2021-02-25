@@ -17,6 +17,9 @@ namespace RTCLI.AOTCompiler3.Meta
         [H2001()]
         public static string CXXMethodSignature(this MethodDefinition method, bool WithConstant)
         {
+            return (method.IsStatic ? "static " : "") +
+                method.CXXRetType() + " " +
+                method.CXXShortMethodName() + method.CXXParamSequence(WithConstant);
             var Type = method.DeclaringType;
 
             string H2001 = (method.IsStatic ? "static " : "") +
@@ -35,7 +38,12 @@ namespace RTCLI.AOTCompiler3.Meta
             return Type.CXXTypeName() + (Type.HasGenericParameters ? $"<{Type.CXXTemplateArg()}>" : "") 
                 + "::" + Method.CXXShortMethodName();
         }
-
+        public static string CXXMethodSignatureFull(this MethodDefinition method, bool WithConstant)
+        {
+            return (method.IsStatic ? "static " : "") +
+                method.CXXRetType() + " " + method.DeclaringType.CXXTypeName().Replace("::", "_") + "_" +
+                method.CXXShortMethodName() + method.CXXParamSequence(WithConstant);
+        }
         public static string CXXArgSequence(this MethodDefinition method)
         {
             return $"({string.Join(',', method.Parameters.Select(a => a.Name))})";

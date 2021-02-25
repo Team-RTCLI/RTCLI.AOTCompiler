@@ -58,7 +58,7 @@ namespace RTCLI.AOTCompiler3.Translators
                     WriteTypeRecursively(codeWriter, nested);
                 }
                 // [H2001] Method Signatures
-                CXXHeaderRules.WriteMethodSignatures(codeWriter, type);
+                CXXHeaderRules.WriteMethodSignatures(codeWriter, type, type.IsValueType);
 
                 // [H2005] Field Declaration
                 CXXHeaderRules.WriteFieldDeclaration(codeWriter, type);
