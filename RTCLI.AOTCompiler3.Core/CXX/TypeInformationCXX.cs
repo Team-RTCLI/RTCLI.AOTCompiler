@@ -59,13 +59,23 @@ namespace RTCLI.AOTCompiler3.Meta
             var gTs  = typeReference.GenericParameters;
             return gTs != null ? string.Join(',', gTs.Select(a => $"class {a.CXXTypeName()}")) : "";
         }
-        //public static Mono.Collections.Generic.Collection<InterfaceImplementation> InterfacesSolved(this TypeDefinition type)
-        //{
-        //    foreach(var i in type.Interfaces)
-        //    {
-
-        //    }
-        //}
+        public static List<InterfaceImplementation> InterfacesSolved(this TypeDefinition type)
+        {
+            Mono.Collections.Generic.Collection<InterfaceImplementation> toRemove = new Mono.Collections.Generic.Collection<InterfaceImplementation>();
+            foreach (var i in type.Interfaces)
+            {
+                var InterfaceDef = i.InterfaceType.Resolve();
+                var Interfaces = InterfaceDef.Interfaces.Select(a => a.InterfaceType);
+                foreach (var ii in type.Interfaces)
+                {
+                    if (Interfaces.Contains(ii.InterfaceType))
+                    {
+                        toRemove.Add(ii);
+                    }
+                }
+            }
+            return type.Interfaces.Except(toRemove).ToList();
+        }
 
         public static string NamespaceSequence(this TypeReference typeRef)
         {
