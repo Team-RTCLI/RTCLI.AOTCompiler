@@ -41,15 +41,15 @@ namespace RTCLI.AOTCompiler3.Translators
         private void WriteTypeRecursively(CodeTextWriter codeWriter, TypeDefinition type)
         {
             if (type.HasGenericParameters)
-                codeWriter.WriteLine($"template<{type.CXXTemplateParam()}>");
+                codeWriter.WriteLine(CXXHeaderRules.GenericDeclaration(type));
+
             var solved = type.InterfacesSolved();
             string Interfaces = string.Join(',', solved.Select(a => $"public {a.InterfaceType.CXXTypeName()}"));
-            string BaseType = type.BaseType != null ? type.BaseType.CXXTypeName() : "RTCLI::System::Object";
-            string TypeDecl = type.IsValueType ?
-                                 $"/*[C0001]*/struct {type.CXXShortTypeName()}" :
-                                 type.IsInterface ?
-                                 $"/*[C0002]*/interface {type.CXXShortTypeName()} {(type.Interfaces.Count > 0 ? ": " +  Interfaces : "")}" :
-                                 $"/*[C0003]*/class {type.CXXShortTypeName()} : public {BaseType}{(type.Interfaces.Count > 0 ? "," + Interfaces : "")}";
+
+            string TypeDecl = type.IsValueType ? CXXHeaderRules.StructDeclaration(type) :
+                                 type.IsInterface ? CXXHeaderRules.InterfaceDeclaration(type) :
+                                 CXXHeaderRules.ClassDeclaration(type);
+
             using (var classScope = new CXXScopeDisposer(codeWriter, TypeDecl, true,
                 $"// [H2000] TypeScope {type.CXXTypeName()} ",
                 $"// [H2000] Exit TypeScope {type.CXXTypeName()}"))

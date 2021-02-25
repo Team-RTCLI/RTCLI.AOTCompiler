@@ -23,12 +23,12 @@ namespace RTCLI.AOTCompiler3.Translators
     {
         public static string CXXUberHeaderPath(this AssemblyDefinition assembly)
         {
-            return Path.Combine(assembly.RTCLIShortName(), "include/_UberHeader_.h").Replace("\\", "/");
+            return Path.Combine(assembly.RTCLIShortName(), $"include/{Constants.CXXUberHeaderName}").Replace("\\", "/");
         }
 
         public static string CXXUberHeaderPath(this AssemblyNameReference assembly)
         {
-            return Path.Combine(assembly.RTCLIShortName(), "include/_UberHeader_.h").Replace("\\", "/");
+            return Path.Combine(assembly.RTCLIShortName(), $"include/{Constants.CXXUberHeaderName}").Replace("\\", "/");
         }
     }
 }
