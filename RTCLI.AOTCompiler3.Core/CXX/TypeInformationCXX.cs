@@ -10,6 +10,10 @@ namespace RTCLI.AOTCompiler3.Meta
     {
         public static string CXXNamespace(this TypeDefinition typeDef)
         {
+            if(typeDef.Namespace == null || typeDef.Namespace.Length == 0)
+            {
+                return "RTCLI";
+            }
             return "RTCLI::" + string.Join("::", typeDef.Namespace.Split('.'));
         }
         private static string GenericInstanceString(this TypeReference genericInstance)
@@ -55,7 +59,13 @@ namespace RTCLI.AOTCompiler3.Meta
             var gTs  = typeReference.GenericParameters;
             return gTs != null ? string.Join(',', gTs.Select(a => $"class {a.CXXTypeName()}")) : "";
         }
+        //public static Mono.Collections.Generic.Collection<InterfaceImplementation> InterfacesSolved(this TypeDefinition type)
+        //{
+        //    foreach(var i in type.Interfaces)
+        //    {
 
+        //    }
+        //}
 
         public static string NamespaceSequence(this TypeReference typeRef)
         {
