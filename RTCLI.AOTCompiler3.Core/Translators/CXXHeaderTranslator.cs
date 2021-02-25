@@ -80,16 +80,20 @@ namespace RTCLI.AOTCompiler3.Translators
                 codeWriter.unindent().WriteLine("public:").indent();
                 foreach (var nested in type.NestedTypes)
                 {
+                    codeWriter.WriteLine($"// [H2002] Inner Classes {nested.CXXShortTypeName()}");
                     WriteTypeRecursively(codeWriter, nested);
                 }
-                codeWriter.WriteLine("// [H2001] Method Signatures");
-                foreach (var method in type.Methods)
+                if(type.Methods != null & type.Methods.Count != 0)
                 {
-                    if (method.HasGenericParameters)
-                        codeWriter.WriteLine($"template<{method.CXXTemplateParam()}>");
-                    codeWriter.WriteLine($"{(method.IsNewSlot ? "virtual " : "")}{method.CXXMethodSignature(true)};");
+                    codeWriter.WriteLine("// [H2001] Method Signatures");
+                    foreach (var method in type.Methods)
+                    {
+                        if (method.HasGenericParameters)
+                            codeWriter.WriteLine($"template<{method.CXXTemplateParam()}>");
+                        codeWriter.WriteLine($"{(method.IsNewSlot ? "virtual " : "")}{method.CXXMethodSignature(true)};");
+                    }
+                    codeWriter.WriteLine("// [H2001] Method Signatures End");
                 }
-                codeWriter.WriteLine("// [H2001] Method Signatures End");
                 foreach (var field in type.Fields)
                 {
                     //codeWriter.WriteLine(field.CXXFieldDeclaration());
@@ -116,35 +120,6 @@ namespace RTCLI.AOTCompiler3.Translators
                 }
             }
 
-        }
-
-        private sealed class CXXScopeDisposer : IDisposable
-        {
-            private CodeTextWriter parent;
-            private bool EndWithSemicolon = false;
-            private string onExit = null;
-            public CXXScopeDisposer(CodeTextWriter parent, string Scope, bool bEndWithSemicolon = false, string onEnter = null, string onExit = null)
-            {
-                this.parent = parent;
-                this.EndWithSemicolon = bEndWithSemicolon;
-                this.onExit = onExit;
-                if (onEnter != null) parent.WriteLine(onEnter);
-                parent.WriteLine(Scope);
-                parent.WriteLine("{");
-                parent.indent();
-            }
-
-            public void Dispose()
-            {
-                if (parent != null)
-                {
-                    parent.unindent();
-                    parent.WriteLine("}" + (EndWithSemicolon?";":""));
-                    if(onExit != null) parent.WriteLine(onExit);
-                    parent.WriteLine();
-                    parent = null;
-                }
-            }
         }
 
         private string EnvIncludes => "#include <RTCLI/RTCLI.hpp>";
