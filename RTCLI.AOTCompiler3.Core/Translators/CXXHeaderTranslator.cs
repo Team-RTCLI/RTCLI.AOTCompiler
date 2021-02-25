@@ -55,7 +55,12 @@ namespace RTCLI.AOTCompiler3.Translators
                     codeWriter.WriteLine("// [H0001] Forward Declaration");
 
                     codeWriter.WriteLine();
-                    WriteTypeRecursively(codeWriter, Type);
+                    using (var ___ = new CXXScopeDisposer(codeWriter,
+                        "namespace " + Type.CXXNamespace(),
+                        false, "// [H2003] namespace", "// [H2003] Exit namespace"))
+                    {
+                        WriteTypeRecursively(codeWriter, Type);
+                    }
 
                     codeWriter.Flush();
                     uberHeaderWriter.WriteLine($"#include \"{Type.CXXHeaderPath()}\"");
