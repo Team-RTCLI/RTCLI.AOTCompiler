@@ -50,7 +50,8 @@ namespace RTCLI.AOTCompiler3.Translators
                         Writer.WriteLine($"template<{method.CXXTemplateParam()}>");
                     string H2001_0 = $"{(method.IsNewSlot ? "virtual " : "")}{method.CXXMethodSignature(true)};";
                     string H2001_1 = Type.IsValueType ? H2001_0.Replace("virtual ", "") : H2001_0;
-                    Writer.WriteLine(H2001_1);
+                    string H2001_2 = (method.IsFinal && !Type.IsValueType) ? H2001_1.Replace(";", " final;") : H2001_1;
+                    Writer.WriteLine(H2001_2);
                 }
                 Writer.WriteLine();
             }
