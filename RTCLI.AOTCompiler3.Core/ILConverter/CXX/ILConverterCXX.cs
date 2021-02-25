@@ -2,6 +2,9 @@ using Mono.Cecil.Cil;
 using System.Dynamic;
 using RTCLI.AOTCompiler3.Translators;
 using RTCLI.AOTCompiler3.Meta;
+using System.Collections.Generic;
+using System.Reflection;
+using System;
 
 namespace RTCLI.AOTCompiler3.ILConverters
 {

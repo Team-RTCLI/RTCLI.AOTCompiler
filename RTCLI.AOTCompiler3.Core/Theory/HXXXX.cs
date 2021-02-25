@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Reflection;
+
 
 namespace RTCLI.AOTCompiler3
 {
@@ -10,11 +10,6 @@ namespace RTCLI.AOTCompiler3
         public HAttribute()
         {
 
-        }
-        static HAttribute()
-        {
-            var assembly = Assembly.GetAssembly(typeof(HAttribute));
-            var t = typeof(HAttribute);
         }
     }
     
@@ -106,5 +101,14 @@ namespace RTCLI.AOTCompiler3
 
         }
         static string description => "Field Declaration";
+    }
+    
+    public class H9999 : HAttribute
+    {
+        public H9999()
+        {
+
+        }
+        static string description => "Copyright";
     }
 }

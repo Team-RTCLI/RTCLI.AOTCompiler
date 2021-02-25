@@ -16,51 +16,32 @@ namespace RTCLI.AOTCompiler3.Translators
             {
                 foreach (var Type in Module.Types)
                 {
-                    var codeWriter = Storage.Wirter(Path.Combine(Type.CXXNamespaceToPath(), Type.CXXShortTypeName() + ".cpp"));
-                    codeWriter.WriteLine(Constants.CopyRight);
+                    var Writer = Storage.Wirter(Path.Combine(Type.CXXNamespaceToPath(), Type.CXXShortTypeName() + ".cpp"));
 
-                    codeWriter.WriteLine(EnvIncludes);
+                    // [S9999] Copyright
+                    CXXSourceRules.Copyright(Writer);
+                    // [S1000] Include Uber Headers.
+                    CXXSourceRules.IncludeUberHeaders(Writer, Type);
 
-                    codeWriter.WriteLine();
-                    codeWriter.WriteLine("// [S1000] Include Uber Headers.");
-                    codeWriter.WriteLine($"#include <{Type.CXXUberHeaderPath()}>");
-                    foreach(var assemblyReference in Module.AssemblyReferences)
+                    // [S0001] Close Unused-Label Warning
+                    using (var no_unused_lables = new ScopeNoUnusedWarning(Writer))
                     {
-                        codeWriter.WriteLine($"#include <{assemblyReference.CXXUberHeaderPath()}>");
+                        Writer.WriteLine("");
+                        //WriteMethodRecursive(codeWriter, type);
+                        Writer.WriteLine("");
+
+
+                        Writer.WriteLine("");
+                        Writer.WriteLine("// [S0000] Generate Test Point.");
+                        Writer.WriteLine($"#ifdef RTCLI_TEST_POINT");
+                        Writer.WriteLine("int main(void){");
+                        Writer.WriteLine($"\t{Type.CXXTypeName()}::Test();");
+                        Writer.WriteLine("\treturn 0;");
+                        Writer.WriteLine("}");
+                        Writer.WriteLine($"#endif");
                     }
 
-                    codeWriter.WriteLine("");
-                    codeWriter.WriteLine("// [S0001] Close Unused-Label Warnings.");
-                    codeWriter.WriteLine($"#if defined(RTCLI_COMPILER_CLANG)");
-                    codeWriter.WriteLine($"#pragma clang diagnostic push");
-                    codeWriter.WriteLine($"#pragma clang diagnostic ignored \"-Wunused-label\"");
-                    codeWriter.WriteLine($"#elif defined(RTCLI_COMPILER_MSVC)");
-                    codeWriter.WriteLine($"#pragma warning(push)");
-                    codeWriter.WriteLine($"#pragma warning(disable: 4102)");
-                    codeWriter.WriteLine($"#endif");
-                    
-                    codeWriter.WriteLine("");
-                    //WriteMethodRecursive(codeWriter, type);
-                    codeWriter.WriteLine("");
-
-                    codeWriter.WriteLine("");
-                    codeWriter.WriteLine("// [S0001] Pop Unused-Label Warnings.");
-                    codeWriter.WriteLine($"#if defined(RTCLI_COMPILER_CLANG)");
-                    codeWriter.WriteLine($"#pragma clang diagnostic pop");
-                    codeWriter.WriteLine($"#elif defined(RTCLI_COMPILER_MSVC)");
-                    codeWriter.WriteLine($"#pragma warning(pop)");
-                    codeWriter.WriteLine($"#endif");
-
-                    codeWriter.WriteLine("");
-                    codeWriter.WriteLine("// [S0000] Generate Test Point.");
-                    codeWriter.WriteLine($"#ifdef RTCLI_TEST_POINT");
-                    codeWriter.WriteLine("int main(void){");
-                    codeWriter.WriteLine($"\t{Type.CXXTypeName()}::Test();");
-                    codeWriter.WriteLine("\treturn 0;");
-                    codeWriter.WriteLine("}");
-                    codeWriter.WriteLine($"#endif");
-
-                    codeWriter.Flush();
+                    Writer.Flush();
                 }
             }
         }

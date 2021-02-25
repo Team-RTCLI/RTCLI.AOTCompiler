@@ -17,23 +17,25 @@ namespace RTCLI.AOTCompiler3.Translators
             {
                 foreach(var Type in Module.Types)
                 {
-                    var codeWriter = Storage.Wirter(Type.CXXHeaderPath());
-                    codeWriter.WriteLine(Constants.CopyRight);
+                    var Writer = Storage.Wirter(Type.CXXHeaderPath());
+                    // [H9999] Copyright
+                    CXXHeaderRules.CopyWrite(Writer);
+
                     // [H0000] Include Protect
-                    CXXHeaderRules.WriteIncludeProtect(codeWriter, Type);
-                    codeWriter.WriteLine(EnvIncludes);
-                    codeWriter.WriteLine();
+                    CXXHeaderRules.WriteIncludeProtect(Writer);
+                    Writer.WriteLine(EnvIncludes);
+                    Writer.WriteLine();
 
                     // [H0001] Forward Declaration
-                    CXXHeaderRules.WriteForwardDeclaration(codeWriter, Type);
-                    codeWriter.WriteLine();
+                    CXXHeaderRules.WriteForwardDeclaration(Writer, Type);
+                    Writer.WriteLine();
 
                     // [H2003] namespace
-                    using (var ___ = new CXXNamespaceScope(codeWriter, Type.CXXNamespace()))
+                    using (var ___ = new CXXNamespaceScope(Writer, Type.CXXNamespace()))
                     {
-                        WriteTypeRecursively(codeWriter, Type);
+                        WriteTypeRecursively(Writer, Type);
                     }
-                    codeWriter.Flush();
+                    Writer.Flush();
                 }
             }
         }

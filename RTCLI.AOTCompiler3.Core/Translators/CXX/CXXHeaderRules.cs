@@ -10,17 +10,17 @@ namespace RTCLI.AOTCompiler3.Translators
     public static class CXXHeaderRules
     {
         [H0000()]
-        public static void WriteIncludeProtect(CodeTextWriter codeWriter, TypeDefinition type)
+        public static void WriteIncludeProtect(CodeTextWriter Writer)
         {
-            codeWriter.WriteLine("// [H0000] Include Protect");
-            codeWriter.WriteLine("#pragma once");
+            Writer.WriteLine("// [H0000] Include Protect");
+            Writer.WriteLine("#pragma once");
         }
         
         [H0001()]
-        public static void WriteForwardDeclaration(CodeTextWriter codeWriter, TypeDefinition type)
+        public static void WriteForwardDeclaration(CodeTextWriter Writer, TypeDefinition Type)
         {
-            codeWriter.WriteLine("// [H0001] Forward Declaration");
-            codeWriter.WriteLine("// TODO");
+            Writer.WriteLine("// [H0001] Forward Declaration");
+            Writer.WriteLine("// TODO");
         }
 
         [H1000()]
@@ -39,63 +39,69 @@ namespace RTCLI.AOTCompiler3.Translators
         }
 
         [H2001()]
-        public static void WriteMethodSignatures(CodeTextWriter codeWriter, TypeDefinition type)
+        public static void WriteMethodSignatures(CodeTextWriter Writer, TypeDefinition Type)
         {
-            if (type.Methods != null & type.Methods.Count != 0)
+            if (Type.Methods != null & Type.Methods.Count != 0)
             {
-                codeWriter.WriteLine("// [H2001] Method Signatures");
-                foreach (var method in type.Methods)
+                Writer.WriteLine("// [H2001] Method Signatures");
+                foreach (var method in Type.Methods)
                 {
                     if (method.HasGenericParameters)
-                        codeWriter.WriteLine($"template<{method.CXXTemplateParam()}>");
-                    codeWriter.WriteLine($"{(method.IsNewSlot ? "virtual " : "")}{method.CXXMethodSignature(true)};");
+                        Writer.WriteLine($"template<{method.CXXTemplateParam()}>");
+                    Writer.WriteLine($"{(method.IsNewSlot ? "virtual " : "")}{method.CXXMethodSignature(true)};");
                 }
-                codeWriter.WriteLine();
+                Writer.WriteLine();
             }
         }
 
         [H2004()]
-        public static void WriteBoxedValueType(CodeTextWriter codeWriter, TypeDefinition type)
+        public static void WriteBoxedValueType(CodeTextWriter Writer, TypeDefinition Type)
         {
-            if (type.IsValueType)
+            if (Type.IsValueType)
             {
-                var solved = type.InterfacesSolved();
+                var solved = Type.InterfacesSolved();
                 string Interfaces = string.Join(',', solved.Select(a => $"public {a.InterfaceType.CXXTypeName()}"));
 
                 // [H2004] Boxed ValueType
-                if (type.HasGenericParameters)
-                    codeWriter.WriteLine($"template<{type.CXXTemplateParam()}>");
-                string classDef = $"class {type.CXXShortTypeName()}_V : public RTCLI::System::ValueType{Interfaces}";
-                using (var classScope = new CXXScopeDisposer(codeWriter, classDef, true,
-                    $"// [H2004] Boxed ValueType {type.CXXTypeName()}_V ",
-                    $"// [H2004] Exit Boxed ValueType {type.CXXTypeName()}_V"))
+                if (Type.HasGenericParameters)
+                    Writer.WriteLine($"template<{Type.CXXTemplateParam()}>");
+                string classDef = $"class {Type.CXXShortTypeName()}_V : public RTCLI::System::ValueType{Interfaces}";
+                using (var classScope = new CXXScopeDisposer(Writer, classDef, true,
+                    $"// [H2004] Boxed ValueType {Type.CXXTypeName()}_V ",
+                    $"// [H2004] Exit Boxed ValueType {Type.CXXTypeName()}_V"))
                 {
-                    codeWriter.unindent().WriteLine("public:").indent();
-                    codeWriter.WriteLine($"using ValueType = {type.CXXShortTypeName()};");
-                    //codeWriter.WriteLine($"using ValueType = struct {type.CXXShortTypeName()};");
-                    codeWriter.WriteLine($"{type.CXXShortTypeName()} value;");
-                    foreach (var method in type.Methods)
+                    Writer.unindent().WriteLine("public:").indent();
+                    Writer.WriteLine($"using ValueType = {Type.CXXShortTypeName()};");
+                    //Writer.WriteLine($"using ValueType = struct {type.CXXShortTypeName()};");
+                    Writer.WriteLine($"{Type.CXXShortTypeName()} value;");
+                    foreach (var method in Type.Methods)
                     {
                         if (method.HasGenericParameters)
-                            codeWriter.WriteLine($"template<{method.CXXTemplateParam()}>");
-                        codeWriter.WriteLine($"RTCLI_FORCEINLINE {method.CXXMethodSignature(true)} {{ value.{method.CXXShortMethodName()}{method.CXXArgSequence()}; }}");
+                            Writer.WriteLine($"template<{method.CXXTemplateParam()}>");
+                        Writer.WriteLine($"RTCLI_FORCEINLINE {method.CXXMethodSignature(true)} {{ value.{method.CXXShortMethodName()}{method.CXXArgSequence()}; }}");
                     }
                 }
             }
         }
 
         [H2005()]
-        public static void WriteFieldDeclaration(CodeTextWriter codeWriter, TypeDefinition type)
+        public static void WriteFieldDeclaration(CodeTextWriter Writer, TypeDefinition Type)
         {
-            if (type.Fields != null & type.Fields.Count != 0)
+            if (Type.Fields != null & Type.Fields.Count != 0)
             {
-                codeWriter.WriteLine("// [H2005] Field Declarations");
-                foreach (var field in type.Fields)
+                Writer.WriteLine("// [H2005] Field Declarations");
+                foreach (var field in Type.Fields)
                 {
-                    codeWriter.WriteLine(field.CXXFieldDeclaration());
+                    Writer.WriteLine(field.CXXFieldDeclaration());
                 }
-                codeWriter.WriteLine();
+                Writer.WriteLine();
             }
+        }
+
+        [H9999()]
+        public static void CopyWrite(CodeTextWriter Writer)
+        {
+            Writer.WriteLine(Constants.CopyRight);
         }
 
 
@@ -160,6 +166,4 @@ namespace RTCLI.AOTCompiler3.Translators
 
         }
     }
-
-    
 }
