@@ -56,16 +56,16 @@ namespace RTCLI.AOTCompiler3.Translators
                         {
                             var odd = od.Resolve();
                             overrided.Add(odd);
-                            Writer.WriteLine($"{odd.CXXMethodSignature(true)} override{CondStr(method.IsAbstract, "= 0")}{CondStr(method.IsFinal, " final")};");
+                            Writer.WriteLine($"{odd.CXXMethodSignature()} override{CondStr(method.IsAbstract, "= 0")}{CondStr(method.IsFinal, " final")};");
                         }
                     }
                     else if (!ValueType && method.IsVirtual)
                     {
                         if(method.IsNewSlot)
-                            Writer.WriteLine($"virtual {method.CXXMethodSignature(true)}{CondStr(method.IsAbstract, " = 0")}{CondStr(method.IsFinal, " final")};");
+                            Writer.WriteLine($"virtual {method.CXXMethodSignature()}{CondStr(method.IsAbstract, " = 0")}{CondStr(method.IsFinal, " final")};");
                         if(!Type.IsInterface && !method.IsAbstract)
                         {
-                            Writer.WriteLine($"{method.CXXMethodImplSignature(true)};");
+                            Writer.WriteLine($"{method.CXXRetType()} {method.CXXRowName()}_Impl{method.CXXParamSequence(true)};");
                             foreach (var i in Type.Interfaces)
                             {
                                 var itype = i.InterfaceType.Resolve();
@@ -73,7 +73,7 @@ namespace RTCLI.AOTCompiler3.Translators
                                 {
                                     if (mtdd.Name == method.Name && !overrided.Contains(mtdd))
                                     {
-                                        Writer.WriteLine($"virtual {mtdd.CXXMethodSignature(true)}{CondStr(method.IsAbstract, " = 0")}{CondStr(method.IsFinal, " final")};");
+                                        Writer.WriteLine($"virtual {mtdd.CXXMethodSignature()}{CondStr(method.IsAbstract, " = 0")}{CondStr(method.IsFinal, " final")};");
                                     }
                                 }
                             }
@@ -84,7 +84,7 @@ namespace RTCLI.AOTCompiler3.Translators
                         if (method.HasGenericParameters)
                             Writer.WriteLine($"template<{method.CXXTemplateParam()}>");
 
-                        Writer.WriteLine($"{method.CXXMethodSignature(true)}{CondStr(method.IsVirtual, " override")};");
+                        Writer.WriteLine($"{method.CXXMethodSignature()}{CondStr(method.IsVirtual, " override")};");
                     }
                 }
                 Writer.WriteLine();

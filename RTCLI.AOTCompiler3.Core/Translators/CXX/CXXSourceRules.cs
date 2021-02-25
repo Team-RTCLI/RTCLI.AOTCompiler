@@ -25,18 +25,10 @@ namespace RTCLI.AOTCompiler3.Translators
         public static void WriteMethodBody(CodeTextWriter Writer, MethodDefinition Method, bool ValueType)
         {
             MethodTranslateContextCXX methodContext = new MethodTranslateContextCXX(Method);
-            var Type = Method.DeclaringType;
-
-            Writer.WriteLine("// [S2000] Method Body");
-            if (Type.HasGenericParameters)
-                Writer.WriteLine($"template<{Type.CXXTemplateParam()}>");
-            if (Method.HasGenericParameters)
-                Writer.WriteLine($"template<{Method.CXXTemplateParam()}>");
-
-            Writer.WriteLine(Method.CXXMethodSignature(false));
 
             Writer.WriteLine("{");
             Writer.indent();
+            Writer.WriteLine("// [S2000] Method Body");
             if (Method.IsConstructor && Method.IsStatic)
             {
                 Writer.WriteLine("// [S2000-2] Static Constructor Body");

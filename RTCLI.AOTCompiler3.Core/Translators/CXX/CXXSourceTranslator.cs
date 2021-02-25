@@ -59,19 +59,62 @@ namespace RTCLI.AOTCompiler3.Translators
                 if (Method.Body == null)
                     continue;
                 // [S2000] Method Body
-                if(!ValueType && Method.HasOverrides && Method.IsVirtual)
+                List<MethodDefinition> overrided = new List<MethodDefinition>();
+                if (!ValueType && Method.HasOverrides && Method.IsVirtual)
                 {
-
+                    foreach (var od in Method.Overrides)
+                    {
+                        var odd = od.Resolve();
+                        overrided.Add(odd);
+                        if (Type.HasGenericParameters)
+                            Writer.WriteLine($"template<{Type.CXXTemplateParam()}>");
+                        Writer.WriteLine(odd.CXXMethodImplSignature(ValueType, Type));
+                        CXXSourceRules.WriteMethodBody(Writer, Method, ValueType);
+                    }
                 }
                 else if(!ValueType && Method.IsVirtual)
                 {
-
+                    if (Type.HasGenericParameters)
+                        Writer.WriteLine($"template<{Type.CXXTemplateParam()}>");
+                    Writer.WriteLine($"{Method.CXXRetType()} {Type.CXXMethodDeclarePrefix(ValueType)}::{Method.CXXRowName()}_Impl{Method.CXXParamSequence(true)}");
+                    CXXSourceRules.WriteMethodBody(Writer, Method, ValueType);
+                    if (Method.IsNewSlot)
+                    {
+                        if (Type.HasGenericParameters)
+                            Writer.WriteLine($"template<{Type.CXXTemplateParam()}>");
+                        Writer.WriteLine(Method.CXXMethodImplSignature(ValueType));
+                        Writer.WriteLine($"{{ return {Method.CXXRowName()}_Impl{Method.CXXArgSequence()}; }}");
+                    }
+                    if (!Type.IsInterface)
+                    {
+                        foreach (var i in Type.Interfaces)
+                        {
+                            var itype = i.InterfaceType.Resolve();
+                            foreach (var mtdd in itype.Methods)
+                            {
+                                if (mtdd.Name == Method.Name && !overrided.Contains(mtdd))
+                                {
+                                    if (Type.HasGenericParameters)
+                                        Writer.WriteLine($"template<{Type.CXXTemplateParam()}>");
+                                    Writer.WriteLine(mtdd.CXXMethodImplSignature(ValueType, Type));
+                                    Writer.WriteLine($"{{ return {Method.CXXRowName()}_Impl{Method.CXXArgSequence()}; }}");
+                                }
+                            }
+                        }
+                    }
                 }
                 else
                 {
+                    if (Type.HasGenericParameters)
+                        Writer.WriteLine($"template<{Type.CXXTemplateParam()}>");
+                    if (Method.HasGenericParameters)
+                        Writer.WriteLine($"template<{Method.CXXTemplateParam()}>");
 
+                    Writer.WriteLine(Method.CXXMethodImplSignature(ValueType));
+
+                    CXXSourceRules.WriteMethodBody(Writer, Method, ValueType);
                 }
-                CXXSourceRules.WriteMethodBody(Writer, Method, ValueType);
+
             }
         }
 

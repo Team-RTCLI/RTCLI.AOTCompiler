@@ -19,29 +19,32 @@ namespace RTCLI.AOTCompiler3.Meta
             return Cond ? Str : "";
         }
         [H2001()]
-        public static string CXXMethodSignature(this MethodDefinition method, bool WithConstant)
+        public static string CXXMethodSignature(this MethodDefinition method)
         {
             return (method.IsStatic ? "static " : "") +
                 method.CXXRetType() + " " +
-                method.CXXShortMethodName() + method.CXXParamSequence(WithConstant);
-            var Type = method.DeclaringType;
-
-            string H2001 = (method.IsStatic ? "static " : "") +
-                method.CXXRetType() + " " +
-                method.CXXShortMethodName() + method.CXXParamSequence(WithConstant);
-            string H2001_0 = $"{(method.IsNewSlot ? "virtual " : "")}{H2001 + (method.IsAbstract ? " = 0" : "")};";
-            string H2001_1 = Type.IsValueType ? H2001_0.Replace("virtual ", "") : H2001_0; // [H2001-1] struct de-virtual
-            string H2001_2 = (method.IsFinal && !Type.IsValueType) ? H2001_1.Replace(";", " final;") : H2001_1; // [H2001-2] final-specifier
-
-            return H2001_2;
+                method.CXXShortMethodName() + method.CXXParamSequence(true);
         }
 
-        public static string CXXMethodImplSignature(this MethodDefinition method, bool WithConstant)
+        [H2001()]
+        public static string CXXMethodImplSignature(this MethodDefinition method, bool ValueType, TypeDefinition Type = null)
         {
             return method.CXXRetType() + " " +
-                method?.Name.Replace('<', '_').Replace('>', '_') + "_Impl" +
-                method.CXXParamSequence(WithConstant);
+                method.CXXMethodDeclareName(ValueType, Type) + method.CXXParamSequence(false);
         }
+
+        public static string CXXMethodDeclarePrefix(this TypeDefinition Type, bool ValueType)
+        {
+            return $"{Type.CXXTypeName()}{CondStr(!ValueType && Type.IsValueType, "_V")}{CondStr(Type.HasGenericParameters, $"<{Type.CXXTemplateArg()}>")}";
+        }
+
+        public static string CXXMethodDeclareName(this MethodDefinition Method, bool ValueType, TypeDefinition Type = null)
+        {
+            if(Type is null)
+                Type = Method.DeclaringType;
+            return $"{Type.CXXMethodDeclarePrefix(ValueType)}::{Method.CXXShortMethodName()}";
+        }
+
         public static string CXXArgSequence(this MethodDefinition method)
         {
             return $"({string.Join(',', method.Parameters.Select(a => a.Name))})";
@@ -90,7 +93,8 @@ namespace RTCLI.AOTCompiler3.Meta
         {
             return $"{type.CXXTypeName()}::{method.CXXShortMethodName()}";
         }
-
+        public static string CXXRowName(this MethodDefinition method)
+            => method?.Name.Replace('<', '_').Replace('>', '_');
         public static string CXXShortMethodName(this MethodDefinition method)
         {
             if(method.IsConstructor)
@@ -103,7 +107,7 @@ namespace RTCLI.AOTCompiler3.Meta
             }
             if(method.IsVirtual)
                 return method?.DeclaringType.CXXTypeName().Replace("::", "_") + "_" + method?.Name.Replace('<', '_').Replace('>', '_'); ;
-            return method?.Name.Replace('<', '_').Replace('>', '_');
+            return method.CXXRowName();
         }
     }
 }
