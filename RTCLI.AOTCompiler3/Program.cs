@@ -12,7 +12,7 @@ namespace RTCLI.AOTCompiler3
         public bool enableBundler = false;
         public TargetPlatforms targetPlatform = TargetPlatforms.Generic;
         public bool cxxStaticAssertOnUnimplementatedILs = false;
-        public bool recursivelyCompileAll = true;
+        public bool recursivelyCompileAll = false;
     }
 
     class Program
