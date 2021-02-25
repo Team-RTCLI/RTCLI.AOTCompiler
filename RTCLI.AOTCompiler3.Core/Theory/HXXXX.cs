@@ -63,4 +63,14 @@ namespace RTCLI.AOTCompiler3
         static string description => "namespace";
     }
 
+    // doc: https://www.yuque.com/oy5oo6/su8qgw/bg2gtq
+    public class H2004 : HAttribute
+    {
+        public H2004()
+        {
+
+        }
+        static string description => "Boxed ValueType";
+    }
+
 }

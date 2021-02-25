@@ -54,6 +54,37 @@ namespace RTCLI.AOTCompiler3.Translators
             }
         }
 
+        [H2004()]
+        public static void WriteBoxedValueType(CodeTextWriter codeWriter, TypeDefinition type)
+        {
+            if (type.IsValueType)
+            {
+                var solved = type.InterfacesSolved();
+                string Interfaces = string.Join(',', solved.Select(a => $"public {a.InterfaceType.CXXTypeName()}"));
+
+                // [H2004] Boxed ValueType
+                if (type.HasGenericParameters)
+                    codeWriter.WriteLine($"template<{type.CXXTemplateParam()}>");
+                string classDef = $"class {type.CXXShortTypeName()}_V : public RTCLI::System::ValueType{Interfaces}";
+                using (var classScope = new CXXScopeDisposer(codeWriter, classDef, true,
+                    $"// [H2004] Boxed ValueType {type.CXXTypeName()}_V ",
+                    $"// [H2004] Exit Boxed ValueType {type.CXXTypeName()}_V"))
+                {
+                    codeWriter.unindent().WriteLine("public:").indent();
+                    codeWriter.WriteLine($"using ValueType = {type.CXXShortTypeName()};");
+                    //codeWriter.WriteLine($"using ValueType = struct {type.CXXShortTypeName()};");
+                    codeWriter.WriteLine($"{type.CXXShortTypeName()} value;");
+                    foreach (var method in type.Methods)
+                    {
+                        if (method.HasGenericParameters)
+                            codeWriter.WriteLine($"template<{method.CXXTemplateParam()}>");
+                        codeWriter.WriteLine($"RTCLI_FORCEINLINE {method.CXXMethodSignature(true)} {{ value.{method.CXXShortMethodName()}{method.CXXArgSequence()}; }}");
+                    }
+                }
+            }
+        }
+
+
         [C0001()]
         public static string StructDeclaration(TypeDefinition type)
         {
@@ -62,7 +93,7 @@ namespace RTCLI.AOTCompiler3.Translators
 
             return $"/*[C0001]*/struct {type.CXXShortTypeName()}";
         }
-        
+
         [C0002()]
         public static string InterfaceDeclaration(TypeDefinition type)
         {
@@ -71,7 +102,7 @@ namespace RTCLI.AOTCompiler3.Translators
 
             return $"/*[C0002]*/interface {type.CXXShortTypeName()} {(type.Interfaces.Count > 0 ? ": " + Interfaces : "")}";
         }
-        
+
         [C0003()]
         public static string ClassDeclaration(TypeDefinition type)
         {
@@ -81,7 +112,7 @@ namespace RTCLI.AOTCompiler3.Translators
 
             return $"/*[C0003]*/class {type.CXXShortTypeName()} : public {BaseType}{(type.Interfaces.Count > 0 ? "," + Interfaces : "")}";
         }
-        
+
         [C0003()]
         public static string GenericDeclaration(TypeDefinition type)
         {
@@ -102,4 +133,6 @@ namespace RTCLI.AOTCompiler3.Translators
 
         }
     }
+
+    
 }

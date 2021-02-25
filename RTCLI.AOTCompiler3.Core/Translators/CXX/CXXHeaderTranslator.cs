@@ -43,9 +43,6 @@ namespace RTCLI.AOTCompiler3.Translators
             if (type.HasGenericParameters)
                 codeWriter.WriteLine(CXXHeaderRules.GenericDeclaration(type));
 
-            var solved = type.InterfacesSolved();
-            string Interfaces = string.Join(',', solved.Select(a => $"public {a.InterfaceType.CXXTypeName()}"));
-
             string TypeDecl = type.IsValueType ? CXXHeaderRules.StructDeclaration(type) :
                                  type.IsInterface ? CXXHeaderRules.InterfaceDeclaration(type) :
                                  CXXHeaderRules.ClassDeclaration(type);
@@ -60,7 +57,7 @@ namespace RTCLI.AOTCompiler3.Translators
                     codeWriter.WriteLine($"// [H2002] Inner Classes {nested.CXXShortTypeName()}");
                     WriteTypeRecursively(codeWriter, nested);
                 }
-                // [H2001]
+                // [H2001] Method Signatures
                 CXXHeaderRules.WriteMethodSignatures(codeWriter, type);
 
                 if (type.Fields != null & type.Fields.Count != 0)
@@ -74,29 +71,10 @@ namespace RTCLI.AOTCompiler3.Translators
                 }
             }
 
+            // [H2004] Boxed ValueType
             if (!type.IsValueType)
                 return;
-
-            // [H2004] Boxed ValueType
-            if (type.HasGenericParameters)
-                codeWriter.WriteLine($"template<{type.CXXTemplateParam()}>");
-            string classDef = $"class {type.CXXShortTypeName()}_V : public RTCLI::System::ValueType{Interfaces}";
-            using (var classScope = new CXXScopeDisposer(codeWriter, classDef, true,
-                $"// [H2004] Boxed ValueType {type.CXXTypeName()}_V ",
-                $"// [H2004] Exit Boxed ValueType {type.CXXTypeName()}_V"))
-            {
-                codeWriter.unindent().WriteLine("public:").indent();
-                codeWriter.WriteLine($"using ValueType = {type.CXXShortTypeName()};");
-                //codeWriter.WriteLine($"using ValueType = struct {type.CXXShortTypeName()};");
-                codeWriter.WriteLine($"{type.CXXShortTypeName()} value;");
-                foreach (var method in type.Methods)
-                {
-                    if (method.HasGenericParameters)
-                        codeWriter.WriteLine($"template<{method.CXXTemplateParam()}>");
-                    codeWriter.WriteLine($"RTCLI_FORCEINLINE {method.CXXMethodSignature(true)} {{ value.{method.CXXShortMethodName()}{method.CXXArgSequence()}; }}");
-                }
-            }
-
+            CXXHeaderRules.WriteBoxedValueType(codeWriter, type);
         }
 
         private string EnvIncludes => "#include <RTCLI/RTCLI.hpp>";
