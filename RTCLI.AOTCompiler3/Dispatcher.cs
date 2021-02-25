@@ -13,7 +13,6 @@ namespace RTCLI.AOTCompiler3
         public static void Translate(
             CodeTextStorage storage,
             DispatchArgs dispatchArgs,
-            string assemblyPath,
             AssemblyDefinition assembly)
         {
             // ${OutputPath}/${Assembly}
@@ -61,28 +60,46 @@ namespace RTCLI.AOTCompiler3
                 }
             }
 
-            // Translate
-            Parallel.ForEach(assemblyPaths, aseemblyPath => {
-                if (!assemblyPathMapping.ContainsKey(aseemblyPath))
+            if(dispatchArgs.recursivelyCompileAll)
+            {
+                Parallel.ForEach(AssemblyRepo.GlobalAssemblies, assembly =>
                 {
-                    
-                }
-                else
-                {
-                    var assembly = assemblyPathMapping[aseemblyPath];
                     var storage = new CodeTextStorage(
-                        logw,
-                        outputPath,
-                        "    ");
+                            logw,
+                            outputPath,
+                            "    ");
                     {
                         Translate(
                             storage,
                             dispatchArgs,
-                            aseemblyPath,
-                            assembly);
+                            assembly.Value);
                     }
-                }
-            });
+                });;
+            }
+            else
+            {
+                // Translate
+                Parallel.ForEach(assemblyPaths, aseemblyPath => {
+                    if (!assemblyPathMapping.ContainsKey(aseemblyPath))
+                    {
+
+                    }
+                    else
+                    {
+                        var assembly = assemblyPathMapping[aseemblyPath];
+                        var storage = new CodeTextStorage(
+                            logw,
+                            outputPath,
+                            "    ");
+                        {
+                            Translate(
+                                storage,
+                                dispatchArgs,
+                                assembly);
+                        }
+                    }
+                });
+            }
         }
 
         public static void TranslateAll(

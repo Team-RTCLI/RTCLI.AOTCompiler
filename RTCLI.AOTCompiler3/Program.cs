@@ -12,6 +12,7 @@ namespace RTCLI.AOTCompiler3
         public bool enableBundler = false;
         public TargetPlatforms targetPlatform = TargetPlatforms.Generic;
         public bool cxxStaticAssertOnUnimplementatedILs = false;
+        public bool recursivelyCompileAll = true;
     }
 
     class Program
@@ -31,6 +32,7 @@ namespace RTCLI.AOTCompiler3
                     { "bundler", "Produce bundler source file", _ => dispatchArgs.enableBundler = true },
                     { "target=", "Target platform [NativeCpp|InterpreterCode]", v => dispatchArgs.targetPlatform = Enum.TryParse<TargetPlatforms>(v, true, out var t) ? t : TargetPlatforms.Generic },
                     { "h|help", "Print this help", _ => help = true },
+                    { "r|recursive", "Recursively Compile All Depended Assemblies", _ => dispatchArgs.recursivelyCompileAll = true },
                     { "assert-with-il-unimpl", "Gen CXX Static Assert On Unimplementated ILs", _ => dispatchArgs.cxxStaticAssertOnUnimplementatedILs = true },
                 };
 

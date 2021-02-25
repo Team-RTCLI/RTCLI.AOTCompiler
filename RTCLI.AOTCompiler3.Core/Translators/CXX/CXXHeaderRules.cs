@@ -101,6 +101,7 @@ namespace RTCLI.AOTCompiler3.Translators
         [H9999()]
         public static void CopyWrite(CodeTextWriter Writer)
         {
+            Writer.WriteLine("// [H9999] Copyright");
             Writer.WriteLine(Constants.CopyRight);
         }
 

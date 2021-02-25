@@ -17,4 +17,8 @@
     <ProjectReference Include="..\RTCLI.TestCase\TestCase.csproj" />
   </ItemGroup>
 
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="copy &quot;$(SolutionDir)RTCLI.Standard\mscorlib.dll&quot; &quot;$(TargetDir)mscorlib.dll&quot;;&#xD;&#xA;copy &quot;$(SolutionDir)RTCLI.Standard\netstandard.dll&quot; &quot;$(TargetDir)netstandard.dll&quot;;" />
+  </Target>
+
 </Project>

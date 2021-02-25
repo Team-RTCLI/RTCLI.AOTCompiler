@@ -21,8 +21,15 @@ namespace RTCLI.AOTCompiler3
             assemblyFindDir.Add(Directory.GetCurrentDirectory());
         }
 
-        private static AssemblyDefinition ReadAssemblyRecursively(string assemblyName, ReaderParameters parameter)
+        private static AssemblyDefinition ReadAssemblyRecursively(
+            string assemblyName, ReaderParameters parameter)
         {
+            var pth = Path.GetDirectoryName(assemblyName);
+            if(Directory.Exists(pth))
+            {
+                System.Console.WriteLine("Add " + pth + " to Assembly Find Dir.");
+                assemblyFindDir.Add(pth);
+            }
             AssemblyDefinition AssemblyLoadedRecursively = null;
             AssemblyLoadedRecursively = ReadAssemblyFromDisk(assemblyName, parameter);
             if (AssemblyLoadedRecursively != null)
