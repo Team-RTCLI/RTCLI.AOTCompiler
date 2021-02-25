@@ -37,21 +37,37 @@ namespace RTCLI.AOTCompiler3.Translators
             }
             uberHeaderWriter.Flush();
         }
-
+        public static string CondStr(bool Cond, string Str)
+        {
+            return Cond ? Str : "";
+        }
         [H2001()]
-        public static void WriteMethodSignatures(CodeTextWriter Writer, TypeDefinition Type)
+        public static void WriteMethodSignatures(CodeTextWriter Writer, TypeDefinition Type, bool ValueType)
         {
             if (Type.Methods != null & Type.Methods.Count != 0)
             {
                 Writer.WriteLine("// [H2001] Method Signatures");
                 foreach (var method in Type.Methods)
                 {
-                    if (method.HasGenericParameters)
-                        Writer.WriteLine($"template<{method.CXXTemplateParam()}>");
-                    string H2001_0 = $"{(method.IsNewSlot ? "virtual " : "")}{method.CXXMethodSignature(true)};";
-                    string H2001_1 = Type.IsValueType ? H2001_0.Replace("virtual ", "") : H2001_0;
-                    string H2001_2 = (method.IsFinal && !Type.IsValueType) ? H2001_1.Replace(";", " final;") : H2001_1;
-                    Writer.WriteLine(H2001_2);
+                    if(!ValueType && method.HasOverrides && method.IsVirtual)
+                    {
+                        foreach(var od in method.Overrides)
+                        {
+                            Writer.WriteLine($"{od.Resolve().CXXMethodSignatureFull(true)} override{CondStr(method.IsAbstract, "= 0")}{CondStr(method.IsFinal, " final")};");
+                        }
+                    }
+                    else if (!ValueType && method.IsNewSlot)
+                    {
+                        Writer.WriteLine($"virtual {method.CXXMethodSignature(true)}{CondStr(method.IsAbstract, " = 0")}{CondStr(method.IsFinal, " final")};");
+                        Writer.WriteLine($"virtual {method.CXXMethodSignatureFull(true)}{CondStr(method.IsAbstract, " = 0")}{CondStr(method.IsFinal, " final")};");
+                    }
+                    else if(!(method.HasOverrides && method.IsVirtual))
+                    {
+                        if (method.HasGenericParameters)
+                            Writer.WriteLine($"template<{method.CXXTemplateParam()}>");
+
+                        Writer.WriteLine($"{method.CXXMethodSignature(true)}{CondStr(method.IsVirtual, " override")};");
+                    }    
                 }
                 Writer.WriteLine();
             }
@@ -77,12 +93,7 @@ namespace RTCLI.AOTCompiler3.Translators
                     Writer.WriteLine($"using ValueType = {Type.CXXShortTypeName()};");
                     //Writer.WriteLine($"using ValueType = struct {type.CXXShortTypeName()};");
                     Writer.WriteLine($"{Type.CXXShortTypeName()} value;");
-                    foreach (var method in Type.Methods)
-                    {
-                        if (method.HasGenericParameters)
-                            Writer.WriteLine($"template<{method.CXXTemplateParam()}>");
-                        Writer.WriteLine($"RTCLI_FORCEINLINE {method.CXXMethodSignature(true)} {{ value.{method.CXXShortMethodName()}{method.CXXArgSequence()}; }}");
-                    }
+                    WriteMethodSignatures(Writer, Type, false);
                 }
             }
         }

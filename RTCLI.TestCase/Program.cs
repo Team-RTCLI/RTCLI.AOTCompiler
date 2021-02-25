@@ -22,13 +22,16 @@ namespace TestCase
 
         public static int Main(string[] args)
         {
-            TestCase.TestSystem.Test();
-            Object o = null;
-            bool res = o.Equals(o);
-            Value v = new Value();
-            var t = v.Test(v);
-
-            Console.WriteLine(v.ToString());
+            var Test = new TestInterface.A();
+            var I1 = (TestInterface.Interface1)Test;
+            var I2 = (TestInterface.Interface2)Test;
+            var I3 = (TestInterface.Interface3)Test;
+            var I4 = (TestInterface.Interface4)Test;
+            Console.WriteLine(Test.a());
+            Console.WriteLine(I1.a());
+            Console.WriteLine(I2.a());
+            Console.WriteLine(I3.a());
+            Console.WriteLine(I4.a());
             return 0;
         }
     }
