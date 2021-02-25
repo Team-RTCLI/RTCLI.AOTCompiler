@@ -14,6 +14,24 @@ namespace RTCLI.AOTCompiler3.Translators
         {
             return Path.Combine(typeReference.CXXNamespaceToPath(), typeReference.CXXShortTypeName() + ".h").Replace("\\", "/");
         }
+
+        public static string CXXUberHeaderPath(this TypeReference typeReference)
+        {
+            return typeReference.Module.Assembly.CXXUberHeaderPath();
+        }
+    }
+
+    public static class AssemblyCXXPathHelper
+    {
+        public static string CXXUberHeaderPath(this AssemblyDefinition assembly)
+        {
+            return Path.Combine(assembly.RTCLIShortName(), "include/_UberHeader_.h").Replace("\\", "/");
+        }
+
+        public static string CXXUberHeaderPath(this AssemblyNameReference assembly)
+        {
+            return Path.Combine(assembly.RTCLIShortName(), "include/_UberHeader_.h").Replace("\\", "/");
+        }
     }
 
     public class CXXHeaderTranslator
@@ -26,20 +44,29 @@ namespace RTCLI.AOTCompiler3.Translators
 
         public void Run()
         {
-            foreach(var Module in FocusedAssembly.Modules)
+            var uberHeaderWriter = Storage.Wirter("_UberHeader_.h");
+            uberHeaderWriter.WriteLine("// [H1000] UberHeader"); 
+            foreach (var Module in FocusedAssembly.Modules)
             {
                 foreach(var Type in Module.Types)
                 {
-                    var codeWriter = Storage.Wirter(Path.Combine(Type.CXXNamespaceToPath(), Type.CXXShortTypeName() + ".h").Replace("\\", "/"));
+                    var codeWriter = Storage.Wirter(Type.CXXHeaderPath());
                     codeWriter.WriteLine(Utilities.CopyRight);
-                    codeWriter.WriteLine("//[H0000] Include Protect");
+                    codeWriter.WriteLine("// [H0000] Include Protect");
                     codeWriter.WriteLine("#pragma once");
                     codeWriter.WriteLine(EnvIncludes);
-                    codeWriter.WriteLine("//[H0001] Forward Declaration");
+
+                    codeWriter.WriteLine();
+                    codeWriter.WriteLine("// [H0001] Forward Declaration");
+
+                    codeWriter.WriteLine();
+
 
                     codeWriter.Flush();
+                    uberHeaderWriter.WriteLine($"#include \"{Type.CXXHeaderPath()}\"");
                 }
             }
+            uberHeaderWriter.Flush();
         }
 
         // ${OutputPath}/${Assembly}/include

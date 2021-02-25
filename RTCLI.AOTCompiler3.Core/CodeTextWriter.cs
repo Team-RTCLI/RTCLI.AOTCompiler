@@ -12,7 +12,7 @@ namespace RTCLI.AOTCompiler3
             sw = new StreamWriter(relatedPath, false, Encoding.UTF8);
         }
 
-        public CodeTextWriter WriteLine(string toWrite)
+        public CodeTextWriter WriteLine(string toWrite = "")
         {
             sw.WriteLine(indentString + toWrite);
             return this;

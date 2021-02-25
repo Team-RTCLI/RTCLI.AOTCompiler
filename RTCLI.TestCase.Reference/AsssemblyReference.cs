@@ -32,3 +32,11 @@ namespace TestCase.Reference
         private string InternalName;
     }
 }
+
+namespace TestCase.Reference2
+{
+    public class RefClass2
+    {
+        public int value;   
+    }
+}

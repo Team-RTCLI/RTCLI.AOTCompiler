@@ -25,7 +25,14 @@ namespace RTCLI.AOTCompiler3.Translators
                     codeWriter.WriteLine(Utilities.CopyRight);
 
                     codeWriter.WriteLine(EnvIncludes);
-                    codeWriter.WriteLine($"#include <{Type.CXXHeaderPath()}.h>");
+
+                    codeWriter.WriteLine();
+                    codeWriter.WriteLine("// [S1000] Include Uber Headers.");
+                    codeWriter.WriteLine($"#include <{Type.CXXUberHeaderPath()}>");
+                    foreach(var assemblyReference in Module.AssemblyReferences)
+                    {
+                        codeWriter.WriteLine($"#include <{assemblyReference.CXXUberHeaderPath()}>");
+                    }
 
                     codeWriter.WriteLine("");
                     codeWriter.WriteLine("// [S0001] Close Unused-Label Warnings.");
