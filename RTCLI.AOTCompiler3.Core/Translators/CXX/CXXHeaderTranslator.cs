@@ -100,7 +100,7 @@ namespace RTCLI.AOTCompiler3.Translators
                             codeWriter.WriteLine($"template<{method.CXXTemplateParam()}>");
                         codeWriter.WriteLine($"{(method.IsNewSlot ? "virtual " : "")}{method.CXXMethodSignature(true)};");
                     }
-                    codeWriter.WriteLine("// [H2001] Method Signatures End");
+                    codeWriter.WriteLine();
                 }
                 if (type.Fields != null & type.Fields.Count != 0)
                 {
@@ -109,7 +109,7 @@ namespace RTCLI.AOTCompiler3.Translators
                     {
                         codeWriter.WriteLine(field.CXXFieldDeclaration());
                     }
-                    codeWriter.WriteLine("// [H2005] Field Declarations End");
+                    codeWriter.WriteLine();
                 }
             }
 
