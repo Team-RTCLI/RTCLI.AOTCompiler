@@ -12,26 +12,40 @@ namespace RTCLI.AOTCompiler3.Meta
         {
             return "RTCLI::" + string.Join("::", typeDef.Namespace.Split('.'));
         }
+        private static string GenericInstanceString(this TypeReference genericInstance)
+        {
+            var elemT = genericInstance.GetElementType();
+            GenericInstanceType def = genericInstance as GenericInstanceType;
+
+            var genericArgumentTypes = def.GenericArguments;
+            return $"{elemT.CXXTypeName()}<{string.Join(',', genericArgumentTypes.Select(a => a.CXXTypeName()))}>";
+        }
         public static string CXXTypeName(this TypeReference typeReference)
         {
             if (typeReference.IsArray)
-                return $"RTCLI::System::ElementArray<{typeReference.GetElementType().CXXTypeName()}>";
+            {
+                var elemT = typeReference.GetElementType();
+                return $"RTCLI::System::ElementArray<{elemT.CXXTypeName()}>";
+            }
             if (typeReference.IsGenericInstance)
-                return "UNIMPLEMENTED_CXX_TYPE_NAME";
+                return typeReference.GenericInstanceString();
             if (typeReference.IsGenericParameter)
                 return typeReference.FullName;
+
             if (typeReference.IsPointer)
                 return "UNIMPLEMENTED_CXX_TYPE_NAME";
             else return "RTCLI::" + string.Join("::", typeReference.FullName.Split('.', '/')).Replace("<>", "__").Replace('`', '_').Replace("<", "_").Replace(">", "_");
         }
         public static string CXXShortTypeName(this TypeReference typeReference)
         {
+            var elemT = typeReference.GetElementType();
             if (typeReference.IsArray)
                 return $"RTCLI::System::ElementArray<{typeReference.GetElementType().CXXTypeName()}>";
             if (typeReference.IsGenericInstance)
-                return "UNIMPLEMENTED_CXX_SHORT_TYPE_NAME";
+                return typeReference.GenericInstanceString();
             if (typeReference.IsGenericParameter)
                 return typeReference.FullName;
+
             if (typeReference.IsPointer)
                 return "UNIMPLEMENTED_CXX_SHORT_TYPE_NAME";
             else return typeReference.Name.Replace("<>", "__").Replace('`', '_').Replace("<", "_").Replace(">", "_");
