@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RTCLI.TestCase.Reference\TestCase.Reference.csproj" />
+    <ProjectReference Include="..\RTCLI.TestCase\TestCase.csproj" />
+  </ItemGroup>
+
+</Project>

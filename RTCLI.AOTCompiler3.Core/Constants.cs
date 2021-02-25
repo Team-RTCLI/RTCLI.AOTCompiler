@@ -17,7 +17,7 @@ namespace RTCLI.AOTCompiler3
         {
             InitAllCXXILConverters();
         }
-        static Dictionary<OpCode, ICXXILConverter> CXXILConverters = new Dictionary<OpCode, ICXXILConverter>();
+        public static Dictionary<OpCode, ICXXILConverter> CXXILConverters = new Dictionary<OpCode, ICXXILConverter>();
 
 
 

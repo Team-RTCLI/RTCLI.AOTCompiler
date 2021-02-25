@@ -34,6 +34,16 @@ namespace RTCLI.AOTCompiler3
     }
     
     // doc: https://www.yuque.com/oy5oo6/su8qgw/ggxmal
+    public class S2000 : SAttribute
+    {
+        public S2000()
+        {
+
+        }
+        static string description => "Method Body";
+    }
+    
+    // doc: https://www.yuque.com/oy5oo6/su8qgw/ggxmal
     public class S9999 : SAttribute
     {
         public S9999()
