@@ -47,12 +47,12 @@ namespace RTCLI.AOTCompiler3.Translators
             if (type.HasGenericParameters)
                 codeWriter.WriteLine($"template<{type.CXXTemplateParam()}>");
             string Interfaces = string.Join(',', type.Interfaces.Select(a => $"public {a.InterfaceType.CXXTypeName()}"));
-            if (type.Interfaces.Count > 0)
-                Interfaces = "," + Interfaces;
             string BaseType = type.BaseType != null ? type.BaseType.CXXTypeName() : "RTCLI::System::Object";
             string TypeDecl = type.IsValueType ?
-                                 $"struct {type.CXXShortTypeName()}"
-                               : $"class {type.CXXShortTypeName()} : public {BaseType}{Interfaces}";
+                                 $"struct {type.CXXShortTypeName()}" :
+                                 type.IsInterface ?
+                                 $"interface {type.CXXShortTypeName()} {(type.Interfaces.Count > 0 ? ": " +  Interfaces : "")}" :
+                                 $"class {type.CXXShortTypeName()} : public {BaseType}{(type.Interfaces.Count > 0 ? "," + Interfaces : "")}";
             using (var classScope = new CXXScopeDisposer(codeWriter, TypeDecl, true,
                 $"// [H2000] TypeScope {type.CXXTypeName()} ",
                 $"// [H2000] Exit TypeScope {type.CXXTypeName()}"))

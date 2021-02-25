@@ -2,8 +2,17 @@
 
 namespace TestCase.Reference
 {
-    public interface IGetName
+    public interface BaseInterface
     {
+    
+    }
+
+    public interface IGetName : BaseInterface
+    {
+        public class InAnInterface
+        {
+            int val;
+        }
         string Name { get; }
     }
 
