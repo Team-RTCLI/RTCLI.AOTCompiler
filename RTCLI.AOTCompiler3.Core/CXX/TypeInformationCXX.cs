@@ -37,7 +37,10 @@ namespace RTCLI.AOTCompiler3.Meta
                 return typeReference.FullName;
 
             if (typeReference.IsPointer)
-                return "UNIMPLEMENTED_CXX_TYPE_NAME";
+            {
+                var elemT = typeReference.GetElementType();
+                return $"{elemT}*";
+            }
             else return "RTCLI::" + string.Join("::", typeReference.FullName.Split('.', '/')).Replace("<>", "__").Replace('`', '_').Replace("<", "_").Replace(">", "_");
         }
         public static string CXXShortTypeName(this TypeReference typeReference)
