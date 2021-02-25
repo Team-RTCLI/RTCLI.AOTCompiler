@@ -102,7 +102,7 @@ namespace RTCLI.AOTCompiler3.Translators
                 // [H2004] Boxed ValueType
                 if (Type.HasGenericParameters)
                     Writer.WriteLine($"template<{Type.CXXTemplateParam()}>");
-                string classDef = $"class {Type.CXXShortTypeName()}_V : public RTCLI::System::ValueType{Interfaces}";
+                string classDef = $"class {Type.CXXShortTypeName()}_V : public RTCLI::System::ValueType{(solved.Count == 0 ? "" : "," + Interfaces)}";
                 using (var classScope = new CXXScopeDisposer(Writer, classDef, true,
                     $"// [H2004] Boxed ValueType {Type.CXXTypeName()}_V ",
                     $"// [H2004] Exit Boxed ValueType {Type.CXXTypeName()}_V"))
