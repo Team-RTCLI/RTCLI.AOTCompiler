@@ -6,6 +6,8 @@ if(WIN32)
     set(CMAKE_PREFIX_PATH "C:/Program Files (x86)")
 endif()
 
+project(RTCLI_CXXTest)
+
 find_package(RTCLIDefault 0.0.1 REQUIRED)
 link_libraries(RTCLI::RTCLIDefault)
 include_directories(RTCLI.Generated)
@@ -17,19 +19,29 @@ FILE(GLOB modules
 # build all assemblies
 FOREACH(module ${modules})
     message(STATUS ${module})
-    project(${module})
     file(GLOB_RECURSE 
-        source_list 
+        inc_list
         ${CMAKE_CURRENT_SOURCE_DIR}/RTCLI.Generated/${module}/*.h
         ${CMAKE_CURRENT_SOURCE_DIR}/RTCLI.Generated/${module}/*.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/RTCLI.Generated/${module}/*.hxx
-
+        ${CMAKE_CURRENT_SOURCE_DIR}/RTCLI.Generated/${module}/*.inl
+    ) 
+    file(GLOB_RECURSE 
+        source_list 
         ${CMAKE_CURRENT_SOURCE_DIR}/RTCLI.Generated/${module}/*.c
         ${CMAKE_CURRENT_SOURCE_DIR}/RTCLI.Generated/${module}/*.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/RTCLI.Generated/${module}/*.cxx
-        ${CMAKE_CURRENT_SOURCE_DIR}/RTCLI.Generated/${module}/*.inl
     )
-    add_library(${module} ${incs} ${source_list})
+    add_library(${module} ${inc_list} ${source_list})
+
+    FOREACH(test ${source_list})
+        get_filename_component(TARGET_NAME ${test} NAME_WLE)
+        set(TARGET_NAME ${module}_${TARGET_NAME})
+        message(STATUS ${TARGET_NAME})
+
+        add_executable(${TARGET_NAME} ${test})
+        target_compile_definitions(${TARGET_NAME} PRIVATE "-DRTCLI_TEST_POINT")
+    ENDFOREACH()
 ENDFOREACH()
 
 #add_definitions("-DRTCLI_TEST_POINT")
