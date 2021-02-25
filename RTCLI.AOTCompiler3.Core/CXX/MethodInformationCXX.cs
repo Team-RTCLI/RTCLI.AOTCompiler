@@ -14,16 +14,26 @@ namespace RTCLI.AOTCompiler3.Meta
             return gTs != null ? string.Join(',', gTs.Select(a => $"class {a.CXXTypeName()}")) : "";
         }
 
+        [H2001()]
         public static string CXXMethodSignature(this MethodDefinition method, bool WithConstant)
         {
-            return (method.IsStatic ? "static " : "") +
+            var Type = method.DeclaringType;
+
+            string H2001 = (method.IsStatic ? "static " : "") +
                 method.CXXRetType() + " " +
                 method.CXXShortMethodName() + method.CXXParamSequence(WithConstant);
+            string H2001_0 = $"{(method.IsNewSlot ? "virtual " : "")}{H2001 + (method.IsAbstract ? " = 0" : "")};";
+            string H2001_1 = Type.IsValueType ? H2001_0.Replace("virtual ", "") : H2001_0; // [H2001-1] struct de-virtual
+            string H2001_2 = (method.IsFinal && !Type.IsValueType) ? H2001_1.Replace(";", " final;") : H2001_1; // [H2001-2] final-specifier
+
+            return H2001_2;
         }
+        
         public static string CXXArgSequence(this MethodDefinition method)
         {
             return $"({string.Join(',', method.Parameters.Select(a => a.Name))})";
         }
+        
         public static string CXXParamSequence(this MethodDefinition method, bool WithConstant)
         {
             string sequence = "";

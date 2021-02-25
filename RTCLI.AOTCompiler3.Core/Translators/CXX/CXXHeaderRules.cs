@@ -48,10 +48,8 @@ namespace RTCLI.AOTCompiler3.Translators
                 {
                     if (method.HasGenericParameters)
                         Writer.WriteLine($"template<{method.CXXTemplateParam()}>");
-                    string H2001_0 = $"{(method.IsNewSlot ? "virtual " : "")}{method.CXXMethodSignature(true)};";
-                    string H2001_1 = Type.IsValueType ? H2001_0.Replace("virtual ", "") : H2001_0;
-                    string H2001_2 = (method.IsFinal && !Type.IsValueType) ? H2001_1.Replace(";", " final;") : H2001_1;
-                    Writer.WriteLine(H2001_2);
+
+                    Writer.WriteLine(method.CXXMethodSignature(true));
                 }
                 Writer.WriteLine();
             }
@@ -81,7 +79,7 @@ namespace RTCLI.AOTCompiler3.Translators
                     {
                         if (method.HasGenericParameters)
                             Writer.WriteLine($"template<{method.CXXTemplateParam()}>");
-                        Writer.WriteLine($"RTCLI_FORCEINLINE {method.CXXMethodSignature(true)} {{ value.{method.CXXShortMethodName()}{method.CXXArgSequence()}; }}");
+                        Writer.WriteLine($"RTCLI_FORCEINLINE {method.CXXMethodSignature(true).Replace(";", "")} {{ value.{method.CXXShortMethodName()}{method.CXXArgSequence()}; }}");
                     }
                 }
             }
