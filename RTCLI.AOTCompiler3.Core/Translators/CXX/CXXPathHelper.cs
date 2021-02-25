@@ -1,6 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Text;
+using Mono.Cecil;
+using RTCLI.AOTCompiler3.Meta;
 
 namespace RTCLI.AOTCompiler3.Translators
 {
