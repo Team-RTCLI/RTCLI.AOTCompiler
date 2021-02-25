@@ -38,12 +38,18 @@ namespace RTCLI.AOTCompiler3.ILConverters
                 genericArgs = $"<{string.Join(',', gmtd.GenericArguments.Select(a => a.CXXTypeName()))}>";
             if (!mtdDef.IsStatic)
             {
-                string caller = $"(({GetMethodOwner(mtd, methodContext)}&)" // Caster: ((DeclaringType&)
-                    + $"{methodContext.CmptStackPopObject})."; // Caller: caller)
-                string callBody =
-                    $"{caller}" +
-                    (Virt ? "" : $"{GetMethodOwner(mtd, methodContext)}::") +
-                    $"{mtdDef.CXXShortMethodName() + genericArgs}({args});"; // Method Call body.
+                string caller = methodContext.CmptStackPopObject;
+                string callBody;
+                if (Virt)
+                {
+                    callBody =
+                       $"RTCLI_CALLVIRT({caller},{GetMethodOwner(mtd, methodContext)},{mtdDef.CXXShortMethodName() + genericArgs},{args});"; // Method Call body.
+                }
+                else
+                {
+                    callBody =
+                        $"{caller}.{GetMethodOwner(mtd, methodContext)}::{mtdDef.CXXShortMethodName() + genericArgs}({args});"; // Method Call body.
+                }
                 return (mtd.ReturnType.FullName != "System.Void" ? $"auto {methodContext.CmptStackPushObject} = " : "")
                     + callBody;
             }

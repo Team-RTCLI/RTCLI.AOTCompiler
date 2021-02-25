@@ -17,6 +17,9 @@ namespace RTCLI.AOTCompiler3.Meta
         [H2001()]
         public static string CXXMethodSignature(this MethodDefinition method, bool WithConstant)
         {
+            return (method.IsStatic ? "static " : "") +
+                method.CXXRetType() + " " +
+                method.CXXShortMethodName() + method.CXXParamSequence(WithConstant);
             var Type = method.DeclaringType;
 
             string H2001 = (method.IsStatic ? "static " : "") +
