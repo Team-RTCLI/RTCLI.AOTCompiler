@@ -7,7 +7,6 @@ using System.Collections.Generic;
 
 namespace RTCLI.AOTCompiler3.ILConverters
 {
-
     public class MethodCallConvert
     {
         public static string GetMethodOwner(MethodReference mtd, MethodTranslateContextCXX methodContext)
