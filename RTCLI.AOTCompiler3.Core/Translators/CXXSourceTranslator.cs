@@ -17,7 +17,7 @@ namespace RTCLI.AOTCompiler3.Translators
                 foreach (var Type in Module.Types)
                 {
                     var codeWriter = Storage.Wirter(Path.Combine(Type.CXXNamespaceToPath(), Type.CXXShortTypeName() + ".cpp"));
-                    codeWriter.WriteLine(Utilities.CopyRight);
+                    codeWriter.WriteLine(Constants.CopyRight);
 
                     codeWriter.WriteLine(EnvIncludes);
 
