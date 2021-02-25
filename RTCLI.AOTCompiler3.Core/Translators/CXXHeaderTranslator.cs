@@ -56,8 +56,9 @@ namespace RTCLI.AOTCompiler3.Translators
 
                     codeWriter.WriteLine();
                     using (var ___ = new CXXScopeDisposer(codeWriter,
-                        "namespace " + Type.CXXNamespace(),
-                        false, "// [H2003] namespace", "// [H2003] Exit namespace"))
+                        "namespace " + Type.CXXNamespace(), false,
+                        "// [H2003] namespace",
+                        "// [H2003] Exit namespace"))
                     {
                         WriteTypeRecursively(codeWriter, Type);
                     }
@@ -80,7 +81,9 @@ namespace RTCLI.AOTCompiler3.Translators
             string TypeDecl = type.IsValueType ?
                                  $"struct {type.CXXShortTypeName()}"
                                : $"class {type.CXXShortTypeName()} : public {BaseType}{Interfaces}";
-            using (var classScope = new CXXScopeDisposer(codeWriter, TypeDecl, true, $"// [H2000] TypeScope {type.CXXTypeName()} ", $"// [H2000] Exit TypeScope {type.CXXTypeName()}"))
+            using (var classScope = new CXXScopeDisposer(codeWriter, TypeDecl, true,
+                $"// [H2000] TypeScope {type.CXXTypeName()} ",
+                $"// [H2000] Exit TypeScope {type.CXXTypeName()}"))
             {
                 codeWriter.unindent().WriteLine("public:").indent();
                 foreach (var nested in type.NestedTypes)
@@ -99,9 +102,14 @@ namespace RTCLI.AOTCompiler3.Translators
                     }
                     codeWriter.WriteLine("// [H2001] Method Signatures End");
                 }
-                foreach (var field in type.Fields)
+                if (type.Fields != null & type.Fields.Count != 0)
                 {
-                    //codeWriter.WriteLine(field.CXXFieldDeclaration());
+                    codeWriter.WriteLine("// [H2005] Field Declarations");
+                    foreach (var field in type.Fields)
+                    {
+                        codeWriter.WriteLine(field.CXXFieldDeclaration());
+                    }
+                    codeWriter.WriteLine("// [H2005] Field Declarations End");
                 }
             }
 
