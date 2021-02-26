@@ -7,6 +7,7 @@ namespace TestCase
     class TestDelegate
     {
         public delegate void DelegateA(float arg);
+        public static float StaticFunc() { return 1; }
         public static void Test()
         {
             DelegateA arg = null;
@@ -15,6 +16,7 @@ namespace TestCase
             arg = arg2 => { upvalue = arg2; };
             arg(2.0f);
             Func<float, float> asd = arg2 => arg2;
+            Func<float> aaa = StaticFunc;
         }
     }
 }
