@@ -13,38 +13,45 @@ namespace RTCLI.AOTCompiler3.Meta
         private static ConcurrentDictionary<string, List<TypeReference>> strongRefernces = new ConcurrentDictionary<string, List<TypeReference>>();
         private static ConcurrentDictionary<string, List<TypeReference>> nestedTypes = new ConcurrentDictionary<string, List<TypeReference>>();
 
+        [C1001]
         private static void solveTypeReferences(TypeDefinition Type)
         {
             List<TypeReference> weak = new List<TypeReference>(); 
             List<TypeReference> strong = new List<TypeReference>();
-            List<TypeReference> All = new List<TypeReference>();
+            List<TypeReference> fld_prop = new List<TypeReference>();
             var TNameCXX = Type.CXXTypeName();
 
-            if(Type.BaseType != null)
-                strong.Add(Type.BaseType);
+            // [C1001-1] Base & Interfaces are Strong References.
+            if(Type.BaseType != null) strong.Add(Type.BaseType);
             strong = strong.Union(Type.Interfaces.Select(i => i.InterfaceType)).ToList();
 
-            All = All.Union(Type.Fields.Select(f => f.FieldType)).ToList();
-            All = All.Union(Type.Properties.Select(p => p.PropertyType)).ToList();
-            All = All.Union(Type.Methods.Select(m => m.ReturnType)).ToList();
+            // [C1001-2] Param & Ret Types are Weak References.
+            weak = weak.Union(Type.Methods.Select(m => m.ReturnType)).ToList();
             foreach (var Method in Type.Methods)
             {
-                All = All.Union(Method.Parameters.Select(p => p.ParameterType)).ToList();
+                weak = weak.Union(Method.Parameters.Select(p => p.ParameterType)).ToList();
             }
 
-            // remove self and nested types
-            All = All.Except(Type.RecursedNestedTypes()).ToList();
-            if(All.Contains(Type)) All.Remove(Type);
-
-            All = All.Where((t, i) => All.FindIndex(rm => rm.FullName == t.FullName) == i).ToList();
-
+            // [C1001-3] Prop & Fields
+            fld_prop = fld_prop.Union(Type.Fields.Select(f => f.FieldType)).ToList();
+            fld_prop = fld_prop.Union(Type.Properties.Select(p => p.PropertyType)).ToList();
             // value_type => strong
             // class => weak
-            foreach (var T in All)
+            foreach (var T in fld_prop)
             {
                 if (T.IsValueType) strong.Add(T);
                 else weak.Add(T);
             }
+
+            // remove self and nested types
+            weak = weak.Except(Type.RecursedNestedTypes()).ToList();
+            if (weak.Contains(Type)) weak.Remove(Type);
+            strong = strong.Except(Type.RecursedNestedTypes()).ToList();
+            if (strong.Contains(Type)) strong.Remove(Type);
+            // remove replicated.
+            weak = weak.Where((t, i) => weak.FindIndex(rm => rm.FullName == t.FullName) == i).ToList();
+            strong = strong.Where((t, i) => strong.FindIndex(rm => rm.FullName == t.FullName) == i).ToList();
+
             weakReferences.TryAdd(TNameCXX, weak);
             strongRefernces.TryAdd(TNameCXX, strong);
         }
