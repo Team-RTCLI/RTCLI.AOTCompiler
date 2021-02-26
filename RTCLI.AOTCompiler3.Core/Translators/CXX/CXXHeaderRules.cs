@@ -39,33 +39,17 @@ namespace RTCLI.AOTCompiler3.Translators
         }
 
         [H1001()]
-        public static void IncludeBaseTypesHeaders(CodeTextWriter Writer, TypeDefinition Type)
+        public static void IncludeStrongReferences(CodeTextWriter Writer, TypeDefinition Type)
         {
-            Writer.WriteLine("// [H1001] Base Types Headers");
-            if(Type.BaseType != null)
-                Writer.WriteLine($"#include <{Type.BaseType.CXXHeaderPath()}>");
-            foreach(var Interface in Type.Interfaces)
+            var StrongRefernces = Type.StrongRefernces();
+            if(StrongRefernces.Count != 0)
             {
-                var InterfaceT = Interface.InterfaceType;
-                Writer.WriteLine($"#include <{InterfaceT.CXXHeaderPath()}>");
-            }
-        }
-
-        [H1002()]
-        public static void IncludeFieldHeaders(CodeTextWriter Writer, TypeDefinition Type)
-        {
-            Writer.WriteLine("// [H1002] Field Headers");
-            foreach(var Field in Type.Fields)
-            {
-                var FieldT = Field.FieldType;
-                if(FieldT.IsValueType)
-                    Writer.WriteLine($"#include <{FieldT.CXXHeaderPath()}>");
-            }
-            foreach(var Property in Type.Properties)
-            {
-                var PropertyT = Property.PropertyType;
-                if(PropertyT.IsValueType)
-                    Writer.WriteLine($"#include <{PropertyT.CXXHeaderPath()}>");
+                Writer.WriteLine("// [H1001] Strong Referenced Types Headers");
+                foreach (var R in StrongRefernces)
+                {
+                    if (!R.IsPrimitive)
+                        Writer.WriteLine($"#include <{R.CXXHeaderPath()}>");
+                }
             }
         }
 

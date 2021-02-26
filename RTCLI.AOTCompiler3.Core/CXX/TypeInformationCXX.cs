@@ -3,11 +3,98 @@ using System.Collections.Generic;
 using System.Text;
 using Mono.Cecil;
 using System.Linq;
+using System.Collections.Concurrent;
 
 namespace RTCLI.AOTCompiler3.Meta
 {
     public static class TypeInformationCXX
     {
+        private static ConcurrentDictionary<string, List<TypeReference>> weakReferences = new ConcurrentDictionary<string, List<TypeReference>>();
+        private static ConcurrentDictionary<string, List<TypeReference>> strongRefernces = new ConcurrentDictionary<string, List<TypeReference>>();
+        private static ConcurrentDictionary<string, List<TypeReference>> nestedTypes = new ConcurrentDictionary<string, List<TypeReference>>();
+
+        private static void solveTypeReferences(TypeDefinition Type)
+        {
+            List<TypeReference> weak = new List<TypeReference>(); 
+            List<TypeReference> strong = new List<TypeReference>();
+            List<TypeReference> All = new List<TypeReference>();
+            var TNameCXX = Type.CXXTypeName();
+
+            if(Type.BaseType != null)
+                strong.Add(Type.BaseType);
+            strong = strong.Union(Type.Interfaces.Select(i => i.InterfaceType)).ToList();
+
+            All = All.Union(Type.Fields.Select(f => f.FieldType)).ToList();
+            All = All.Union(Type.Properties.Select(p => p.PropertyType)).ToList();
+            All = All.Union(Type.Methods.Select(m => m.ReturnType)).ToList();
+            foreach (var Method in Type.Methods)
+            {
+                All = All.Union(Method.Parameters.Select(p => p.ParameterType)).ToList();
+            }
+
+            // remove self and nested types
+            All = All.Except(Type.RecursedNestedTypes()).ToList();
+            if(All.Contains(Type)) All.Remove(Type);
+
+            All = All.Where((t, i) => All.FindIndex(rm => rm.FullName == t.FullName) == i).ToList();
+
+            // value_type => strong
+            // class => weak
+            foreach (var T in All)
+            {
+                if (T.IsValueType) strong.Add(T);
+                else weak.Add(T);
+            }
+            weakReferences.TryAdd(TNameCXX, weak);
+            strongRefernces.TryAdd(TNameCXX, strong);
+        }
+
+        private static void solveNestedTypes(TypeDefinition Type)
+        {
+            List<TypeReference> allNested = new List<TypeReference>();
+            var TNameCXX = Type.CXXTypeName();
+            foreach (var Nested in Type.NestedTypes)
+            {
+                solveNestedTypes(Nested);
+                allNested.Concat(nestedTypes[Nested.CXXTypeName()]);
+                allNested.Add(Nested);
+            }
+            nestedTypes.TryAdd(TNameCXX, allNested);
+        }
+
+        public static List<TypeReference> RecursedNestedTypes(this TypeDefinition Type)
+        {
+            string TCXXTypeName = Type.CXXTypeName();
+            if (nestedTypes.ContainsKey(TCXXTypeName))
+            {
+                return nestedTypes[TCXXTypeName];
+            }
+            solveNestedTypes(Type);
+            return nestedTypes[TCXXTypeName];
+        }
+
+        public static List<TypeReference> WeakReferences(this TypeDefinition Type)
+        {
+            string TCXXTypeName = Type.CXXTypeName();
+            if(weakReferences.ContainsKey(TCXXTypeName))
+            {
+                return weakReferences[TCXXTypeName];
+            }
+            solveTypeReferences(Type);
+            return weakReferences[TCXXTypeName];
+        }
+        
+        public static List<TypeReference> StrongRefernces(this TypeDefinition Type)
+        {
+            string TCXXTypeName = Type.CXXTypeName();
+            if(strongRefernces.ContainsKey(TCXXTypeName))
+            {
+                return strongRefernces[TCXXTypeName];
+            }
+            solveTypeReferences(Type);
+            return strongRefernces[TCXXTypeName];
+        }
+
         public static string CXXNamespace(this TypeDefinition typeDef)
         {
             if(typeDef.Namespace == null || typeDef.Namespace.Length == 0)
