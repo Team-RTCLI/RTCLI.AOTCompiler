@@ -10,12 +10,7 @@ namespace RTCLI.AOTCompiler3.Meta
     {
         public static string CXXParamDecorated(this ParameterDefinition pram)
         {
-            if (pram.ParameterType.IsGenericParameter)
-                return $"RTCLI::TVar<{pram.CXXTypeName()}>";
-            if (!pram.ParameterType.IsValueType || (pram.IsOut || pram.IsIn))
-                return pram.CXXTypeName() + "&";
-
-            return pram.CXXTypeName();
+            return pram.ParameterType.CXXVarDeclaration();
         }
         public static string CXXTypeName(this ParameterDefinition pram)
         {

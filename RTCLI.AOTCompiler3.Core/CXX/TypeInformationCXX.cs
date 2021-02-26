@@ -134,7 +134,8 @@ namespace RTCLI.AOTCompiler3.Meta
                 return typeReference.GenericInstanceString();
             if (typeReference.IsGenericParameter)
                 return typeReference.FullName;
-
+            if (typeReference.IsByReference)
+                return typeReference.GetElementType().CXXTypeName();
             if (typeReference.IsPointer)
             {
                 var elemT = typeReference.GetElementType();

@@ -77,16 +77,28 @@ namespace RTCLI.AOTCompiler3.Meta
         public static string CXXRetType(this MethodDefinition method)
         {
             var type = method.ReturnType;
-            //if (type.DeclaringType == null)
-            //    return "RTCLI::System::Void";
-            if (method.ReturnType.IsByReference)
-                return type.CXXTypeName() + "&";
-            if (method.ReturnType.IsGenericParameter)
-                return $"RTCLI::TRet<{type.CXXTypeName()}>";
-            if (type.IsValueType)
-                return type.CXXTypeName();
+            if (type.IsVoid())
+                return "RTCLI::System::Void";
+
+            bool IsByRef = type.IsByReference;
+            if (IsByRef)
+            {
+                if (type.IsGenericParameter)
+                    return $"RTCLI::TRet<{type.CXXTypeName()}&>";
+                else if (type.GetElementType().IsValueType)
+                    return type.CXXTypeName() + "&";
+                else
+                    return $"RTCLI::TRef<{type.CXXTypeName()}>&";
+            }
             else
-                return type.CXXTypeName() + "&";
+            {
+                if (type.IsGenericParameter)
+                    return $"RTCLI::TRet<{type.CXXTypeName()}>";
+                else if (type.IsValueType)
+                    return type.CXXTypeName();
+                else
+                    return $"{type.CXXTypeName()}&";
+            }
         }
 
         public static string CXXMethodCallName(this MethodDefinition method, TypeReference type)
