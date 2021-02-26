@@ -77,8 +77,8 @@ namespace RTCLI.AOTCompiler3.Meta
         public static string CXXRetType(this MethodDefinition method)
         {
             var type = method.ReturnType;
-            //if (type.DeclaringType == null)
-            //    return "RTCLI::System::Void";
+            if (type.IsVoid())
+                return "RTCLI::System::Void";
 
             bool IsByRef = type.IsByReference;
             if (IsByRef)

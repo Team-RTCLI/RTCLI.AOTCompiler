@@ -11,6 +11,8 @@ namespace RTCLI.AOTCompiler3.Meta
     {
         public static string CXXVarDeclaration(this TypeReference type)
         {
+            if (type.IsVoid())
+                return "RTCLI::System::Void";
             bool IsByRef = type.IsByReference;
             if (IsByRef)
             {
