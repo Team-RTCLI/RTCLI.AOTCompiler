@@ -9,12 +9,32 @@ namespace RTCLI.AOTCompiler3.Meta
 {
     public static class VarInformationCXX
     {
+        public static string CXXVarDeclaration(this TypeReference type)
+        {
+            bool IsByRef = type.IsByReference;
+            if (IsByRef)
+            {
+                if (type.IsGenericParameter)
+                    return $"RTCLI::TLocal<{type.CXXTypeName()}&>";
+                else if (type.GetElementType().IsValueType)
+                    return $"RTCLI::TRef<{type.CXXTypeName()}>";
+                else
+                    return $"RTCLI::TRef<RTCLI::TRef<{type.CXXTypeName()}>>";
+            }
+            else
+            {
+                if (type.IsGenericParameter)
+                    return $"RTCLI::TLocal<{type.CXXTypeName()}>";
+                else if (type.IsValueType)
+                    return type.CXXTypeName();
+                else
+                    return $"RTCLI::TRef<{type.CXXTypeName()}>";
+            }
+        }
+
         public static string CXXVarDeclaration(this VariableDefinition Var)
         {
-            var Type = Var.VariableType;
-            return Type.IsGenericParameter ? $"RTCLI::TVar<{Type.CXXTypeName()}>" :
-                Type.IsValueType ? Type.CXXTypeName() :
-                $"RTCLI::TRef<{Type.CXXTypeName()}>";
+            return Var.VariableType.CXXVarDeclaration();
         }
         
         public static string CXXVarInitVal(this VariableDefinition Var)

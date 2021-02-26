@@ -4,10 +4,11 @@ namespace TestCase
 {
     public class TestSystem
     {
-        public TestSystem(int val, in int val2, out int val3, ref int val4, int val5 = 30)
+        public TestSystem(int val, in int val2, out int val3, ref string val4, int val5 = 30)
         {
+            ref string val6 = ref val4;
             val3 = 10;
-            val4 = 20;
+            val6 = "asd";
             val = val2;
 
         }
