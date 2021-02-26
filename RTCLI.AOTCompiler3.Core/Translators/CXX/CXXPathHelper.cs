@@ -10,7 +10,12 @@ namespace RTCLI.AOTCompiler3.Translators
     {
         public static string CXXHeaderPath(this TypeReference typeReference)
         {
-            return Path.Combine(typeReference.CXXNamespaceToPath(), typeReference.CXXShortTypeName() + ".h").Replace("\\", "/");
+            var T = typeReference;
+            if(typeReference.IsGenericInstance)
+            {
+                T = typeReference.GetElementType();
+            }
+            return Path.Combine(T.CXXNamespaceToPath(), T.CXXShortTypeName() + ".h").Replace("\\", "/");
         }
 
         public static string CXXUberHeaderPath(this TypeReference typeReference)

@@ -52,6 +52,11 @@ namespace RTCLI.AOTCompiler3
         static string description => "generic";
     }
 
-
+    // doc: https://www.yuque.com/oy5oo6/su8qgw/cb16dg
+    public class C1001 : CAttribute
+    {
+        public C1001() { }
+        static string description => "Strong Reference";
+    }
 
 }

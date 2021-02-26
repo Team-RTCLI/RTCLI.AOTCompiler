@@ -2,11 +2,34 @@
 
 namespace TestProgram
 {
+    public interface Interface0
+    {
+        void Slot()
+        {
+            Console.WriteLine("0");
+        }
+    }
+    public interface Interface1 : Interface0
+    {
+        new void Slot()
+        {
+            Console.WriteLine("1");
+        }
+    }
+    public class Class : Interface1
+    {
+        void Interface1.Slot()
+        {
+            Console.WriteLine("Override Interface1");
+        }
+    }
     class Program
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Class Fuck = new Class();
+            (Fuck as Interface0).Slot();
+            (Fuck as Interface1).Slot();
         }
     }
 }

@@ -17,9 +17,11 @@ namespace RTCLI.AOTCompiler3.Translators
                 foreach (var Type in Module.Types)
                 {
                     var Writer = Storage.Wirter(Path.Combine(Type.CXXNamespaceToPath(), Type.CXXShortTypeName() + ".cpp"));
-
                     // [S9999] Copyright
                     CXXSourceRules.Copyright(Writer);
+                    if (Type.IsPrimitive)
+                        continue;
+
                     // [S1000] Include Uber Headers.
                     CXXSourceRules.IncludeUberHeaders(Writer, Type);
 

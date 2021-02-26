@@ -8,6 +8,8 @@ endif()
 
 project(RTCLI_CXXTest)
 
+set(GEN_TEST FALSE)
+
 find_package(RTCLIDefault 0.0.1 REQUIRED)
 link_libraries(RTCLI::RTCLIDefault)
 include_directories(RTCLI.Generated)
@@ -33,15 +35,21 @@ FOREACH(module ${modules})
         ${CMAKE_CURRENT_SOURCE_DIR}/RTCLI.Generated/${module}/*.cxx
     )
     add_library(${module} ${inc_list} ${source_list})
+    target_include_directories(${module} 
+        PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/RTCLI.Generated/${module}/include
+    )
 
-    FOREACH(test ${source_list})
-        get_filename_component(TARGET_NAME ${test} NAME_WLE)
-        set(TARGET_NAME ${module}_${TARGET_NAME})
-        message(STATUS ${TARGET_NAME})
+    if(GEN_TEST)
+        FOREACH(test ${source_list})
+            get_filename_component(TARGET_NAME ${test} NAME_WLE)
+            set(TARGET_NAME ${module}_${TARGET_NAME})
+            message(STATUS ${TARGET_NAME})
 
-        add_executable(${TARGET_NAME} ${test})
-        target_compile_definitions(${TARGET_NAME} PRIVATE "-DRTCLI_TEST_POINT")
-    ENDFOREACH()
+            add_executable(${TARGET_NAME} ${test})
+            target_compile_definitions(${TARGET_NAME} PRIVATE "-DRTCLI_TEST_POINT")
+        ENDFOREACH()
+    endif(GEN_TEST)
 ENDFOREACH()
 
 #add_definitions("-DRTCLI_TEST_POINT")
