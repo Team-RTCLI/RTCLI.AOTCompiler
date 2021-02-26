@@ -37,6 +37,20 @@ namespace RTCLI.AOTCompiler3.Translators
             }
             uberHeaderWriter.Flush();
         }
+
+        [H1001()]
+        public static void IncludeBaseTypesHeaders(CodeTextWriter Writer, TypeDefinition Type)
+        {
+            Writer.WriteLine("// [H1001] Base Types Headers");
+            if(Type.BaseType != null)
+                Writer.WriteLine($"#include <{Type.BaseType.CXXHeaderPath()}>");
+            foreach(var Interface in Type.Interfaces)
+            {
+                var InterfaceT = Interface.InterfaceType;
+                Writer.WriteLine($"#include <{InterfaceT.CXXHeaderPath()}>");
+            }
+        }
+
         public static string CondStr(bool Cond, string Str)
         {
             return Cond ? Str : "";
@@ -104,7 +118,7 @@ namespace RTCLI.AOTCompiler3.Translators
                 // [H2004] Boxed ValueType
                 if (Type.HasGenericParameters)
                     Writer.WriteLine($"template<{Type.CXXTemplateParam()}>");
-                string classDef = $"class {Type.CXXShortTypeName()}_V : public RTCLI::System::ValueType{(solved.Count == 0 ? "" : "," + Interfaces)}";
+                string classDef = $"struct {Type.CXXShortTypeName()}_V : public RTCLI::System::ValueType{(solved.Count == 0 ? "" : "," + Interfaces)}";
                 using (var classScope = new CXXScopeDisposer(Writer, classDef, true,
                     $"// [H2004] Boxed ValueType {Type.CXXTypeName()}_V ",
                     $"// [H2004] Exit Boxed ValueType {Type.CXXTypeName()}_V"))
@@ -165,7 +179,7 @@ namespace RTCLI.AOTCompiler3.Translators
             string Interfaces = string.Join(',', solved.Select(a => $"public {a.InterfaceType.CXXTypeName()}"));
             string BaseType = type.BaseType != null ? type.BaseType.CXXTypeName() : "RTCLI::System::Object";
 
-            return $"/*[C0003]*/class {type.CXXShortTypeName()} : public {BaseType}{(type.Interfaces.Count > 0 ? "," + Interfaces : "")}";
+            return $"/*[C0003]*/struct {type.CXXShortTypeName()} : public {BaseType}{(type.Interfaces.Count > 0 ? "," + Interfaces : "")}";
         }
 
         [C0004()]
