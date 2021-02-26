@@ -80,6 +80,11 @@ namespace RTCLI.AOTCompiler3.Meta
             return nestedTypes[TCXXTypeName];
         }
 
+        public static bool IsVoid(this TypeReference Type)
+        {
+            return Type.CXXTypeName() == "RTCLI::System::Void";
+        }
+
         public static List<TypeReference> WeakReferences(this TypeDefinition Type)
         {
             string TCXXTypeName = Type.CXXTypeName();
