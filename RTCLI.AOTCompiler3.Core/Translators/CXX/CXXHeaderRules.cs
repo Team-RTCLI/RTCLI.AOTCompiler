@@ -59,13 +59,13 @@ namespace RTCLI.AOTCompiler3.Translators
             {
                 var FieldT = Field.FieldType;
                 if(FieldT.IsValueType)
-                    Writer.WriteLine($"#include <{FieldT}>");
+                    Writer.WriteLine($"#include <{FieldT.CXXHeaderPath()}>");
             }
             foreach(var Property in Type.Properties)
             {
                 var PropertyT = Property.PropertyType;
                 if(PropertyT.IsValueType)
-                    Writer.WriteLine($"#include <{PropertyT}>");
+                    Writer.WriteLine($"#include <{PropertyT.CXXHeaderPath()}>");
             }
         }
 
