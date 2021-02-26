@@ -20,7 +20,21 @@ namespace RTCLI.AOTCompiler3.Translators
         public static void WriteForwardDeclaration(CodeTextWriter Writer, TypeDefinition Type)
         {
             Writer.WriteLine("// [H0001] Forward Declaration");
-            Writer.WriteLine("// TODO");
+            var rs = Type.WeakReferences();
+            foreach (var r in rs)
+            {
+                if(r.HasGenericParameters || r.IsGenericInstance)
+                {
+
+                }
+                else if(!r.IsPrimitive || !r.IsVoid())
+                {
+                    Writer.WriteLine(
+                    $"namespace {r.CXXNamespace()} " + "{ "
+                    + $"struct {r.CXXShortTypeName()}; "
+                    + "}");
+                }
+            }
         }
 
         [H1000()]

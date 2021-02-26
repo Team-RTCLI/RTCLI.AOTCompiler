@@ -107,7 +107,7 @@ namespace RTCLI.AOTCompiler3.Meta
             return strongRefernces[TCXXTypeName];
         }
 
-        public static string CXXNamespace(this TypeDefinition typeDef)
+        public static string CXXNamespace(this TypeReference typeDef)
         {
             if(typeDef.Namespace == null || typeDef.Namespace.Length == 0)
             {
