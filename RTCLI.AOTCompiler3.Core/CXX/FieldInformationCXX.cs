@@ -17,7 +17,7 @@ namespace RTCLI.AOTCompiler3.Meta
             string res =
                 (field.IsStatic ? "static " : "") +
                 (field.FieldType.IsGenericParameter ? $"RTCLI::TField<{field.CXXTypeName()}> " :
-                field.FieldType.IsValueType ? $"{field.CXXTypeName()} " : $"RTCLI::Managed<{field.CXXTypeName()}> ") +
+                field.FieldType.IsValueType ? $"{field.CXXTypeName()} " : $"RTCLI::TRef<{field.CXXTypeName()}> ") +
             $"{Utilities.GetCXXValidTokenString(field.Name)};";
             return res;
         }
