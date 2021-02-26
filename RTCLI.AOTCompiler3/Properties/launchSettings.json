@@ -2,7 +2,7 @@
   "profiles": {
     "RTCLI.AOTCompiler3": {
       "commandName": "Project",
-      "commandLineArgs": "-g1 -r \"$(SolutionDir)RTCLI.CXXTest/RTCLI.Generated\" \"C:\\Program Files\\dotnet\\shared\\Microsoft.NETCore.App\\5.0.0/mscorlib.dll\""
+      "commandLineArgs": "-g1 \"$(SolutionDir)RTCLI.CXXTest/RTCLI.Generated\"  \"$(SolutionDir)RTCLI.TestCase/bin/Debug/netstandard2.1/TestCase.dll\" \"$(SolutionDir)RTCLI.TestCase.Reference/bin/Debug/netstandard2.1/TestCase.Reference.dll\""
     }
   }
 }
