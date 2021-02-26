@@ -27,8 +27,11 @@ namespace RTCLI.AOTCompiler3.Translators
                         continue;
 
                     Writer.WriteLine(EnvIncludes);
-                    // [H1001] Base Types Headers
+                    // [H1001] Base Type Headers
                     CXXHeaderRules.IncludeBaseTypesHeaders(Writer, Type);
+                    // [H1002] Field Headers
+                    CXXHeaderRules.IncludeFieldHeaders(Writer, Type);
+
                     Writer.WriteLine();
 
                     // [H0001] Forward Declaration

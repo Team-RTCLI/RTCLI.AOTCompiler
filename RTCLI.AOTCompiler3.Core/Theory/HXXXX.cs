@@ -35,7 +35,14 @@ namespace RTCLI.AOTCompiler3
     public class H1001 : HAttribute
     {
         public H1001() {}
-        static string description => "Base Types Headers";
+        static string description => "Base Type Headers";
+    }
+
+    // doc: https://www.yuque.com/oy5oo6/su8qgw/nflly8
+    public class H1002 : HAttribute
+    {
+        public H1002() {}
+        static string description => "Field Headers";
     }
 
     // doc: https://www.yuque.com/oy5oo6/su8qgw/mzg1ps

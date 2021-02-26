@@ -51,6 +51,24 @@ namespace RTCLI.AOTCompiler3.Translators
             }
         }
 
+        [H1002()]
+        public static void IncludeFieldHeaders(CodeTextWriter Writer, TypeDefinition Type)
+        {
+            Writer.WriteLine("// [H1002] Field Headers");
+            foreach(var Field in Type.Fields)
+            {
+                var FieldT = Field.FieldType;
+                if(FieldT.IsValueType)
+                    Writer.WriteLine($"#include <{FieldT}>");
+            }
+            foreach(var Property in Type.Properties)
+            {
+                var PropertyT = Property.PropertyType;
+                if(PropertyT.IsValueType)
+                    Writer.WriteLine($"#include <{PropertyT}>");
+            }
+        }
+
         public static string CondStr(bool Cond, string Str)
         {
             return Cond ? Str : "";
