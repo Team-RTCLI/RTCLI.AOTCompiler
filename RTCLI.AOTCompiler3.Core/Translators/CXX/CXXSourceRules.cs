@@ -101,6 +101,18 @@ namespace RTCLI.AOTCompiler3.Translators
                 : $"RTCLI::unimplemented_il(\"{ inst.ToString()}\"); //{inst.ToString()}";
         }
 
+        [S2001()]
+        public static void WriteStaticFieldImplementation(CodeTextWriter Writer, TypeDefinition Type)
+        {
+            Writer.WriteLine("// [S2001] Static Field Implementation");
+            foreach (var Field in Type.Fields)
+            {
+                if(Field.IsStatic)
+                    Writer.WriteLine($"{Field.FieldType.CXXTypeName()} " +
+                        $"{Type.CXXTypeName()}::{Utilities.GetCXXValidTokenString(Field.Name)};");
+            }
+        }
+
         [S9999()]
         public static void Copyright(CodeTextWriter Writer)
         {
