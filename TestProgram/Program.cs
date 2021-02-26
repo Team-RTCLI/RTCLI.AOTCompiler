@@ -2,6 +2,11 @@
 
 namespace TestProgram
 {
+    public struct TestStaticVal
+    {
+        public static int val = 1;
+    }
+
     public interface Interface0
     {
         void Slot()
@@ -30,6 +35,8 @@ namespace TestProgram
             Class Fuck = new Class();
             (Fuck as Interface0).Slot();
             (Fuck as Interface1).Slot();
+
+            Console.WriteLine(TestStaticVal.val);
         }
     }
 }

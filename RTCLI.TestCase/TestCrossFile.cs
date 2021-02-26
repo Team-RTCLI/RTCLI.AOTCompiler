@@ -9,6 +9,7 @@ namespace TestCase
         public static void Test()
         {
             System.Console.WriteLine(TestSystem.val);
+            System.Console.WriteLine(TestSystem.valP);
             System.Console.WriteLine(system_test.valval);
             TestSystem.Test();
         }

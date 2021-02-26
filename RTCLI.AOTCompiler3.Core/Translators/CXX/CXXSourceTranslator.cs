@@ -36,6 +36,9 @@ namespace RTCLI.AOTCompiler3.Translators
                     // [S0001] Close Unused-Label Warning
                     using (var no_unused_lables = new ScopeNoUnusedWarning(Writer))
                     {
+                        // [S2001] Static Field Implementation
+                        CXXSourceRules.WriteStaticFieldImplementation(Writer, Type);
+
                         Writer.WriteLine("");
                         WriteMethodRecursive(Writer, Type, Type.IsValueType);
                         if(Type.IsValueType)

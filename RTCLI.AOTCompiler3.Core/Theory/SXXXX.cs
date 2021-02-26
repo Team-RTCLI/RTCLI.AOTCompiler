@@ -54,6 +54,16 @@ namespace RTCLI.AOTCompiler3
     }
     
     // doc: https://www.yuque.com/oy5oo6/su8qgw/ggxmal
+    public class S2001 : SAttribute
+    {
+        public S2001()
+        {
+
+        }
+        static string description => "Static Field Implementation";
+    }
+    
+    // doc: https://www.yuque.com/oy5oo6/su8qgw/ggxmal
     public class S9999 : SAttribute
     {
         public S9999()
