@@ -223,5 +223,10 @@ namespace RTCLI.AOTCompiler3.Meta
         {
             return typeReference.NamespaceSequence().Replace(".", "/");
         }
+
+        public static bool IsImplementedByVM(this TypeReference Type)
+        {
+            return Type.IsPrimitive || Type.IsVoid() || Type.CXXTypeName() == "RTCLI::System::Object" || Type.CXXTypeName() == "RTCLI::System::ValueType";
+        }
     }
 }

@@ -20,6 +20,19 @@ namespace RTCLI.AOTCompiler3.Translators
                 Writer.WriteLine($"#include <{assemblyReference.CXXUberHeaderPath()}>");
             }
         }
+        
+        [S1001()]
+        public static void IncludeWeakReferences(CodeTextWriter Writer, TypeDefinition Type)
+        {
+            Writer.WriteLine("// [S1001] Include Uber Headers.");
+            Writer.WriteLine($"#include <{Type.CXXHeaderPath()}>");
+            var rs = Type.WeakReferences();
+            foreach (var r in rs)
+            {
+                if(!r.IsImplementedByVM())
+                    Writer.WriteLine($"#include <{r.CXXHeaderPath()}>");
+            }
+        }
 
         [S2000()]
         public static void WriteMethodBody(CodeTextWriter Writer, MethodDefinition Method, bool ValueType)

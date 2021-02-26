@@ -8,7 +8,7 @@ endif()
 
 project(RTCLI_CXXTest)
 
-set(GEN_TEST FALSE)
+set(GEN_TEST TRUE)
 
 find_package(RTCLIDefault 0.0.1 REQUIRED)
 link_libraries(RTCLI::RTCLIDefault)
@@ -48,6 +48,7 @@ FOREACH(module ${modules})
 
             add_executable(${TARGET_NAME} ${test})
             target_compile_definitions(${TARGET_NAME} PRIVATE "-DRTCLI_TEST_POINT")
+            target_include_directories(${TARGET_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/RTCLI.Generated/${module}/include)
         ENDFOREACH()
     endif(GEN_TEST)
 ENDFOREACH()

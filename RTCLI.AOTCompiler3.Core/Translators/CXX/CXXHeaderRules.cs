@@ -27,7 +27,7 @@ namespace RTCLI.AOTCompiler3.Translators
                 {
 
                 }
-                else if(!r.IsPrimitive || !r.IsVoid())
+                else if(!r.IsImplementedByVM())
                 {
                     Writer.WriteLine(
                     $"namespace {r.CXXNamespace()} " + "{ "
@@ -61,7 +61,7 @@ namespace RTCLI.AOTCompiler3.Translators
                 Writer.WriteLine("// [H1001] Strong Referenced Types Headers");
                 foreach (var R in StrongRefernces)
                 {
-                    if (!R.IsPrimitive && !R.IsVoid())
+                    if (!R.IsImplementedByVM())
                         Writer.WriteLine($"#include <{R.CXXHeaderPath()}>");
                 }
             }

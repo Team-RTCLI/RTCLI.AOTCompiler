@@ -2,16 +2,8 @@
 
 namespace TestCase
 {
-    public class TestSystem
+    public struct TestSystem
     {
-        public TestSystem(int val, in int val2, out int val3, ref string val4, int val5 = 30)
-        {
-            ref string val6 = ref val4;
-            val3 = 10;
-            val6 = "asd";
-            val = val2;
-
-        }
         public static void Test()
         {
             System.Console.Write("Write Tested!\n");
@@ -33,5 +25,8 @@ namespace TestCase
             //String.Intern(readed);
             //System.Console.Write(readed);
         }
+
+        public static int val = 0;
+        public int valval;
     }
 }

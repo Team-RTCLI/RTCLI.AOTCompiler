@@ -32,6 +32,16 @@ namespace RTCLI.AOTCompiler3
         }
         static string description => "Include Uber Headers";
     }
+
+    // doc: https://www.yuque.com/oy5oo6/su8qgw/vg0364
+    public class S1001 : SAttribute
+    {
+        public S1001()
+        {
+
+        }
+        static string description => "Include Weak References";
+    }
     
     // doc: https://www.yuque.com/oy5oo6/su8qgw/ggxmal
     public class S2000 : SAttribute

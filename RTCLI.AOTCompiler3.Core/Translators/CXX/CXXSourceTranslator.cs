@@ -19,11 +19,19 @@ namespace RTCLI.AOTCompiler3.Translators
                     var Writer = Storage.Wirter(Path.Combine(Type.CXXNamespaceToPath(), Type.CXXShortTypeName() + ".cpp"));
                     // [S9999] Copyright
                     CXXSourceRules.Copyright(Writer);
+                    Writer.WriteLine($"#include <mutex>");
                     if (Type.IsPrimitive)
                         continue;
 
-                    // [S1000] Include Uber Headers.
-                    CXXSourceRules.IncludeUberHeaders(Writer, Type);
+                    if(Constants.CXXUseUberHeader)
+                    {
+                        // [S1000] Include Uber Headers.
+                        CXXSourceRules.IncludeUberHeaders(Writer, Type);
+                    }
+                    else
+                    {
+                        CXXSourceRules.IncludeWeakReferences(Writer, Type);
+                    }
 
                     // [S0001] Close Unused-Label Warning
                     using (var no_unused_lables = new ScopeNoUnusedWarning(Writer))

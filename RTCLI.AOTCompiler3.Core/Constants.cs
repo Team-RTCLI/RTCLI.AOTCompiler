@@ -13,6 +13,8 @@ namespace RTCLI.AOTCompiler3
         public static string CXXCtorName => "Constructor";
         public static string CXXUberHeaderName => "_UberHeader_.h";
 
+        public static bool CXXUseUberHeader = false;
+
         static Constants()
         {
             InitAllCXXILConverters();
