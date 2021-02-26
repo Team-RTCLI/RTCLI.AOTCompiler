@@ -56,10 +56,19 @@ namespace RTCLI.AOTCompiler3
             return CmptStack.Count > 0;
         }
 
+
+        public void AddStaticReference(TypeDefinition typeDefinition)
+        {
+            if (!StaticReference.Contains(typeDefinition))
+                StaticReference.Add(typeDefinition);
+        }
+
         public int ArgumentsCount => ArgumentsStack.Count;
         Stack<int> CmptStack = new Stack<int>();
         List<string> ArgumentsStack = new List<string>();
         public List<TypeDefinition> StaticReference = new List<TypeDefinition>();
+        public List<string> LableReference = new List<string>();
+        public List<TypeDefinition> TypeReference = new List<TypeDefinition>();
 
         public MethodDefinition Method { get; }
     }

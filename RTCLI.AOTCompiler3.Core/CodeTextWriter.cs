@@ -18,6 +18,12 @@ namespace RTCLI.AOTCompiler3
             return this;
         }
 
+        public CodeTextWriter WriteLineRaw(string toWrite = "")
+        {
+            sw.WriteLine(toWrite);
+            return this;
+        }
+
         public CodeTextWriter indent()
         {
             indentString += "\t";

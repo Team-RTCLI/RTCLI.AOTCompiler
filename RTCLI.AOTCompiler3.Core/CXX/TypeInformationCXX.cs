@@ -163,26 +163,13 @@ namespace RTCLI.AOTCompiler3.Meta
             else return typeReference.Name.Replace("<>", "__").Replace('`', '_').Replace("<", "_").Replace(">", "_");
         }
 
-        public static string CallStaticConstructor(this TypeDefinition typeDefinition,
-            MethodTranslateContextCXX methodContext)
+        public static MethodDefinition GetStaticConstructor(this TypeDefinition typeDefinition)
         {
             MethodDefinition StaticConstructor = null;
             foreach (var method in typeDefinition.Methods)
-            {
                 if (method.IsStatic && method.IsConstructor)
                     StaticConstructor = method;
-            }
-
-            if (methodContext.Method == StaticConstructor)
-                return "";
-
-            if (!methodContext.StaticReference.Contains(typeDefinition))
-            {
-                methodContext.StaticReference.Add(typeDefinition);
-                if (StaticConstructor != null)
-                    return $"{StaticConstructor.CXXMethodCallName(typeDefinition)}();";
-            }
-            return "";
+            return StaticConstructor;
         }
 
         public static string CXXTemplateParam(this TypeReference typeReference)

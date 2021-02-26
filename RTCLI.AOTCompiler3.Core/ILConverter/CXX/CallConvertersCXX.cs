@@ -13,6 +13,16 @@ namespace RTCLI.AOTCompiler3.ILConverters
         {
             return mtd.DeclaringType.CXXTypeName();
         }
+        public static void Visit(Instruction instruction, MethodTranslateContextCXX methodContext)
+        {
+            var mtd = instruction.Operand as MethodReference;
+            var mtdDef = mtd.Resolve();
+            if (mtdDef.IsStatic)
+            {
+                var type = mtd.DeclaringType.Resolve();
+                methodContext.AddStaticReference(type);
+            }
+        }
         public static string Convert(Instruction instruction, MethodTranslateContextCXX methodContext, bool Virt)
         {
             var mtd = instruction.Operand as MethodReference;
@@ -59,8 +69,7 @@ namespace RTCLI.AOTCompiler3.ILConverters
             {
                 var type = mtd.DeclaringType.Resolve();
                 string callBody = $"{mtdDef.CXXMethodCallName(type) + genericArgs}({args});"; // Method Call body.
-                return type.CallStaticConstructor(methodContext) +
-                (mtd.ReturnType.FullName != "System.Void" ? $"auto {methodContext.CmptStackPushObject} = " : "")
+                return (mtd.ReturnType.FullName != "System.Void" ? $"auto {methodContext.CmptStackPushObject} = " : "")
                     + callBody;
             }
             return "ERROR_METHOD_NAME";
@@ -71,12 +80,16 @@ namespace RTCLI.AOTCompiler3.ILConverters
     {
         public string Convert(Instruction instruction, MethodTranslateContextCXX methodContext)
             => MethodCallConvert.Convert(instruction, methodContext, false);
+        public void Visit(Instruction instruction, MethodTranslateContextCXX methodContext) 
+            => MethodCallConvert.Visit(instruction, methodContext);
         public OpCode TargetOpCode() => OpCodes.Call;
     }
     public class CallVirtConverterCXX : ICXXILConverter
     {
         public string Convert(Instruction instruction, MethodTranslateContextCXX methodContext)
             => MethodCallConvert.Convert(instruction, methodContext, true);
+        public void Visit(Instruction instruction, MethodTranslateContextCXX methodContext)
+            => MethodCallConvert.Visit(instruction, methodContext);
         public OpCode TargetOpCode() => OpCodes.Callvirt;
     }
     public class TailcallConverterCXX : ICXXILConverter

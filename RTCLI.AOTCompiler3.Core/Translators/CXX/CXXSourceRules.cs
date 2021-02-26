@@ -65,10 +65,22 @@ namespace RTCLI.AOTCompiler3.Translators
             Writer.WriteLine("// [S2000-1] Code Body");
             foreach (var instruction in Method.Body.Instructions)
             {
+                IterateILInstruction(instruction, methodContext);
+            }
+            foreach(var sr in methodContext.StaticReference)
+            {
+                var constructor = sr.GetStaticConstructor();
+                if (constructor == null)
+                    continue;
+                Writer.WriteLine($"{constructor.CXXMethodCallName(sr)}();");
+            }
+            foreach (var instruction in Method.Body.Instructions)
+            {
                 Writer.WriteLine(NoteILInstruction(instruction, methodContext));
-                Writer.WriteLine(
-                    instruction.GetLabel() + ": " +
-                    TranslateILInstruction(instruction, methodContext));
+                var Lable = instruction.GetLabel();
+                if (methodContext.LableReference.Contains(Lable))
+                    Writer.WriteLineRaw(Lable + " :");
+                Writer.WriteLine(TranslateILInstruction(instruction, methodContext));
             }
             if (Method.IsConstructor && Method.IsStatic)
             {
@@ -99,6 +111,13 @@ namespace RTCLI.AOTCompiler3.Translators
             return StaticAssertOnUnimplementatedILs
                 ? $"static_assert(0, \"[{inst.ToString()}] Has No Converter Implementation!\");"
                 : $"RTCLI::unimplemented_il(\"{ inst.ToString()}\"); //{inst.ToString()}";
+        }
+
+        private static void IterateILInstruction(
+            Instruction inst, MethodTranslateContextCXX methodContext)
+        {
+            if (Constants.CXXILConverters.TryGetValue(inst.OpCode, out ICXXILConverter targetConverter))
+                targetConverter.Visit(inst, methodContext);
         }
 
         [S2001()]

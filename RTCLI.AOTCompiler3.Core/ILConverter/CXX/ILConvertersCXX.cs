@@ -446,38 +446,51 @@ namespace RTCLI.AOTCompiler3.ILConverters
     public class LdsfldConverterCXX : ICXXILConverter
     {
         public OpCode TargetOpCode() => OpCodes.Ldsfld;
+        public void Visit(Instruction instruction, MethodTranslateContextCXX methodContext)
+        {
+            var fld = instruction.Operand as FieldReference;
+            var Type = fld.DeclaringType.Resolve();
+            methodContext.AddStaticReference(Type);
+        }
         public string Convert(Instruction instruction, MethodTranslateContextCXX methodContext)
         {
             var fld = instruction.Operand as FieldReference;
             var Type = fld.DeclaringType.Resolve();
-
-            return Type.CallStaticConstructor(methodContext) +
-                $"auto& {methodContext.CmptStackPushObject} = {Type.CXXTypeName()}::{Utilities.GetCXXValidTokenString(fld.Name)};";
+            return $"auto& {methodContext.CmptStackPushObject} = {Type.CXXTypeName()}::{Utilities.GetCXXValidTokenString(fld.Name)};";
         }
     }
 
     public class LdsfldaConverterCXX : ICXXILConverter
     {
         public OpCode TargetOpCode() => OpCodes.Ldsflda;
+        public void Visit(Instruction instruction, MethodTranslateContextCXX methodContext)
+        {
+            var fld = instruction.Operand as FieldReference;
+            var Type = fld.DeclaringType.Resolve();
+            methodContext.AddStaticReference(Type);
+        }
         public string Convert(Instruction instruction, MethodTranslateContextCXX methodContext)
         {
             var fld = instruction.Operand as FieldReference;
             var Type = fld.DeclaringType.Resolve();
-
-            return Type.CallStaticConstructor(methodContext) +
-                $"auto& {methodContext.CmptStackPushObject} = RTCLI_ADDRESSOF({Type.CXXTypeName()}::{Utilities.GetCXXValidTokenString(fld.Name)});";
+            return $"auto& {methodContext.CmptStackPushObject} = RTCLI_ADDRESSOF({Type.CXXTypeName()}::{Utilities.GetCXXValidTokenString(fld.Name)});";
         }
     }
 
     public class StsfldConverterCXX : ICXXILConverter
     {
         public OpCode TargetOpCode() => OpCodes.Stsfld;
+        public void Visit(Instruction instruction, MethodTranslateContextCXX methodContext)
+        {
+            var fld = instruction.Operand as FieldReference;
+            var Type = fld.DeclaringType.Resolve();
+            methodContext.AddStaticReference(Type);
+        }
         public string Convert(Instruction instruction, MethodTranslateContextCXX methodContext)
         {
             var fld = instruction.Operand as FieldReference;
             var Type = fld.DeclaringType.Resolve();
-            return Type.CallStaticConstructor(methodContext) +
-                $"{Type.CXXTypeName()}::{Utilities.GetCXXValidTokenString(fld.Name)} = {methodContext.CmptStackPopObject};";
+            return $"{Type.CXXTypeName()}::{Utilities.GetCXXValidTokenString(fld.Name)} = {methodContext.CmptStackPopObject};";
         }
     }
 

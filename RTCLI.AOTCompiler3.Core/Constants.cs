@@ -32,6 +32,8 @@ namespace RTCLI.AOTCompiler3
             int index = 0;
             foreach (var type in assembly.GetTypes())
             {
+                if (type.IsInterface)
+                    continue;
                 Type[] typeInterfaces = type.FindInterfaces(typeNameFilter, typeof(ILConverters.ICXXILConverter));
                 if (typeInterfaces.Length > 0)
                 {

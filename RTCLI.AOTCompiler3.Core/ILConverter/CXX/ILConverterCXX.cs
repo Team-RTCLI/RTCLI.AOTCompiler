@@ -13,6 +13,7 @@ namespace RTCLI.AOTCompiler3.ILConverters
         string Note(Instruction instruction, MethodTranslateContextCXX methodContext) 
             => "// " + instruction.ToString().HoldEscape();
 
-        string Convert(Instruction instruction, MethodTranslateContextCXX methodContext); 
+        string Convert(Instruction instruction, MethodTranslateContextCXX methodContext);
+        void Visit(Instruction instruction, MethodTranslateContextCXX methodContext) { }
     }
 }
