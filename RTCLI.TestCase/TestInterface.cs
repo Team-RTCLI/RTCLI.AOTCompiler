@@ -23,7 +23,7 @@ namespace TestCase
 
         public interface Interface2 : Interface1
         {
-            public float a();
+            public new float a();
         }
 
         public interface Interface3 : Interface2
@@ -34,6 +34,11 @@ namespace TestCase
         public interface Interface4 : Interface3
         {
             public float a() => 4;
+        }
+
+        public interface Interface5 : Interface4
+        {
+        
         }
 
         public class A : Interface4

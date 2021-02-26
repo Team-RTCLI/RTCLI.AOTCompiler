@@ -116,18 +116,9 @@ namespace RTCLI.AOTCompiler3.Meta
 
         public static string NamespaceSequence(this TypeReference typeRef)
         {
-            // Try Resolve
-            var typeDef = typeRef.Resolve();
-            if (typeDef != null)
-            {
-                return typeDef.NamespaceSequence();
-            }
             return typeRef.Namespace;
         }
-        public static string NamespaceSequence(this TypeDefinition typeDef)
-        {
-            return typeDef.Namespace;
-        }
+
         public static string CXXNamespaceToPath(this TypeReference typeReference)
         {
             return typeReference.NamespaceSequence().Replace(".", "/");

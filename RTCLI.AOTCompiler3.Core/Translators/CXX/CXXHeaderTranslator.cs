@@ -13,6 +13,7 @@ namespace RTCLI.AOTCompiler3.Translators
         {
             // [H1000] UberHeader
             CXXHeaderRules.GenerateUberHeader(Storage, FocusedAssembly);
+
             foreach (var Module in FocusedAssembly.Modules)
             {
                 foreach(var Type in Module.Types)
@@ -20,10 +21,14 @@ namespace RTCLI.AOTCompiler3.Translators
                     var Writer = Storage.Wirter(Type.CXXHeaderPath());
                     // [H9999] Copyright
                     CXXHeaderRules.CopyWrite(Writer);
-
                     // [H0000] Include Protect
                     CXXHeaderRules.WriteIncludeProtect(Writer);
+                    if (Type.IsPrimitive)
+                        continue;
+
                     Writer.WriteLine(EnvIncludes);
+                    // [H1001] Base Types Headers
+                    CXXHeaderRules.IncludeBaseTypesHeaders(Writer, Type);
                     Writer.WriteLine();
 
                     // [H0001] Forward Declaration

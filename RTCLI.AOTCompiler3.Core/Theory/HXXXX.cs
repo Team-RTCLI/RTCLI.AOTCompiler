@@ -31,6 +31,13 @@ namespace RTCLI.AOTCompiler3
         static string description => "Uber Header";
     }
 
+    // doc: https://www.yuque.com/oy5oo6/su8qgw/cb16dg
+    public class H1001 : HAttribute
+    {
+        public H1001() {}
+        static string description => "Base Types Headers";
+    }
+
     // doc: https://www.yuque.com/oy5oo6/su8qgw/mzg1ps
     public class H2000 : HAttribute
     {
