@@ -63,6 +63,7 @@ namespace RTCLI.AOTCompiler3.Translators
                     {
                         if(method.IsNewSlot)
                             Writer.WriteLine($"virtual {method.CXXMethodSignature()}{CondStr(method.IsAbstract, " = 0")}{CondStr(method.IsFinal, " final")};");
+#if ENABLE_EXPLICT_OVERIDE
                         if(!Type.IsInterface && !method.IsAbstract)
                         {
                             Writer.WriteLine($"{method.CXXRetType()} {method.CXXRowName()}_Impl{method.CXXParamSequence(true)};");
@@ -78,13 +79,14 @@ namespace RTCLI.AOTCompiler3.Translators
                                 }
                             }
                         }
+#endif
                     }
                     else
                     {
                         if (method.HasGenericParameters)
                             Writer.WriteLine($"template<{method.CXXTemplateParam()}>");
 
-                        Writer.WriteLine($"{method.CXXMethodSignature()}{CondStr(method.IsVirtual, " override")};");
+                        Writer.WriteLine($"{method.CXXMethodSignature()};");
                     }
                 }
                 Writer.WriteLine();

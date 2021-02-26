@@ -105,8 +105,10 @@ namespace RTCLI.AOTCompiler3.Meta
                 }
                 return Constants.CXXCtorName;
             }
+#if ENABLE_EXPLICT_OVERRIDE
             if(method.IsVirtual)
                 return method?.DeclaringType.CXXTypeName().Replace("::", "_") + "_" + method?.Name.Replace('<', '_').Replace('>', '_'); ;
+#endif
             return method.CXXRowName();
         }
     }

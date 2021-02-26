@@ -76,7 +76,8 @@ namespace RTCLI.AOTCompiler3.Translators
                 {
                     if (Type.HasGenericParameters)
                         Writer.WriteLine($"template<{Type.CXXTemplateParam()}>");
-                    Writer.WriteLine($"{Method.CXXRetType()} {Type.CXXMethodDeclarePrefix(ValueType)}::{Method.CXXRowName()}_Impl{Method.CXXParamSequence(true)}");
+#if ENABLE_EXPLICT_OVERRIDE
+                    Writer.WriteLine($"{Method.CXXRetType()} {Type.CXXMethodDeclarePrefix(ValueType)}::{Method.CXXRowName()}_Impl{Method.CXXParamSequence(false)}");
                     CXXSourceRules.WriteMethodBody(Writer, Method, ValueType);
                     if (Method.IsNewSlot)
                     {
@@ -102,6 +103,10 @@ namespace RTCLI.AOTCompiler3.Translators
                             }
                         }
                     }
+#else
+                    Writer.WriteLine($"{Method.CXXRetType()} {Type.CXXMethodDeclarePrefix(ValueType)}::{Method.CXXRowName()}{Method.CXXParamSequence(false)}");
+                    CXXSourceRules.WriteMethodBody(Writer, Method, ValueType);
+#endif
                 }
                 else
                 {
