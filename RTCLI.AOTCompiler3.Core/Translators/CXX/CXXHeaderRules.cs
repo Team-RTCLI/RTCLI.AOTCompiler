@@ -47,7 +47,7 @@ namespace RTCLI.AOTCompiler3.Translators
                 Writer.WriteLine("// [H1001] Strong Referenced Types Headers");
                 foreach (var R in StrongRefernces)
                 {
-                    if (!R.IsPrimitive)
+                    if (!R.IsPrimitive && !R.IsVoid())
                         Writer.WriteLine($"#include <{R.CXXHeaderPath()}>");
                 }
             }
