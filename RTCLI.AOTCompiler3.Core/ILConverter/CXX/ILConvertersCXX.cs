@@ -114,8 +114,9 @@ namespace RTCLI.AOTCompiler3.ILConverters
         public string Convert(Instruction instruction, MethodTranslateContextCXX methodContext)
         {
             var Type = instruction.Operand as TypeReference;
+            var Arg = methodContext.CmptStackPopObject;
             return $"auto {methodContext.CmptStackPushObject} = \n" +
-                $"\t\tRTCLI::Castclass<{Type.CXXTypeName()}>({methodContext.CmptStackPopObject});";
+                $"\t\tRTCLI::Castclass<{Type.CXXTypeName()}>({Arg});";
         }
     }
 
@@ -440,6 +441,18 @@ namespace RTCLI.AOTCompiler3.ILConverters
                 return $"auto& {name} = {obj}.{Utilities.GetCXXValidTokenString(fld.Name)}{(fld.FieldType.IsValueType ? "" : ".Get()")};";
             }
             return "";
+        }
+    }
+
+    public class LdfldaConverterCXX : ICXXILConverter
+    {
+        public OpCode TargetOpCode() => OpCodes.Ldflda;
+        public string Convert(Instruction instruction, MethodTranslateContextCXX methodContext)
+        {
+            var obj = methodContext.CmptStackPopObject;
+            var fld = instruction.Operand as FieldReference;
+            var name = methodContext.CmptStackPushObject;
+            return $"auto& {name} = {obj}.{Utilities.GetCXXValidTokenString(fld.Name)};";
         }
     }
 

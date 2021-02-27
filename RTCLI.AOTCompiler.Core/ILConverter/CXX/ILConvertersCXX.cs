@@ -122,9 +122,10 @@ namespace RTCLI.AOTCompiler.ILConverters
         public string Convert(Instruction instruction, MethodTranslateContext methodContext)
         {
             var typeReference = instruction.Operand as TypeReference;
-            TypeInformation typeInformation = methodContext.TranslateContext.MetadataContext.GetTypeInformation(typeReference);
+            TypeInformation typeInformation = methodContext.TranslateContext.MetadataContext.GetTypeInformation(typeReference);\
+            var Arg = (methodContext as CXXMethodTranslateContext).CmptStackPopObject;
             return $"auto {(methodContext as CXXMethodTranslateContext).CmptStackPushObject} = \n" +
-                $"\t\tRTCLI::Castclass<{typeInformation.CXXTypeName}>({(methodContext as CXXMethodTranslateContext).CmptStackPopObject});";
+                $"\t\tRTCLI::Castclass<{typeInformation.CXXTypeName}>({Arg});";
         }
     }
 

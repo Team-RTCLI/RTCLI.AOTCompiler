@@ -16,7 +16,10 @@ namespace RTCLI.AOTCompiler3.ILConverters
             if(index < 0)
                 return $"auto& {methodContext.CmptStackPushObject} = *this;";
             else
-                return $"auto& {methodContext.CmptStackPushObject} = {methodContext.Method.Parameters[index].Name};";
+            {
+                var param = methodContext.Method.Parameters[index];
+                return $"auto& {methodContext.CmptStackPushObject} = {param.Name}{(param.ParameterType.IsValueType?"" : ".Get()")};";
+            }
         }
     }
 

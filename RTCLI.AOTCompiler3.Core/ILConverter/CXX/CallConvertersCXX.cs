@@ -35,13 +35,13 @@ namespace RTCLI.AOTCompiler3.ILConverters
                 argList.Add(methodContext.CmptStackPopObject);
             argList.Reverse();
             args = string.Join(',', argList);
-            if (mtd.FullName.StartsWith("!!0"))
+            /*if (mtd.FullName.StartsWith("!!0"))
             {
                 var gargT = (mtd as GenericInstanceMethod).GenericArguments[0];
                 
                 return $"{gargT.CXXTypeName()}& {methodContext.CmptStackPushObject} = " +
                     $"\\n\t\tRTCLI::new_object<{gargT.CXXTypeName()}>({args});";
-            }
+            }*/
 
             string genericArgs = "";
             if (mtd is GenericInstanceMethod gmtd)
