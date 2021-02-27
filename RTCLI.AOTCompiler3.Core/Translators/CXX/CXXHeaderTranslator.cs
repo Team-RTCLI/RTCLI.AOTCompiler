@@ -49,6 +49,12 @@ namespace RTCLI.AOTCompiler3.Translators
         [H2002()]
         private void WriteTypeRecursively(CodeTextWriter codeWriter, TypeDefinition type)
         {
+            if(type.IsEnum)
+            {
+                CXXHeaderRules.WriteEnumType(codeWriter, type);
+                return;
+            }
+
             // [C0004] generic
             if (type.HasGenericParameters)
                 codeWriter.WriteLine(CXXHeaderRules.GenericDeclaration(type));

@@ -79,6 +79,8 @@ namespace RTCLI.AOTCompiler3.Meta
             var type = method.ReturnType;
             if (type.IsVoid())
                 return "RTCLI::System::Void";
+            if (type.IsOptionalModifier)
+                return type.GetElementType().CXXVarDeclaration();
 
             bool IsByRef = type.IsByReference;
             if (IsByRef)

@@ -123,28 +123,46 @@ namespace RTCLI.AOTCompiler3.Translators
             }
         }
 
+        public static void WriteEnumType(CodeTextWriter Writer, TypeDefinition Type)
+        {
+            if (!Type.IsEnum)
+                return;
+            Writer.WriteLine($"using {Type.CXXShortTypeName()} = {Type.Fields.First().FieldType.CXXTypeName()};");
+            string classDef = $"struct {Type.CXXShortTypeName()}_V : public RTCLI::System::Enum";
+            using (var classScope = new CXXScopeDisposer(Writer, classDef, true,
+                $"// [H2004] Boxed ValueType {Type.CXXTypeName()}_V ",
+                $"// [H2004] Exit Boxed ValueType {Type.CXXTypeName()}_V"))
+            {
+                Writer.unindent().WriteLine("public:").indent();
+                Writer.WriteLine($"using ValueType = {Type.CXXShortTypeName()};");
+                //Writer.WriteLine($"using ValueType = struct {type.CXXShortTypeName()};");
+                Writer.WriteLine($"{Type.CXXShortTypeName()} value;");
+                foreach(var Field in Type.Fields.Skip(1))
+                    Writer.WriteLine($"static constexpr {Type.CXXShortTypeName()} {Field.Name} = {Field.Constant};");
+            }
+        }
+
         [H2004()]
         public static void WriteBoxedValueType(CodeTextWriter Writer, TypeDefinition Type)
         {
-            if (Type.IsValueType)
-            {
-                var solved = Type.InterfacesSolved();
-                string Interfaces = string.Join(',', solved.Select(a => $"public {a.InterfaceType.CXXTypeName()}"));
+            if (!Type.IsValueType)
+                return;
+            var solved = Type.InterfacesSolved();
+            string Interfaces = string.Join(',', solved.Select(a => $"public {a.InterfaceType.CXXTypeName()}"));
 
-                // [H2004] Boxed ValueType
-                if (Type.HasGenericParameters)
-                    Writer.WriteLine($"template<{Type.CXXTemplateParam()}>");
-                string classDef = $"struct {Type.CXXShortTypeName()}_V : public RTCLI::System::ValueType{(solved.Count == 0 ? "" : "," + Interfaces)}";
-                using (var classScope = new CXXScopeDisposer(Writer, classDef, true,
-                    $"// [H2004] Boxed ValueType {Type.CXXTypeName()}_V ",
-                    $"// [H2004] Exit Boxed ValueType {Type.CXXTypeName()}_V"))
-                {
-                    Writer.unindent().WriteLine("public:").indent();
-                    Writer.WriteLine($"using ValueType = {Type.CXXShortTypeName()};");
-                    //Writer.WriteLine($"using ValueType = struct {type.CXXShortTypeName()};");
-                    Writer.WriteLine($"{Type.CXXShortTypeName()} value;");
-                    WriteMethodSignatures(Writer, Type, false);
-                }
+            // [H2004] Boxed ValueType
+            if (Type.HasGenericParameters)
+                Writer.WriteLine($"template<{Type.CXXTemplateParam()}>");
+            string classDef = $"struct {Type.CXXShortTypeName()}_V : public RTCLI::System::ValueType{(solved.Count == 0 ? "" : "," + Interfaces)}";
+            using (var classScope = new CXXScopeDisposer(Writer, classDef, true,
+                $"// [H2004] Boxed ValueType {Type.CXXTypeName()}_V ",
+                $"// [H2004] Exit Boxed ValueType {Type.CXXTypeName()}_V"))
+            {
+                Writer.unindent().WriteLine("public:").indent();
+                Writer.WriteLine($"using ValueType = {Type.CXXShortTypeName()};");
+                //Writer.WriteLine($"using ValueType = struct {type.CXXShortTypeName()};");
+                Writer.WriteLine($"{Type.CXXShortTypeName()} value;");
+                WriteMethodSignatures(Writer, Type, false);
             }
         }
 
